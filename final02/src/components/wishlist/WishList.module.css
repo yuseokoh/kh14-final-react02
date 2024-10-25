@@ -1,0 +1,174 @@
+.wishlist_container {
+  background-color: #1b2838;
+  color: #c7d5e0;
+  padding: 20px;
+  border-radius: 5px;
+  /* background-image: url('./Login.jpg'); */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.wishlist_title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.wishlist_search_container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.wishlist_search {
+  width: 60%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #4e5d6c;
+  background-color: #2a475e;
+  color: #c7d5e0;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.wishlist_search_button {
+  background-color: #4e5d6c;
+  color: #c7d5e0;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.wishlist_search_button:hover {
+  background-color: #6b7a8c;
+  transform: scale(1.05);
+}
+
+.wishlist_game_list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.wishlist_game_item {
+  display: flex;
+  background-color: #2a475e;
+  padding: 15px;
+  border-radius: 5px;
+  align-items: center;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wishlist_game_item:hover {
+  background-color: #3b5875;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.wishlist_game_image {
+  width: 150px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 20px;
+  transition: transform 0.3s ease;
+}
+
+.wishlist_game_image:hover {
+  transform: scale(1.05);
+}
+
+.wishlist_game_details {
+  flex-grow: 1;
+}
+
+.wishlist_game_title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.wishlist_game_release,
+.wishlist_game_price {
+  margin-bottom: 5px;
+}
+
+.wishlist_cart_button {
+  background-color: #5c7e10;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.wishlist_cart_button:hover {
+  background-color: #78a216;
+  transform: scale(1.05);
+}
+
+.wishlist_cart_button_container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+}
+
+/* Enter 애니메이션 */
+.itemEnter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.itemEnterActive {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
+}
+
+/* Exit 애니메이션 */
+.itemExit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.itemExitActive {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+.drag_handle {
+  cursor: grab;
+  padding-right: 10px;
+  font-size: 24px;
+  color: #c7d5e0;
+}
+
+.wishlist_game_tags {
+  margin-top: 10px;
+}
+
+.wishlist_tag {
+  display: inline-block;
+  background-color: #4e5d6c;
+  color: #c7d5e0;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.play_now_button {
+  background-color: #2874a6;
+  color: #ffffff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-left: 10px;
+}
+
+.play_now_button:hover {
+  background-color: #3498db;
+  transform: scale(1.05);
+}
