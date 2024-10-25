@@ -34,14 +34,6 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-import ActionGame from "./game/gamecategory/ActionGame";
-import AdventureGame from "./game/gamecategory/AdventureGame";
-import IndieGame from "./game/gamecategory/IndieGame";
-import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
-import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
-import RpgGame from "./game/gamecategory/RpgGame";
-import SimulationGame from "./game/gamecategory/SimulationGame";
-import StrategyGame from "./game/gamecategory/StrategyGame";
 
 
 
@@ -95,6 +87,7 @@ const MainContent = () => {
                     <Route path="/member/signupPage" element={<SignupPage />} />
                     {/* 회원가입 아이디 비밀번호입력 */}
                     <Route path="/member/signupForm" element={<SignupForm />} />
+                    <Route path="/member/KakaoEmail" element={<KakaoEmail />} />
 
                     {/* 결제 */}
 
