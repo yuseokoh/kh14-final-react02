@@ -1,121 +1,163 @@
+:root {
+  --gpStoreDarkestGrey: #1b2838;
+  --gpStoreDarkerGrey: #2a475e;
+  --gpColor-Blue: #66c0f4;
+  --gpColor-Green: #5c7e10;
+}
+
 .wishlist_container {
-  background-color: #1b2838;
+  background-color: var(--gpStoreDarkestGrey);
   color: #c7d5e0;
   padding: 20px;
-  border-radius: 5px;
-  /* background-image: url('./Login.jpg'); */
-  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
 .wishlist_title {
-  font-size: 24px;
+  font-size: 26px;
+  color: #ffffff;
   margin-bottom: 20px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .wishlist_search_container {
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  border-radius: 3px;
 }
 
 .wishlist_search {
-  width: 60%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #4e5d6c;
-  background-color: #2a475e;
-  color: #c7d5e0;
-  transition: background-color 0.3s ease, border 0.3s ease;
-}
-
-.wishlist_search_button {
-  background-color: #4e5d6c;
-  color: #c7d5e0;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.wishlist_search_button:hover {
-  background-color: #6b7a8c;
-  transform: scale(1.05);
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  background-color: #316282;
+  border: 1px solid #000;
+  border-radius: 3px;
+  color: #fff;
+  font-size: 14px;
 }
 
 .wishlist_game_list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1px;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .wishlist_game_item {
   display: flex;
-  background-color: #2a475e;
+  background-color: rgba(42, 71, 94, 0.7);
   padding: 15px;
-  border-radius: 5px;
-  align-items: center;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  gap: 15px;
+  transition: background-color 0.2s ease;
+  position: relative;
 }
 
 .wishlist_game_item:hover {
-  background-color: #3b5875;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  background-color: rgba(42, 71, 94, 0.9);
 }
 
-.wishlist_game_image {
-  width: 150px;
-  height: 90px;
+.gameThumbnail {
+  width: 292px;
+  height: 136px;
   object-fit: cover;
-  border-radius: 5px;
-  margin-right: 20px;
-  transition: transform 0.3s ease;
-}
-
-.wishlist_game_image:hover {
-  transform: scale(1.05);
 }
 
 .wishlist_game_details {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .wishlist_game_title {
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 18px;
+  color: #ffffff;
+  margin: 0;
+  font-weight: normal;
 }
 
-.wishlist_game_release,
-.wishlist_game_price {
-  margin-bottom: 5px;
+.game_meta_info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #8f98a0;
+  font-size: 12px;
+}
+
+.tag_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.tag {
+  background-color: rgba(103, 193, 245, 0.2);
+  color: #67c1f5;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.wishlist_action_container {
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.game_price {
+  font-size: 13px;
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .wishlist_cart_button {
-  background-color: #5c7e10;
-  color: #ffffff;
-  padding: 10px;
+  background: linear-gradient(to right, #75b022 5%, #588a1b 95%);
+  padding: 6px 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 2px;
+  color: #ffffff;
+  font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .wishlist_cart_button:hover {
-  background-color: #78a216;
-  transform: scale(1.05);
+  background: linear-gradient(to right, #8ed629 5%, #6cb122 95%);
 }
 
-.wishlist_cart_button_container {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
+.removeButton {
+  background-color: rgba(103, 193, 245, 0.1);
+  border: none;
+  border-radius: 2px;
+  padding: 6px 15px;
+  color: #67c1f5;
+  font-size: 12px;
+  cursor: pointer;
   width: 100%;
+  text-align: center;
 }
 
-/* Enter 애니메이션 */
+.removeButton:hover {
+  background-color: rgba(103, 193, 245, 0.2);
+  color: #ffffff;
+}
+
+/* Animation classes remain the same */
 .itemEnter {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-20px);
 }
 
 .itemEnterActive {
@@ -124,51 +166,12 @@
   transition: opacity 300ms ease-in, transform 300ms ease-in;
 }
 
-/* Exit 애니메이션 */
 .itemExit {
   opacity: 1;
-  transform: translateY(0);
 }
 
 .itemExitActive {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(-20px);
   transition: opacity 300ms ease-out, transform 300ms ease-out;
-}
-
-.drag_handle {
-  cursor: grab;
-  padding-right: 10px;
-  font-size: 24px;
-  color: #c7d5e0;
-}
-
-.wishlist_game_tags {
-  margin-top: 10px;
-}
-
-.wishlist_tag {
-  display: inline-block;
-  background-color: #4e5d6c;
-  color: #c7d5e0;
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-size: 12px;
-  margin-right: 5px;
-}
-
-.play_now_button {
-  background-color: #2874a6;
-  color: #ffffff;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-left: 10px;
-}
-
-.play_now_button:hover {
-  background-color: #3498db;
-  transform: scale(1.05);
 }
