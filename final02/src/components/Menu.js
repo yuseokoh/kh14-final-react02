@@ -75,22 +75,6 @@ const Menu = () => {
                                 </div>
                             </li>
 
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle"
-                                    data-bs-toggle="dropdown" href="#" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.category')}</a>
-                                <div className="dropdown-menu">
-                                    <NavLink className="dropdown-item" to="/game/category/action">{t('action')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/adventure">{t('adventure')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/indie">{t('indie')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/multiplayer">{t('multiplayer')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/openworld">{t('openworld')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/rpg">{t('rpg')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/simulation">{t('simulation')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/category/strategy">{t('strategy')}</NavLink>                                    
-                                </div>
-                            </li>
-
 
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle"

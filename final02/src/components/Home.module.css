@@ -728,6 +728,9 @@
 .gameListItem:nth-child(10) {
   margin-bottom: 0; /* 10번째 아이템의 마진 제거 */
 }
+.gameListItem:nth-child(10) {
+  margin-bottom: 0; /* 10번째 아이템의 마진 제거 */
+}
 
 .sidebarSectionItem {
   padding: 8px 16px;
