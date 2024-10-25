@@ -35,7 +35,20 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-
+import ActionGame from "./game/gamecategory/ActionGame";
+import AdventureGame from "./game/gamecategory/AdventureGame";
+import IndieGame from "./game/gamecategory/IndieGame";
+import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
+import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
+import RpgGame from "./game/gamecategory/RpgGame";
+import SimulationGame from "./game/gamecategory/SimulationGame";
+import StrategyGame from "./game/gamecategory/StrategyGame";
+import BaseBuilding from "./game/gamecategory/BaseBuilding";
+import Fantasy from "./game/gamecategory/Fantasy";
+import PixelGraphics from "./game/gamecategory/PixelGraphics";
+import Roguelike from "./game/gamecategory/Roguelike";
+import Survival from "./game/gamecategory/Survival";
+import SandBox from "./game/gamecategory/Sandbox";
 
 
 const MainContent = () => {
@@ -48,14 +61,14 @@ const MainContent = () => {
                 <Routes>
                     <Route exact path="/" element={<Home />} />
 
-                    {/* 로그인이 필요한 페이지라면 element에 PrivateRoute를 적어서 대상을 명시하면 된다 */}
+                     {/* 로그인이 필요한 페이지라면 element에 PrivateRoute를 적어서 대상을 명시하면 된다 */}
                     {/* 게임 처리 */}
                     <Route path="/game/add" element={<GameAdd />} />
                     <Route path="/game/detail/:gameNo" element={<GameDetail />} />
                     <Route path="/game/edit/:gameNo" element={<GameEdit />} />
 
 
-                    {/* 게임카테고리
+                     {/* 게임카테고리 */}
                     <Route path="/game/category/action" element={<ActionGame />} />
                     <Route path="/game/category/adventure" element={<AdventureGame />} />
                     <Route path="/game/category/indie" element={<IndieGame />} />
@@ -63,9 +76,14 @@ const MainContent = () => {
                     <Route path="/game/category/openworld" element={<OpenWorldGame />} />
                     <Route path="/game/category/rpg" element={<RpgGame />} />
                     <Route path="/game/category/simulation" element={<SimulationGame />} />
-                    <Route path="/game/category/strategy" element={<StrategyGame />} /> */}
+                    <Route path="/game/category/basebuilding" element={<BaseBuilding />} />
+                    <Route path="/game/category/fantasy" element={<Fantasy />} />
+                    <Route path="/game/category/pixelgraphics" element={<PixelGraphics />} />
+                    <Route path="/game/category/roguelike" element={<Roguelike />} />
+                    <Route path="/game/category/sandbox" element={<SandBox />} />
+                    <Route path="/game/category/survival" element={<Survival />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} />
 
-                    {/* 게임 테마 */}
 
 
                     {/* 게임 테마 */}
