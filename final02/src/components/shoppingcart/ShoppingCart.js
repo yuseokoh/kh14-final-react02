@@ -3,11 +3,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import styles from './ShoppingCart.module.css';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
+import { useTranslation } from 'react-i18next';
 
 const ShoppingCart = () => {
   const [cartList, setCartList] = useState([]);
   const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
   const [totalPrice, setTotalPrice] = useState(0);
+  const { t } = useTranslation();
   
   // Recoil 상태 사용
   const login = useRecoilValue(loginState);
@@ -70,6 +72,52 @@ const ShoppingCart = () => {
     }
   }, [login, memberId, loadCartList]);
 
+  const getCurrentUrl = useCallback(() => {
+    return window.location.origin + window.location.pathname + (window.location.hash || '');
+  }, []);
+
+  const sendPurchaseRequest = useCallback(async () => {
+    if (cartList.length === 0) {
+      alert(t('payment.noItemsInCart'));
+      return;
+    }
+
+    try {
+      const token = sessionStorage.getItem('refreshToken');
+      if (!token) {
+        throw new Error(t('payment.errorNoToken'));
+      }
+
+      const response = await axios.post(
+        "http://localhost:8080/game/purchase",
+        {
+          gameList: cartList.map(game => ({
+            gameNo: game.gameNo,
+            qty: 1, // 장바구니에서 각 게임의 수량을 1로 고정
+          })),
+          approvalUrl: getCurrentUrl() + "/success",
+          cancelUrl: getCurrentUrl() + "/cancel",
+          failUrl: getCurrentUrl() + "/fail",
+        },
+       
+      );
+
+      window.sessionStorage.setItem("tid", response.data.tid);
+      window.sessionStorage.setItem("checkedGameList", JSON.stringify(cartList));
+
+      const savedTid = sessionStorage.getItem("tid");
+      if (!savedTid) {
+        throw new Error("tid 저장에 실패했습니다.");
+      }
+
+      // 카카오페이 결제 페이지로 리다이렉트
+      window.location.href = response.data.next_redirect_pc_url;
+    } catch (error) {
+      console.error(t('payment.errorDuringPurchase'), error);
+      alert(t('payment.errorPurchaseFailed'));
+    }
+  }, [cartList, getCurrentUrl, t]);
+
   return (
     <div className={styles.cartPageContainer}>
       <div className={styles.cartItemsContainer}>
@@ -104,7 +152,9 @@ const ShoppingCart = () => {
             <div className={styles.totalPriceValue}>{totalPrice.toLocaleString()}₩</div>
             <p className={styles.taxNotice}>해당되는 지역의 경우 계산 시 판매세가 부과됩니다.</p>
           </div>
-          <button className={styles.checkoutButton}>결제 계속하기</button>
+          <button type='button' onClick={sendPurchaseRequest} className={styles.checkoutButton}>
+        결제하기
+      </button>
         </div>
       </div>
     </div>
