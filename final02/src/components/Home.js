@@ -402,7 +402,22 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
 };
 
 // 사이드바 컴포넌트
-const Sidebar = () => (
+const Sidebar = () => {
+
+  const navigate = useNavigate();
+  
+  const categories = [
+    { name: 'Action', path: '/game/category/action' },
+    { name: 'Adventure', path: '/game/category/adventure' },
+    { name: 'Indie', path: '/game/category/indie' },
+    { name: 'RPG', path: '/game/category/rpg' },
+    { name: 'Simulation', path: '/game/category/simulation' },
+    { name: 'Strategy', path: '/game/category/strategy' },
+    { name: 'Open World', path: '/game/category/openworld' },
+    { name: 'Multiplayer', path: '/game/category/multiplayer' }
+  ];
+  return (
+
   <div className={styles.sidebar}>
     <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>게임 기기</h3>
@@ -431,14 +446,15 @@ const Sidebar = () => (
     <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>카테고리</h3>
       <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Action</li>
-        <li className={styles.sidebarSectionContent}>Adventure</li>
-        <li className={styles.sidebarSectionContent}>Indie</li>
-        <li className={styles.sidebarSectionContent}>RPG</li>
-        <li className={styles.sidebarSectionContent}>Simulation</li>
-        <li className={styles.sidebarSectionContent}>Strategy</li>
-        <li className={styles.sidebarSectionContent}>Open World</li>
-        <li className={styles.sidebarSectionContent}>Multiplayer</li>
+        {categories.map((category, index) =>(
+          <li
+            key={index}
+            className={styles.categoryLink}
+            onClick={() => navigate(category.path)}
+            >
+            {category.name}
+            </li>
+        ))}
       </ul>
     </div>
     
@@ -476,7 +492,7 @@ const Sidebar = () => (
       </ul>
     </div>
   </div>
-);
+  )};
 
 //게임 리스트 아이템 컴포넌트
 const GameListItem = ({game}) => {
