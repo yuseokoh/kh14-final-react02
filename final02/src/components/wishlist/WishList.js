@@ -14,40 +14,31 @@ const WishList = () => {
   const [wishlist, setWishlist] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
-  const [cart,setCart]  = useState([]);
+  const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
 
   // Recoil 상태 사용
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
   const memberLoading = useRecoilValue(memberLoadingState);
 
+  // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
     const resp = await axios.get("http://localhost:8080/wishlist/");
     setWishlist(resp.data);
     setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
   }, []);
- 
-  const addCart = useCallback(async (game) => {
-        const resp = await axios.post("/cart/add", game);
-        setCart(resp.data); 
-        navigate("/cart/");
-}, [navigate, setCart]);
-//   const addCart = useCallback(async (game) => {
-//     const token = localStorage.getItem('token');
-//     console.log("Token:", token);
-//     try {
-//         const resp = await axios.post("http://localhost:8080/cart/add", game, {
-//             headers: {
-//                 Authorization: `Bearer ${token}` 
-//             }
-//         });
-//         setCart(resp.data);
-//         navigate("/wishlist/");
-//     } catch (error) {
-//         console.error("Error adding item to cart", error);
-//     }
-// }, [navigate, setCart]);
 
+  // 장바구니에 게임 추가
+  const addCart = useCallback(async (game) => {
+    try {
+      const resp = await axios.post("/cart/add", game);
+      navigate("/cart/");
+    } catch (error) {
+      console.error("Error adding item to cart", error);
+    }
+  }, [navigate]);
+
+  // 찜 목록 검색
   const searchWishlist = useCallback(() => {
     if (searchKeyword.trim() !== '') {
       const filtered = wishlist.filter((game) =>
@@ -59,6 +50,7 @@ const WishList = () => {
     }
   }, [searchKeyword, wishlist]);
 
+  // 찜 목록에서 게임 제거
   const delWishList = useCallback(async (wishListId) => {
     try {
       await axios.delete(`/wishlist/${wishListId}`);
@@ -67,8 +59,8 @@ const WishList = () => {
       console.error("Error deleting wishlist item", error);
     }
     loadWishlist();
-  }, []);
-  
+  }, [loadWishlist]);
+
   const debouncedSearch = useCallback(debounce(searchWishlist, 300), [searchWishlist]);
 
   useEffect(() => {
@@ -81,6 +73,7 @@ const WishList = () => {
     }
   }, [login, memberId, loadWishlist]);
 
+  // 드래그 관련 기능
   const dragStart = (e, position) => {
     dragItem.current = position;
     e.target.style.opacity = 0.5; // 드래그 시작 시 불투명하게 만들기
@@ -104,9 +97,17 @@ const WishList = () => {
     e.target.style.opacity = 1; // 드래그 종료 시 불투명도 원래대로
   };
 
+  useEffect(() => {
+    if (login && memberId) {
+      loadWishlist();
+    }
+  }, [login, memberId, loadWishlist]);
+
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
-      <h1 className={styles.wishlist_title}>찜 목록</h1>
+      <h1 className={styles.wishlist_title}>
+  {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
+</h1>
       <div className={styles.wishlist_search_container}>
         <input 
           type="text" 
@@ -136,7 +137,14 @@ const WishList = () => {
               onDragEnd={drop}
               onDragOver={(e) => e.preventDefault()}
             >
-              <img src={game.gameImage} alt={game.gameTitle} className={styles.wishlist_game_image} />
+              {/* 게임 이미지 */}
+              <img
+                src={imageUrls[game.wishListId] || 'placeholder_image_url'} // 이미지가 없으면 placeholder 사용
+                alt={game.gameTitle}
+                className={styles.gameThumbnail}
+              />
+              
+              {/* 게임 정보 */}
               <div className={styles.wishlist_game_details} style={{ maxWidth: '75%' }}>
                 <h2 className={styles.wishlist_game_title}>{game.gameTitle}</h2>
                 <div className={styles.game_meta_info}>
@@ -148,6 +156,8 @@ const WishList = () => {
                   <span className={styles.tag}>멀티 플레이어</span>
                 </div>
               </div>
+
+              {/* 액션 버튼 */}
               <div className={styles.wishlist_action_container}>
                 <div className={styles.game_price}>${game.gamePrice}</div>
                 <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>장바구니에 추가</button>

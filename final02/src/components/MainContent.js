@@ -34,7 +34,6 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-import KakaoEmail from "./member/KakaoEmail";
 
 
 
@@ -56,6 +55,16 @@ const MainContent = () => {
 
 
                     {/* 게임카테고리 */}
+                    <Route path="/game/category/action" element={<ActionGame />} />
+                    <Route path="/game/category/adventure" element={<AdventureGame />} />
+                    <Route path="/game/category/indie" element={<IndieGame />} />
+                    <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
+                    <Route path="/game/category/openworld" element={<OpenWorldGame />} />
+                    <Route path="/game/category/rpg" element={<RpgGame />} />
+                    <Route path="/game/category/simulation" element={<SimulationGame />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} />
+
+                    {/* 게임 테마 */}
 
 
                     {/* 게임 테마 */}

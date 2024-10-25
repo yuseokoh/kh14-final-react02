@@ -1,145 +1,176 @@
-.loginPage {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-image: url('./Login.jpg');
-  background-size: cover;
-  /* 이미지가 컨테이너에 꽉 차도록 */
-  background-position: center;
-  /* 이미지를 중앙에 배치 */
-  height: 100vh;
-  /* 화면 높이에 맞추기 */
-  width: 100vw;
-  /* 화면 너비에 맞추기 */
-  margin: 0;
-  padding: 0;
+:root {
+  --gpStoreDarkestGrey: #1b2838;
+  --gpStoreDarkerGrey: #2a475e;
+  --gpColor-Blue: #66c0f4;
+  --gpColor-Green: #5c7e10;
+  --border-radius: 2px;
 }
 
-.cartContainer {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #1b2838;
-  color: #c7d5e0;
-  border-radius: 5px;
-  min-height: 100vh;
-  min-width: 100vh;
-}
-
-.cartTitle {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.cartContent {
+.cartPageContainer {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--gpStoreDarkestGrey);
+  min-height: 100vh;
+  color: #c7d5e0;
+}
+
+.cart_title {
+  font-size: 26px;
+  color: #ffffff;
+  margin-bottom: 20px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cartItemsContainer {
+  width: 100%;
+  max-width: 940px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background-color: var(--gpStoreDarkerGrey);
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
 }
 
 .cartItem {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   padding: 15px;
-  background-color: #2a475e;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease;
 }
 
 .cartItem:hover {
-  background-color: #3b5875;
-}
-
-.cartItemLeft {
-  display: flex;
-  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .gameThumbnail {
-  width: 100px;
-  height: 60px;
+  width: 120px;
+  height: 45px;
   object-fit: cover;
-  border-radius: 5px;
-  margin-right: 20px;
-}
-
-.cartItemRight {
-  flex-grow: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-right: 15px;
 }
 
 .gameInfo {
   flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 15px;
 }
 
 .gameTitle {
-  font-size: 20px;
-  margin-bottom: 5px;
+  font-size: 14px;
+  margin: 0;
+  color: #c7d5e0;
 }
 
 .gamePrice {
-  font-size: 18px;
+  font-size: 13px;
+  color: #c7d5e0;
+  margin: 0;
+  text-align: right;
 }
 
 .actionButtons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .giftButton, .removeButton {
-  padding: 10px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
+  font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .giftButton {
-  background-color: #4e5d6c;
+  background-color: var(--gpStoreDarkerGrey);
   color: #c7d5e0;
 }
 
 .giftButton:hover {
-  background-color: #6b7a8c;
-  transform: scale(1.05);
+  background-color: #3d6c8d;
 }
 
 .removeButton {
-  background-color: #a93226;
-  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #c7d5e0;
 }
 
 .removeButton:hover {
-  background-color: #c0392b;
-  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.cartSummaryContainer {
+  width: 100%;
+  max-width: 940px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: var(--border-radius);
+  padding: 15px;
 }
 
 .cartFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 20px;
 }
 
-.totalPrice {
-  font-size: 20px;
+.continueShoppingButton {
+  padding: 6px 12px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: var(--gpStoreDarkerGrey);
+  color: #c7d5e0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.continueShoppingButton:hover {
+  background-color: #3d6c8d;
+}
+
+.totalPriceSection {
+  text-align: right;
+  margin: 0 20px;
+}
+
+.totalPriceLabel {
+  font-size: 12px;
+  color: #c7d5e0;
+  margin-bottom: 4px;
+}
+
+.totalPriceValue {
+  font-size: 14px;
+  color: #c7d5e0;
   font-weight: bold;
 }
 
+.taxNotice {
+  font-size: 11px;
+  color: #8f98a0;
+  margin: 4px 0 0 0;
+}
+
 .checkoutButton {
-  padding: 15px 30px;
-  font-size: 18px;
-  background-color: #5c7e10;
+  padding: 6px 20px;
+  font-size: 12px;
+  background-color: var(--gpColor-Blue);
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .checkoutButton:hover {
-  background-color: #78a216;
-  transform: scale(1.05);
+  background-color: #7dd5ff;
 }
