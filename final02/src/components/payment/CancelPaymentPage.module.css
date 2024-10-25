@@ -23,6 +23,7 @@ body, html {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6); /* 어두운 그림자 효과 */
     max-width: 600px; /* 중앙에 정렬하기 위해 최대 너비 설정 */
     margin: 50px auto; /* 페이지 상단에서 약간의 여백 */
+    min-height: 100vh; /* 뷰포트의 전체 높이 */
 }
 /* 푸터 스타일 */
 footer {
@@ -49,16 +50,19 @@ footer {
     border-bottom: 1px solid #444; /* 어두운 경계선 */
 }
 
-/* 요약 라벨과 값 스타일 */
 .summaryLabel {
     font-weight: bold;
-    color: #aaa; /* 밝은 회색 */
-}
-
-.summaryValue {
+    color: #aaa;
+    margin-right: 5px; /* 텍스트와 값 사이의 간격 줄이기 */
+    display: inline-block; /* 라벨과 값을 한 줄로 */
+  }
+  
+  .summaryValue {
     font-weight: normal;
-    color: #fff; /* 하얀색 텍스트 */
-}
+    color: #fff;
+    display: inline-block; /* 값을 라벨 바로 옆에 위치 */
+  }
+  
 
 /* 취소 버튼 스타일 */
 .cancelButton {
