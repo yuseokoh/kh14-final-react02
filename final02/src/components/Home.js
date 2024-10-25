@@ -402,81 +402,124 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
 };
 
 // 사이드바 컴포넌트
-const Sidebar = () => (
+const Sidebar = () => {
+
+  const navigate = useNavigate();
+
+  const device = [
+    { name : 'PC 게임', path: '/device/pc'},
+    { name : '모바일 게임', path: '/device/mobile'},
+    { name : '콘솔 게임', path: '/device/console'}
+  ]
+  const recommendations = [
+    {name : '친구 추천', path: '/recommendations/friends'},
+    {name : '큐레이터 추천', path: '/recommendations/curators'},
+    {name : '태그', path: '/recommendations/tags'}
+  ]
+  
+  const categories = [
+    { name: 'Action', path: '/game/category/action' },
+    { name: 'Adventure', path: '/game/category/adventure' },
+    { name: 'Indie', path: '/game/category/indie' },
+    { name: 'RPG', path: '/game/category/rpg' },
+    { name: 'Simulation', path: '/game/category/simulation' },
+    { name: 'Strategy', path: '/game/category/strategy' },
+    { name: 'Open World', path: '/game/category/openworld' },
+    { name: 'Multiplayer', path: '/game/category/multiplayer' },
+    { name: 'BaseBuilding', path: '/game/category/basebuilding' },
+    { name: 'Fantasy', path: '/game/category/fantasy' },
+    { name: 'PixelGraphics', path: '/game/category/pixelgraphics' },
+    { name: 'Roguelike', path: '/game/category/roguelike' },
+    { name: 'Sandbox', path: '/game/category/sandbox' },
+    { name: 'Survival', path: '/game/category/survival' }
+  ];
+
+  const others = [
+    {name: 'Free to Play', path: '/other/freetoplay'},
+    {name: 'Early Access', path: '/other/earlyaccess'},
+    {name: 'Co-op', path: '/other/coop'},
+    {name: 'VR 지원', path: '/other/vr'},
+    {name: '컨트롤러 지원', path: '/other/contoller'}
+  ]
+
+  const ageRatings = [
+    {name: '전체이용가', path: '/rating/all'},
+    {name: '12세이용가', path: '/rating/12'},
+    {name: '15세이용가', path: '/rating/15'},
+    {name: '19세이용가', path: '/rating/19'}
+  ]
+
+
+  return (
+
   <div className={styles.sidebar}>
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>게임 기기</h3>
-      <p className={styles.sidebarSectionContent}>어디서나 즐기는 게임</p>
-    </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>기프트 카드</h3>
-      <p className={styles.sidebarSectionContent}>게임 선물하기</p>
-    </div>
-    
     <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>최근 본 게임</h3>
       <p className={styles.sidebarSectionContent}>사이버펑크 2077</p>
     </div>
     
     <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>추천</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>친구 추천</li>
-        <li className={styles.sidebarSectionContent}>큐레이터 추천</li>
-        <li className={styles.sidebarSectionContent}>태그</li>  
-      </ul>
-    </div>
+        <h3 className={styles.sidebarSectionTitle}>추천</h3>
+        <ul className={styles.sidebarSectionList}>
+          {recommendations.map((rec, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(rec.path)}
+            >
+              {rec.name}
+            </li>
+          ))}
+        </ul>
+      </div>
     
     <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>카테고리</h3>
       <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Action</li>
-        <li className={styles.sidebarSectionContent}>Adventure</li>
-        <li className={styles.sidebarSectionContent}>Indie</li>
-        <li className={styles.sidebarSectionContent}>RPG</li>
-        <li className={styles.sidebarSectionContent}>Simulation</li>
-        <li className={styles.sidebarSectionContent}>Strategy</li>
-        <li className={styles.sidebarSectionContent}>Open World</li>
-        <li className={styles.sidebarSectionContent}>Multiplayer</li>
+        {categories.map((category, index) =>(
+          <li
+            key={index}
+            className={styles.categoryLink}
+            onClick={() => navigate(category.path)}
+            >
+            {category.name}
+            </li>
+        ))}
       </ul>
     </div>
     
     <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>테마</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Survival</li>
-        <li className={styles.sidebarSectionContent}>Sandbox</li>
-        <li className={styles.sidebarSectionContent}>Fantasy</li>
-        <li className={styles.sidebarSectionContent}>Sci-fi</li>
-        <li className={styles.sidebarSectionContent}>Roguelike</li>
-        <li className={styles.sidebarSectionContent}>Pixel Graphics</li>
-        <li className={styles.sidebarSectionContent}>Base Building</li>
-      </ul>
+        <h3 className={styles.sidebarSectionTitle}>기타</h3>
+        <ul className={styles.sidebarSectionList}>
+          {others.map((other, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(other.path)}
+            >
+              {other.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div className={styles.sidebarSection}>
+        <h3 className={styles.sidebarSectionTitle}>연령 등급</h3>
+        <ul className={styles.sidebarSectionList}>
+          {ageRatings.map((rating, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(rating.path)}
+            >
+              {rating.name}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>기타</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Free to Play</li>
-        <li className={styles.sidebarSectionContent}>Early Access</li>
-        <li className={styles.sidebarSectionContent}>Co-op</li>
-        <li className={styles.sidebarSectionContent}>VR 지원</li>
-        <li className={styles.sidebarSectionContent}>컨트롤러 지원</li>
-      </ul>
-    </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>연령 등급</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>전체이용가</li>
-        <li className={styles.sidebarSectionContent}>12세이용가</li>
-        <li className={styles.sidebarSectionContent}>15세이용가</li>
-        <li className={styles.sidebarSectionContent}>19세이용가</li>
-      </ul>
-    </div>
-  </div>
-);
+  );
+};
 
 //게임 리스트 아이템 컴포넌트
 const GameListItem = ({game}) => {

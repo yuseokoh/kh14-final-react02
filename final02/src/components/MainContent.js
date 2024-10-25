@@ -34,7 +34,20 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-
+import ActionGame from "./game/gamecategory/ActionGame";
+import AdventureGame from "./game/gamecategory/AdventureGame";
+import IndieGame from "./game/gamecategory/IndieGame";
+import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
+import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
+import RpgGame from "./game/gamecategory/RpgGame";
+import SimulationGame from "./game/gamecategory/SimulationGame";
+import StrategyGame from "./game/gamecategory/StrategyGame";
+import BaseBuilding from "./game/gamecategory/BaseBuilding";
+import Fantasy from "./game/gamecategory/Fantasy";
+import PixelGraphics from "./game/gamecategory/PixelGraphics";
+import Roguelike from "./game/gamecategory/Roguelike";
+import Survival from "./game/gamecategory/Survival";
+import SandBox from "./game/gamecategory/Sandbox";
 
 
 const MainContent = () => {
@@ -54,15 +67,26 @@ const MainContent = () => {
                     <Route path="/game/edit/:gameNo" element={<GameEdit />} />
 
 
-                    {/* 게임카테고리 */}
-
+                     {/* 게임카테고리 */}
+                    <Route path="/game/category/action" element={<ActionGame />} />
+                    <Route path="/game/category/adventure" element={<AdventureGame />} />
+                    <Route path="/game/category/indie" element={<IndieGame />} />
+                    <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
+                    <Route path="/game/category/openworld" element={<OpenWorldGame />} />
+                    <Route path="/game/category/rpg" element={<RpgGame />} />
+                    <Route path="/game/category/simulation" element={<SimulationGame />} />
+                    <Route path="/game/category/basebuilding" element={<BaseBuilding />} />
+                    <Route path="/game/category/fantasy" element={<Fantasy />} />
+                    <Route path="/game/category/pixelgraphics" element={<PixelGraphics />} />
+                    <Route path="/game/category/roguelike" element={<Roguelike />} />
+                    <Route path="/game/category/sandbox" element={<SandBox />} />
+                    <Route path="/game/category/survival" element={<Survival />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} />
 
                     {/* 게임 테마 */}
 
 
                     {/* 경로변수를 사용할 경우 콜론과 이름을 합쳐 변수명으로 지정 */}
-
-
 
                     {/* 기존 : 일반 라우팅 */}
                     {/* <Route path="/search/autocomplete" element={<AutoComplete/>}/> */}
