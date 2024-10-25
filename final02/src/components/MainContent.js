@@ -19,6 +19,7 @@ import SingUp from './member/SingUp';
 import SignupPage from './member/SignupPage';
 import SignupForm from './member/SignupForm';
 import KakaoLoginPage from './member/KakaoLoginPage';
+import KakaoEmail from './member/KakaoEmail';
 import { useTranslation } from 'react-i18next';
 import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
@@ -54,7 +55,7 @@ const MainContent = () => {
                     <Route path="/game/edit/:gameNo" element={<GameEdit />} />
 
 
-                    {/* 게임카테고리 */}
+                    {/* 게임카테고리
                     <Route path="/game/category/action" element={<ActionGame />} />
                     <Route path="/game/category/adventure" element={<AdventureGame />} />
                     <Route path="/game/category/indie" element={<IndieGame />} />
@@ -62,7 +63,7 @@ const MainContent = () => {
                     <Route path="/game/category/openworld" element={<OpenWorldGame />} />
                     <Route path="/game/category/rpg" element={<RpgGame />} />
                     <Route path="/game/category/simulation" element={<SimulationGame />} />
-                    <Route path="/game/category/strategy" element={<StrategyGame />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} /> */}
 
                     {/* 게임 테마 */}
 
