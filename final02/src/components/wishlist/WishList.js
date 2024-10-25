@@ -23,30 +23,9 @@ const WishList = () => {
 
   // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
-    try {
-      const resp = await axios.get("http://localhost:8080/wishlist/");
-      setWishlist(resp.data);
-      setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
-    } catch (error) {
-      console.error("Error loading wishlist", error);
-    }
-  }, []);
-
-  // 이미지 로딩 함수
-  const loadGameImages = useCallback(async (wishlistData) => {
-    const newImageUrls = {};
-    try {
-      for (const game of wishlistData) {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        if (response.data && response.data.length > 0) {
-          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          newImageUrls[game.wishListId] = imageUrl; // 이미지 URL을 wishListId로 구분하여 저장
-        }
-      }
-      setImageUrls(newImageUrls); // 모든 이미지 URL을 상태에 저장
-    } catch (error) {
-      console.error("이미지 로딩 에러:", error.response || error);
-    }
+    const resp = await axios.get("http://localhost:8080/wishlist/");
+    setWishlist(resp.data);
+    setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
   }, []);
 
   // 장바구니에 게임 추가
@@ -66,10 +45,8 @@ const WishList = () => {
         game.gameTitle.toLowerCase().includes(searchKeyword.toLowerCase())
       );
       setFilteredWishlist(filtered);
-      loadGameImages();
     } else {
       setFilteredWishlist(wishlist); // 검색어가 없을 경우 전체 리스트 표시
-      loadGameImages();
     }
   }, [searchKeyword, wishlist]);
 
@@ -90,12 +67,11 @@ const WishList = () => {
     debouncedSearch();
   }, [searchKeyword, debouncedSearch]);
 
-  // wishlist가 로드된 후에 이미지를 로드
   useEffect(() => {
-    if (wishlist.length > 0) {
-      loadGameImages(wishlist); // wishlist가 로드된 후에만 이미지 로딩을 시도
+    if (login && memberId) {
+      loadWishlist();
     }
-  }, [wishlist, loadGameImages]);
+  }, [login, memberId, loadWishlist]);
 
   // 드래그 관련 기능
   const dragStart = (e, position) => {
@@ -129,7 +105,9 @@ const WishList = () => {
 
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
-      <h1 className={styles.wishlist_title}>찜 목록</h1>
+      <h1 className={styles.wishlist_title}>
+  {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
+</h1>
       <div className={styles.wishlist_search_container}>
         <input 
           type="text" 
