@@ -34,6 +34,7 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
+import KakaoEmail from "./member/KakaoEmail";
 
 
 
@@ -77,6 +78,7 @@ const MainContent = () => {
                     <Route path="/member/signupPage" element={<SignupPage />} />
                     {/* 회원가입 아이디 비밀번호입력 */}
                     <Route path="/member/signupForm" element={<SignupForm />} />
+                    <Route path="/member/KakaoEmail" element={<KakaoEmail />} />
 
                     {/* 결제 */}
 
