@@ -19,6 +19,7 @@ import SingUp from './member/SingUp';
 import SignupPage from './member/SignupPage';
 import SignupForm from './member/SignupForm';
 import KakaoLoginPage from './member/KakaoLoginPage';
+import KakaoEmail from './member/KakaoEmail';
 import { useTranslation } from 'react-i18next';
 import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
@@ -126,6 +127,7 @@ const MainContent = () => {
                     <Route path="/member/signup" element={<SingUp />} />
                     {/* 카카오로그인 테스트 */}
                     <Route path="/member/KakaoLoginPage" element={<KakaoLoginPage />} />
+                    <Route path="/member/KakaoEmail" element={<KakaoEmail/>}/>
                     {/* 찜 */}
                     <Route path="/wishlist" element={<WishList />} />
 
