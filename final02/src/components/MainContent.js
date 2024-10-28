@@ -35,20 +35,20 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-import ActionGame from "./game/gamecategory/ActionGame";
-import AdventureGame from "./game/gamecategory/AdventureGame";
-import IndieGame from "./game/gamecategory/IndieGame";
-import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
-import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
-import RpgGame from "./game/gamecategory/RpgGame";
-import SimulationGame from "./game/gamecategory/SimulationGame";
-import StrategyGame from "./game/gamecategory/StrategyGame";
-import BaseBuilding from "./game/gamecategory/BaseBuilding";
-import Fantasy from "./game/gamecategory/Fantasy";
-import PixelGraphics from "./game/gamecategory/PixelGraphics";
-import Roguelike from "./game/gamecategory/Roguelike";
-import Survival from "./game/gamecategory/Survival";
-import SandBox from "./game/gamecategory/Sandbox";
+// import ActionGame from "./game/gamecategory/ActionGame";
+// import AdventureGame from "./game/gamecategory/AdventureGame";
+// import IndieGame from "./game/gamecategory/IndieGame";
+// import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
+// import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
+// import RpgGame from "./game/gamecategory/RpgGame";
+// import SimulationGame from "./game/gamecategory/SimulationGame";
+// import StrategyGame from "./game/gamecategory/StrategyGame";
+// import BaseBuilding from "./game/gamecategory/BaseBuilding";
+// import Fantasy from "./game/gamecategory/Fantasy";
+// import PixelGraphics from "./game/gamecategory/PixelGraphics";
+// import Roguelike from "./game/gamecategory/Roguelike";
+// import Survival from "./game/gamecategory/Survival";
+// import SandBox from "./game/gamecategory/Sandbox";
 
 
 const MainContent = () => {
@@ -69,7 +69,7 @@ const MainContent = () => {
 
 
                      {/* 게임카테고리 */}
-                    <Route path="/game/category/action" element={<ActionGame />} />
+                    {/* <Route path="/game/category/action" element={<ActionGame />} />
                     <Route path="/game/category/adventure" element={<AdventureGame />} />
                     <Route path="/game/category/indie" element={<IndieGame />} />
                     <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
@@ -82,7 +82,7 @@ const MainContent = () => {
                     <Route path="/game/category/roguelike" element={<Roguelike />} />
                     <Route path="/game/category/sandbox" element={<SandBox />} />
                     <Route path="/game/category/survival" element={<Survival />} />
-                    <Route path="/game/category/strategy" element={<StrategyGame />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} /> */}
 
 
 
