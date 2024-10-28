@@ -36,11 +36,9 @@ const FeaturedGame = ({ game }) => {
       try{ 
         //게임 이미지 정보 가져오기
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        console.log("이미지 정보 응답:", response.data);
         if(response.data && response.data.length > 0) {
           //첫번째 이미지의 attacnmtentNo로 다운로드 URL 생성
           const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          console.log("이미지 URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       }
@@ -105,11 +103,9 @@ const GameCard = ({ game }) => {
       try {
         // 게임 이미지 정보 가져오기
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        console.log("이미지 정보 응답:", response.data);
         if (response.data && response.data.length > 0) {
           // 첫 번째 이미지의 attachmentNo로 다운로드 URL 생성
           const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          console.log("이미지 URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       } catch (error) {
@@ -190,11 +186,9 @@ const VerticalGameCard = ({ game }) => {
       try {
         // 게임 이미지 정보 가져오기
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        console.log("이미지 정보 응답:", response.data);
         if (response.data && response.data.length > 0) {
           // 첫 번째 이미지의 attachmentNo로 다운로드 URL 생성
           const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          console.log("이미지 URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       } catch (error) {
@@ -542,10 +536,8 @@ const GameListItem = ({game}) => {
     const loadGameImage = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        console.log("이미지 정보 응답:", response.data);
         if (response.data && response.data.length > 0) {
           const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          console.log("이미지 URL:", imageUrl);
           setImageUrl(imageUrl);
         }
       }
