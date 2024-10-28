@@ -23,7 +23,7 @@ function KakaoLoginPage() {
       })
       .then(response => {
         console.log("응답 데이터: ", response.data); 
-        const { jwtToken, emailRequired, kakaoId} = response.data;
+        const { jwtToken, emailRequired, kakaoId, nickname } = response.data;
 
         // 이메일 입력이 필요한 경우 이메일 입력 페이지로 이동
         if (emailRequired) {
@@ -33,6 +33,7 @@ function KakaoLoginPage() {
         } else if (jwtToken) {
           // JWT 토큰이 있을 경우 저장하고 메인 페이지로 이동
           localStorage.setItem('jwtToken', jwtToken);
+          localStorage.setItem('nickname', nickname);
           navigate('/');
         } else {
           console.error("JWT Token is missing");
