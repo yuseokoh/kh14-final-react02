@@ -1,0 +1,184 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #c6d4df;
+}
+
+.title {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 30px;
+}
+
+/* 이미지 업로드 섹션 */
+.imageUploadSection {
+    background: #16202d;
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 30px;
+}
+
+.imageUploadSection h3 {
+    margin-bottom: 15px;
+    color: #ffffff;
+}
+
+.imagePreviewArea {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.previewContainer {
+    position: relative;
+    width: 200px;
+    height: 113px; /* 16:9 비율 */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.removeButton {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.removeButton:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.uploadButton {
+    width: 200px;
+    height: 113px;
+    border: 2px dashed #375571;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.uploadButton:hover {
+    border-color: #66c0f4;
+    background: rgba(102, 192, 244, 0.1);
+}
+
+.uploadPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #66c0f4;
+}
+
+.imageHelp {
+    color: #8f98a0;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* 폼 섹션 */
+.formSection {
+    background: #16202d;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.input {
+    width: 100%;
+    padding: 8px 12px;
+    background: #2a475e;
+    border: 1px solid #375571;
+    border-radius: 3px;
+    color: #c6d4df;
+    font-size: 14px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #66c0f4;
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.submitButton, .cancelButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submitButton {
+    background: #66c0f4;
+    color: #ffffff;
+}
+
+.submitButton:hover {
+    background: #7acbff;
+}
+
+.cancelButton {
+    background: #32404d;
+    color: #c6d4df;
+}
+
+.cancelButton:hover {
+    background: #3d4c5c;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .previewContainer, .uploadButton {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
+    }
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+.formGroup textarea.input {
+    min-height: 120px;
+    padding: 12px;
+}
