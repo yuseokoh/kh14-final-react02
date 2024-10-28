@@ -1,146 +1,214 @@
-// GameDetail.js
-
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import styles from './GameDetail.module.css';
 import { Tag, ThumbsUp, ThumbsDown, Share2, Flag } from 'lucide-react';
+import { useRecoilValue } from 'recoil';
+import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
 
-/**
- * 게임 상세 정보 페이지 컴포넌트
- * Steam 스타일의 상세 정보 페이지를 구현
- * 주요 섹션:
- * - 게임 헤더 (제목, 개발사, 출시일)
- * - 게임 미디어 (스크린샷, 영상)
- * - 게임 설명
- * - 사용자 태그
- * - 시스템 요구사항
- */
 const GameDetail = () => {
     const navigate = useNavigate();
     const { gameNo } = useParams();
     
-    // 상태 관리
     const [game, setGame] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
+    const [imageUrl, setImageUrl] = useState(null);
+    const [images, setImages] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(0);
 
-    // 게임 데이터 로딩
-    const loadGame = useCallback(async () => {
+    // Recoil 상태 사용
+  const login = useRecoilValue(loginState);
+  const memberId = useRecoilValue(memberIdState);
+  const memberLoading = useRecoilValue(memberLoadingState);
+
+  
+    // 게임 데이터 및 이미지 로딩
+    const loadGameData = useCallback(async () => {
         try {
-            const resp = await axios.get(`http://localhost:8080/game/${gameNo}`);
-            setGame(resp.data);
+            const [gameResponse, imageResponse] = await Promise.all([
+                axios.get(`http://localhost:8080/game/${gameNo}`),
+                axios.get(`http://localhost:8080/game/image/${gameNo}`)
+            ]);
+
+            setGame(gameResponse.data);
+
+            if (imageResponse.data && imageResponse.data.length > 0) {
+                const imageUrls = imageResponse.data.map(img => 
+                    `http://localhost:8080/game/download/${img.attachmentNo}`
+                );
+                setImages(imageUrls);
+                setImageUrl(imageUrls[0]);
+            }
+
             setLoading(false);
-        }
-        catch (err) {
+        } catch (err) {
             console.error(err);
             setLoading(false);
         }
     }, [gameNo]);
 
+    // 장바구니에 추가
+    const addCart = useCallback(async (game) => {
+        try {
+            // 전달되는 game 데이터를 콘솔에 출력
+            console.log("Adding to cart:", game);
+
+            const resp = await axios.post("/cart/add", game, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/cart/");
+        } catch (error) {
+            console.error("Error adding item to cart", error);
+            window.alert("이미 장바구니에 있는 게임입니다");
+        }
+    }, [navigate]);
+
+    const addWishList = useCallback(async (game) => {
+        try {
+            // 전달되는 game 데이터를 콘솔에 출력하여 gameNo 확인
+            console.log("Adding to wishlist:", game);
+            
+            const token = sessionStorage.getItem('refreshToken');
+            const resp = await axios.post("/wishlist/add", game, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/wishlist/");
+        } catch (error) {
+            console.error("Error adding item to wishlist", error);
+            window.alert("이미 찜에 있는 게임입니다");
+        }
+    }, [navigate]);
+   
+
+    // 게임 데이터 로딩
     useEffect(() => {
-        loadGame();
-    }, [loadGame]);
+        loadGameData();
+    }, [loadGameData]);
 
     if (loading) return <div className={styles.loading}>로딩 중...</div>;
     if (!game) return <div className={styles.error}>게임을 찾을 수 없습니다</div>;
 
+    const handleThumbnailClick = (index) => {
+        setSelectedImage(index);
+        setImageUrl(images[index]);
+    };
+
     return (
-        <div className={styles.container}>
-            {/* 게임 헤더 섹션 */}
-            <div className={styles.header}>
-                <div className={styles.titleSection}>
+        <div className={styles.pageContainer}>
+            <div className={styles.contentWrapper}>
+                {/* 게임 제목 영역 */}
+                <div className={styles.titleArea}>
                     <h1>{game.gameTitle}</h1>
-                    <div className={styles.metadata}>
-                        <span>개발사: {game.gameDeveloper}</span>
-                        <span>출시일: {new Date(game.gamePublicationDate).toLocaleDateString()}</span>
-                        <span>이용등급: {game.gameGrade}</span>
-                    </div>
-                </div>
-                
-                {/* 네비게이션 탭 */}
-                <div className={styles.tabs}>
-                    <button 
-                        className={`${styles.tab} ${activeTab === 'overview' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('overview')}
-                    >
-                        개요
-                    </button>
-                    <button 
-                        className={`${styles.tab} ${activeTab === 'reviews' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('reviews')}
-                    >
-                        리뷰
-                    </button>
-                    <button 
-                        className={`${styles.tab} ${activeTab === 'specifications' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('specifications')}
-                    >
-                        시스템 사양
-                    </button>
-                </div>
-            </div>
-
-            {/* 메인 컨텐츠 영역 */}
-            <div className={styles.mainContent}>
-                {/* 미디어 갤러리 */}
-                <div className={styles.mediaGallery}>
-                    <div className={styles.mainMedia}>
-                        <img src="/api/placeholder/600/337" alt="메인 이미지" />
-                    </div>
-                    <div className={styles.thumbnailStrip}>
-                        {[1,2,3,4].map((_, index) => (
-                            <img 
-                                key={index}
-                                src="/api/placeholder/115/65" 
-                                alt={`썸네일 ${index + 1}`}
-                                className={styles.thumbnail}
-                            />
-                        ))}
+                    <div className={styles.developerInfo}>
+                        <span>개발: {game.gameDeveloper}</span>
+                        <span>배급: {game.gameDeveloper}</span>
                     </div>
                 </div>
 
-                {/* 게임 요약 정보 */}
-                <div className={styles.summary}>
-                    <div className={styles.shortDescription}>
-                        {game.gameShortDescription}
-                    </div>
-                    <div className={styles.tags}>
-                        <h3>인기 태그:</h3>
-                        <div className={styles.tagList}>
-                            {game.gameCategory.split(',').map((category, index) => (
-                                <span key={index} className={styles.tag}>
-                                    {category.trim()}
-                                </span>
+                {/* 메인 콘텐츠 영역 */}
+                <div className={styles.mainContent}>
+                    {/* 좌측: 미디어 섹션 */}
+                    <div className={styles.mediaSection}>
+                        <div className={styles.mainImageContainer}>
+                            {imageUrl && (
+                                <img 
+                                    src={imageUrl} 
+                                    alt={game.gameTitle} 
+                                    className={styles.mainImage}
+                                />
+                            )}
+                        </div>
+                        <div className={styles.thumbnailStrip}>
+                            {images.map((img, index) => (
+                                <img 
+                                    key={index}
+                                    src={img}
+                                    alt={`${game.gameTitle} 스크린샷 ${index + 1}`}
+                                    className={`${styles.thumbnail} ${selectedImage === index ? styles.active : ''}`}
+                                    onClick={() => handleThumbnailClick(index)}
+                                />
                             ))}
                         </div>
+                        <div className={styles.description}>
+                            <div dangerouslySetInnerHTML={{ __html: game.gameDescription }} />
+                        </div>
+                    </div>
+
+                    {/* 우측: 게임 정보 섹션 */}
+                    <div className={styles.infoSection}>
+                        {imageUrl && (
+                            <img 
+                                src={imageUrl} 
+                                alt={game.gameTitle} 
+                                className={styles.infoImage}
+                            />
+                        )}
+                        <div className={styles.gameInfo}>
+                            <div className={styles.shortDescription}>
+                                {game.gameShortDescription}
+                            </div>
+                            
+                            <div className={styles.metaInfo}>
+                                <div>출시일: {new Date(game.gamePublicationDate).toLocaleDateString()}</div>
+                                <div>개발사: {game.gameDeveloper}</div>
+                                <div>이용등급: {game.gameGrade}</div>
+                            </div>
+
+                            <div className={styles.tagSection}>
+                                <h3>인기 태그:</h3>
+                                <div className={styles.tags}>
+                                    {game.gameCategory.split(',').map((category, index) => (
+                                        <span key={index} className={styles.tag}>
+                                            {category.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className={styles.priceSection}>
+                                {game.gameDiscount > 0 ? (
+                                    <>
+                                        <div className={styles.discount}>-{game.gameDiscount}%</div>
+                                        <div className={styles.prices}>
+                                            <span className={styles.originalPrice}>
+                                                ${game.gamePrice.toFixed(2)}
+                                            </span>
+                                            <span className={styles.finalPrice}>
+                                                ${(game.gamePrice * (1 - game.gameDiscount / 100)).toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className={styles.finalPrice}>
+                                        ${game.gamePrice.toFixed(2)}
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className={styles.purchaseButtons}>
+                                <button className={styles.addToCartButton} onClick={() => addCart(game)}>장바구니에 추가</button>
+                                <button className={styles.wishlistButton} onClick={()=>addWishList(game)}>위시리스트에 추가</button>
+                            </div>
+                        </div>
+
+                        <div className={styles.systemRequirements}>
+                            <h3>시스템 요구사항</h3>
+                            <div className={styles.requirements}>
+                                {game.gameSystemRequirement}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* 상세 설명 */}
-                <div className={styles.description}>
-                    <h2>상세 설명</h2>
-                    <div dangerouslySetInnerHTML={{ __html: game.gameDescription }} />
-                </div>
-
-                {/* 시스템 요구사항 */}
-                <div className={styles.systemRequirements}>
-                    <h2>시스템 요구사항</h2>
-                    <div className={styles.requirementsGrid}>
-                        <div className={styles.minimumRequirements}>
-                            <h3>최소 사양</h3>
-                            <div>{game.gameSystemRequirement}</div>
-                        </div>
-                        <div className={styles.recommendedRequirements}>
-                            <h3>권장 사양</h3>
-                            <div>{game.gameSystemRequirement}</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* 사용자 리뷰 섹션 */}
-                <div className={styles.reviews}>
-                    <h2>사용자 리뷰</h2>
+                {/* 하단: 리뷰 섹션 */}
+                <div className={styles.reviewSection}>
+                    <h2>고객 리뷰</h2>
                     <div className={styles.reviewSummary}>
                         <div className={styles.score}>
                             <span className={styles.scoreNumber}>{game.gameUserScore}</span>/10
@@ -151,31 +219,13 @@ const GameDetail = () => {
                     </div>
                 </div>
 
-                {/* 플랫폼 지원 정보 */}
-                <div className={styles.platforms}>
-                    <h2>지원 플랫폼</h2>
-                    <div className={styles.platformList}>
-                        {game.gamePlatforms.split(',').map((platform, index) => (
-                            <span key={index} className={styles.platform}>
-                                {platform.trim()}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-
-                {/* 추가 기능 버튼 */}
-                <div className={styles.actions}>
-                    <button className={styles.actionButton}>
-                        <Share2 /> 공유하기
-                    </button>
-                    <button className={styles.actionButton}>
-                        <Flag /> 신고하기
-                    </button>
+                {/* 관리자 액션 버튼 */}
+                <div className={styles.adminActions}>
                     <button 
                         className={styles.editButton}
-                        onClick={() => navigate(`/game/edit/${gameNo}`)} // 수정된 부분
+                        onClick={() => navigate(`/game/edit/${gameNo}`)}
                     >
-                        게임 수정하기
+                        게임 정보 수정
                     </button>
                 </div>
             </div>
