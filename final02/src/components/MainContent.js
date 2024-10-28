@@ -48,6 +48,8 @@ import PixelGraphics from "./game/gamecategory/PixelGraphics";
 import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
+import Library from "../components/library/Library";
+
 
 
 const MainContent = () => {
@@ -131,6 +133,9 @@ const MainContent = () => {
 
                     {/* 장바구니 */}
                     <Route path="/cart" element={<ShoppingCart />} />  {/* ShoppingCart로 통일 */}
+
+                    {/* 라이브러리 */}
+                    <Route path="/library" element={<Library />} />  {/* ShoppingCart로 통일 */}
 
 
 

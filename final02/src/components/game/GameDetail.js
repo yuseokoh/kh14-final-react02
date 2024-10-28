@@ -196,9 +196,6 @@ const GameDetail = () => {
                                 <button className={styles.addToCartButton} onClick={() => addCart(game)}>장바구니에 추가</button>
                                 <button className={styles.wishlistButton} onClick={()=>addWishList(game)}>위시리스트에 추가</button>
 
-                                <button className={styles.addToCartButton}>장바구니에 추가</button>
-                                <button className={styles.wishlistButton}>위시리스트에 추가</button>
-
                             </div>
                         </div>
 

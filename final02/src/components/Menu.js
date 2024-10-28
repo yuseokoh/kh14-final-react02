@@ -122,6 +122,11 @@ const Menu = () => {
                                         {t('menu.cart')}
                                     </NavLink>
                                 </li>
+                                <li className="nav-item">
+                                    <NavLink className="nav-link" to="/library">
+                                        {t('menu.library')}
+                                    </NavLink>
+                                </li>
                             </>) : (<>
 
                                 <li className="nav-item">
