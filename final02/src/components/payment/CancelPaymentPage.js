@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react'; 
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { FiCheckCircle, FiInfo, FiXCircle } from 'react-icons/fi';
+import { FiCheckCircle } from 'react-icons/fi';
 import styles from './CancelPaymentPage.module.css';
 import LoginImage from './Login.jpg';
 
@@ -132,11 +132,11 @@ const CancelPaymentPage = () => {
   return (
     <div className="mainContent" style={{ backgroundColor: '#1b2838', color: '#fff' }}>
       <div className={styles.paymentSummaryContainer}>
-      <div className={styles.summaryItem} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
-  <span className={styles.summaryLabel}>결제상품명:</span>
-  <span className={styles.summaryValue}>{paymentInfo.paymentDto.paymentName}</span>
-</div>
-
+        <div className={styles.summaryItem} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+          <span className={styles.summaryLabel}>결제상품명:</span>
+          <span className={styles.summaryValue}>{paymentInfo.paymentDto.paymentName}</span>
+        </div>
+        {/* 나머지 요약 정보 항목들 */}
         <div className={styles.summaryItem} style={{ marginBottom: '20px' }}>
           <span className={styles.summaryLabel}>총 결제금액:</span>
           <span className={styles.summaryValue}>{paymentInfo.paymentDto.paymentTotal}원</span>
@@ -171,25 +171,59 @@ const CancelPaymentPage = () => {
             <span className={styles.summaryValue}>{new Date(paymentInfo.responseVO.canceled_at).toLocaleString()}</span>
           </div>
         )}
-        <div className={styles.summaryItem}>
-          <textarea
-            value={cancelReason}
-            onChange={(e) => setCancelReason(e.target.value)}
-            className={styles.summaryValue}
-            style={{ color: '#000', backgroundColor: '#fff', padding: '12px', borderRadius: '4px', border: '1px solid #ccc', width: '100%', height: '50px', resize: 'none' }}
-            placeholder={paymentInfo.responseVO.canceled_at !== null ? "이미 취소된 상품입니다." : "취소 사유를 입력해주세요"}
-            disabled={showCentralAlert || paymentInfo.responseVO.canceled_at !== null}
-          />
-        </div>
-
-        <button
-          className={styles.cancelButton}
-          disabled={paymentInfo.paymentDto.paymentRemain <= 0 || cancelReason.trim() === '' || showCentralAlert || paymentInfo.responseVO.canceled_at !== null}
-          style={{ backgroundColor: cancelReason.trim() && !showCentralAlert && paymentInfo.responseVO.canceled_at === null ? '#c0392b' : '#555', cursor: cancelReason.trim() && !showCentralAlert && paymentInfo.responseVO.canceled_at === null ? 'pointer' : 'not-allowed' }}
-          onClick={handleCancelAllPayment}
-        >
-          전체취소
-        </button>
+        {/* 취소사유 입력란 및 결제 취소 버튼을 결제취소일시가 null인 경우에만 표시 */}
+        {paymentInfo.responseVO.canceled_at === null ? (
+          <>
+            <div className={styles.summaryItem}>
+              <textarea
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                className={styles.summaryValue}
+                style={{
+                  color: '#000',
+                  backgroundColor: '#fff',
+                  padding: '12px',
+                  borderRadius: '4px',
+                  border: '1px solid #ccc',
+                  width: '100%',
+                  height: '50px',
+                  resize: 'none'
+                }}
+                placeholder="취소 사유를 입력해주세요"
+                disabled={showCentralAlert}
+              />
+            </div>
+            <button
+              className={styles.cancelButton}
+              disabled={cancelReason.trim() === '' || showCentralAlert}
+              style={{
+                backgroundColor: cancelReason.trim() && !showCentralAlert ? '#c0392b' : '#555',
+                cursor: cancelReason.trim() && !showCentralAlert ? 'pointer' : 'not-allowed'
+              }}
+              onClick={handleCancelAllPayment}
+            >
+              전체취소
+            </button>
+          </>
+        ) : (
+          <div className={styles.summaryItem}>
+            <textarea
+              className={styles.summaryValue}
+              style={{
+                color: '#000',
+                backgroundColor: '#ccc',
+                padding: '12px',
+                borderRadius: '4px',
+                border: '1px solid #999',
+                width: '100%',
+                height: '50px',
+                resize: 'none'
+              }}
+              value="취소된 상품입니다."
+              disabled
+            />
+          </div>
+        )}
       </div>
 
       {showCentralAlert && (
