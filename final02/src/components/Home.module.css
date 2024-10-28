@@ -106,6 +106,16 @@
   color: #ffffff; /* 변경: 가독성을 위해 더 밝은 색상으로 */
 }
 
+.featuredGameImage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  transition: opacity 0.3s ease;
+}
+
 /* 게임 태그 스타일 */
 .tag {
   background-color: #4c6b22; /* 어두운 녹색 배경 */
@@ -415,9 +425,10 @@
   background-color: #5c7e10;
 }
 
-.horizontalSlider, .verticalSlider {
+.horizontalSlider,
+.verticalCardSlider {
   position: relative;
-  overflow: hidden;
+  margin-bottom: 32px;
 }
 
 .horizontalSliderContainer, .verticalSliderContainer {
@@ -756,9 +767,77 @@
   color: #ffffff;  /* hover 시 밝은 색상으로 변경 */
 }
 
-/* 기존 스타일 유지 */
 .sidebarSectionList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
+
+/* 점 인디케이터 컨테이너 */
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+/* 개별 점 스타일 */
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: background-color 0.3s ease;
+}
+
+/* 활성 점 스타일 */
+.dotsContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 0 20px;
+}
+
+.dot {
+  width: 16px;  /* 더 긴 막대 형태로 변경 */
+  height: 5px;  /* 얇은 높이로 설정 */
+  border-radius: 0;  /* 사각형 모양으로 변경 */
+  background-color: rgba(255, 255, 255, 0.2); /* 더 어두운 비활성 색상 */
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background-color: rgba(255, 255, 255, 0.8); /* 더 밝은 활성 색상 */
+}
+
+/* 특별히 첫 번째와 마지막 인디케이터에 대한 스타일 */
+.dot:first-child,
+.dot:last-child {
+  width: 16px;  /* 동일한 너비 유지 */
+}
+
+/* 슬라이더 컨테이너 여백 조정 */
+.horizontalSlider {
+  margin-bottom: 10px; /* 인디케이터와의 간격 조정 */
+}
+
+/* 활성 점 스타일 */
+.dot.active {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+/* 슬라이더 컨테이너 스타일 수정 */
+.horizontalSlider {
+  position: relative;
+  overflow: hidden; /* hidden으로 변경하여 스크롤바 제거 */
+  margin-bottom: 20px;
+}
+
+.horizontalSliderContainer {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+  /* overflow 관련 속성 제거 */
+}
+

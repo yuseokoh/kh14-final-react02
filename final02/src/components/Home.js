@@ -28,6 +28,7 @@ const FeaturedGame = ({ game }) => {
 
   const [imageUrl, setImageUrl] = useState(null);  
   const navigate = useNavigate();
+  
 
   //이미지 로딩을 위한 useEffect 추가
   useEffect(() => {
@@ -248,6 +249,7 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
   // 현재 표시 중인 첫 번째 게임의 인덱스를 관리하는 상태
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const totalPages = Math.ceil(games.length / itemsPerPage);
 
   // 다음 슬라이드로 이동하는 함수  
   const nextSlide = () => {
@@ -276,6 +278,7 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
   };
 
   return (
+    <div>
     <div className={styles.horizontalSlider}>
       <div 
         className={styles.horizontalSliderContainer} 
@@ -320,6 +323,15 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
         <ChevronRight color="white" size={24} />
       </button>
     </div>
+     <div className={styles.dotsContainer}>
+     {Array.from({ length: totalPages }, (_, i) => (
+       <div
+         key={i}
+         className={`${styles.dot} ${Math.floor(currentIndex / itemsPerPage) === i ? styles.active : ''}`}
+       />
+     ))}
+   </div>
+ </div>
   );
 };
 

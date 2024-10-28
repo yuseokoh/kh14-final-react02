@@ -19,7 +19,6 @@ import SingUp from './member/SingUp';
 import SignupPage from './member/SignupPage';
 import SignupForm from './member/SignupForm';
 import KakaoLoginPage from './member/KakaoLoginPage';
-import KakaoEmail from './member/KakaoEmail';
 import { useTranslation } from 'react-i18next';
 import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
@@ -91,8 +90,6 @@ const MainContent = () => {
 
                     {/* 경로변수를 사용할 경우 콜론과 이름을 합쳐 변수명으로 지정 */}
 
-
-
                     {/* 기존 : 일반 라우팅 */}
                     {/* <Route path="/search/autocomplete" element={<AutoComplete/>}/> */}
                     {/* <Route path="/search/autocomplete2" element={<AutoComplete2/>}/> */}
@@ -106,7 +103,6 @@ const MainContent = () => {
                     <Route path="/member/signupPage" element={<SignupPage />} />
                     {/* 회원가입 아이디 비밀번호입력 */}
                     <Route path="/member/signupForm" element={<SignupForm />} />
-                    <Route path="/member/KakaoEmail" element={<KakaoEmail />} />
 
                     {/* 결제 */}
 
