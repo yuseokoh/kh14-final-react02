@@ -1,5 +1,5 @@
 // 필요한 React 훅과 외부 라이브러리를 임포트합니다.
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, ChevronDown , Tag, Users, Gamepad } from 'lucide-react'; 
 import styles from './Home.module.css';
@@ -601,26 +601,63 @@ const GameListItem = ({game}) => {
 
 // 메인 홈 컴포넌트
 const Home = () => {
-  // 상태 관리를 위한 useState 훅 사용
-  const [games, setGames] = useState([]); // 게임 데이터를 저장할 상태
-  const [featuredIndex, setFeaturedIndex] = useState(0); // 현재 표시 중인 추천 게임의 인덱스
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [error, setError] = useState(null); // 에러 상태
+  const [games, setGames] = useState([]);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [visiblegames, setVisibleGames] = useState(10);
+  const [activeFilter, setActiveFilter] = useState('');
 
   const navigate = useNavigate();
+
+  // 할인 게임 필터링 (20% 이상)
+  const discountedGames = useMemo(() => {
+    return games.filter(game => game.gameDiscount >= 20);
+  }, [games]);
+
+  // 신작 게임 필터링 (2021년 이후)
+  const newGames = useMemo(() => {
+    const cutoffDate = new Date('2021-01-01');
+    return games.filter(game => {
+      const releaseDate = new Date(game.gamePublicationDate);
+      return releaseDate >= cutoffDate;
+    });
+  }, [games]);
+
+  // 인기 게임 필터링 (평점 9점 이상)
+  const topGames = useMemo(() => {
+    return games.filter(game => game.gameUserScore >= 9);
+  }, [games]);
+  const filterOptions = [
+    { id: 'all', name: '전체' },
+    { id: 'action', name: '액션' },
+    { id: 'adventure', name: '어드벤처' },
+    { id: 'rpg', name: 'RPG' },
+    { id: 'simulation', name: '시뮬레이션' },
+    { id: 'strategy', name: '전략' },
+    { id: 'indie', name: '인디' }
+  ];
+
+  const filteredGames = useMemo(() => {
+    if (activeFilter === 'all') return games;
+    return games.filter(game => 
+      game.gameCategory.toLowerCase().includes(activeFilter.toLowerCase())
+    );
+  }, [games, activeFilter]);
+
   
-  const handleShowMore = () =>{
-    setVisibleGames(prev => Math.min(prev + 10, games.length));
-  } 
+  // 더보기 버튼 핸들러
+  const handleShowMore = () => {
+    setVisibleGames(prev => Math.min(prev + 10, filteredGames.length));
+  };
  
   // 컴포넌트 마운트 시 게임 데이터를 가져오기 위한 useEffect 훅
+  // 게임 데이터 로딩
   useEffect(() => {
-    //비동기로 게임데이터가져오는함수
+    //비동기로 게임 데이터를 가져오는 함수
     const fetchGames = async () => {
       try {
         setLoading(true);
-        // 백엔드 API로부터 게임 데이터 가져오기
         const response = await axios.get('http://localhost:8080/game/');
         setGames(response.data);
         setLoading(false);
@@ -633,6 +670,11 @@ const Home = () => {
     fetchGames();
   }, []);//빈배열로 전달해 컴포넌트 마운트시에만 실행하기
 
+    // 필터 변경 시 visible games 리셋
+    useEffect(() => {
+      setVisibleGames(10);
+    }, [activeFilter]);
+
   // 로딩 중일 때 표시할 내용
   if (loading) return <div>로딩 중...</div>;
   // 에러 발생 시 표시할 내용
@@ -642,59 +684,53 @@ const Home = () => {
 
   return (
     <div className={styles.homeContainer}>
-      {/* FeaturedBanner를 최상단에 배치 */}
-        <FeaturedBanner bannerAlt="Steam Next Fest Banner"/>
-        <div className={styles.contentWrapper}>
+      <FeaturedBanner bannerAlt="Steam Next Fest Banner" />
+      <div className={styles.contentWrapper}>
         <Sidebar />
         <div className={styles.contentContainer}>
           <div className={styles.mainContent}>
             {/* 추천 게임 섹션 */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>추천 게임</h2>
-              <div style={{position: 'relative'}}>
+              <div style={{ position: 'relative' }}>
                 <FeaturedGame game={games[featuredIndex]} />
-                {/* 이전 게임으로 이동하는 버튼 */}
-                <button 
+                <button
                   className={`${styles.sliderButton} ${styles.sliderButtonLeft}`}
-                  onClick={() => setFeaturedIndex((prev) => (prev === 0 ? games.length - 1 : prev - 1))}
+                  onClick={() => setFeaturedIndex(prev => prev === 0 ? games.length - 1 : prev - 1)}
                 >
                   <ChevronLeft color="white" size={24} />
                 </button>
-                {/* 다음 게임으로 이동하는 버튼 */}
-                <button 
+                <button
                   className={`${styles.sliderButton} ${styles.sliderButtonRight}`}
-                  onClick={() => setFeaturedIndex((prev) => (prev === games.length - 1 ? 0 : prev + 1))}
+                  onClick={() => setFeaturedIndex(prev => prev === games.length - 1 ? 0 : prev + 1)}
                 >
                   <ChevronRight color="white" size={24} />
                 </button>
               </div>
-            </section>
-
-            {/* 특별 할인 섹션 */}
+            </section>ni
+            {/* 특별 할인 섹션 - 20% 이상 할인 게임 */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>특별 할인</h2>
-              {/* HorizontalSlider 컴포넌트를 사용하여 할인 게임 목록을 표시 */}
-              <HorizontalSlider games={games.filter(game => game.gameDiscount >= 0)} itemsPerPage={4} />
+              <HorizontalSlider games={discountedGames} itemsPerPage={4} />
             </section>
 
-            {/* 신규 및 인기 게임 섹션 */}
+            {/* 신작 게임 섹션 - 2021년 이후 출시 */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>신작 및 인기 게임</h2>
-              {/* HorizontalSlider 컴포넌트를 사용하여 모든 게임 목록을 표시 */}
-              <HorizontalSlider games={games} itemsPerPage={6} />
+              <HorizontalSlider games={newGames} itemsPerPage={6} />
             </section>
 
-            {/* 최고 판매 게임 섹션 */}
+            {/* 최고 인기 게임 섹션 - 평점 9점 이상 */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>최고 인기 게임</h2>
-              {/* VerticalSlider 컴포넌트를 사용하여 게임 목록을 세로로 표시 */}
-              <VerticalCardSlider games={games} itemsPerPage={8} />
+              <VerticalCardSlider games={topGames} itemsPerPage={8} />
             </section>
 
+            {/* 전체 게임 목록 섹션 */}
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>전체 게임 목록</h2>
-                <button 
+                <button
                   className={styles.addGameButton}
                   onClick={() => navigate('/game/add')}
                 >
@@ -709,8 +745,8 @@ const Home = () => {
 
                 {visiblegames < games.length && (
                   <div className={styles.showMoreContainer}>
-                    <button 
-                      onClick={handleShowMore} 
+                    <button
+                      onClick={handleShowMore}
                       className={styles.showMoreTrigger}
                     >
                       <div className={styles.showMoreContent}>
@@ -722,9 +758,8 @@ const Home = () => {
                 )}
               </div>
             </section>
-
-            {/* 카테고리 섹션 */}
-            <section className={styles.section}>
+             {/* 카테고리 섹션 */}
+             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>카테고리</h2>
               <div className={styles.grid}>
                 {/* 카테고리 카드들을 표시 */}
