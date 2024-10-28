@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import debounce from 'lodash.debounce';
 import styles from './WishList.module.css';
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useRecoilValue } from 'recoil';
-import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
+import { loginState, memberIdState } from "../../utils/recoil";
 
 const WishList = () => {
   const navigate = useNavigate();
@@ -15,23 +15,45 @@ const WishList = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
   const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
-  const { wishlistId } = useParams();
-  // Recoil 상태 사용
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-  const memberLoading = useRecoilValue(memberLoadingState);
 
   // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/wishlist/");
-    setWishlist(resp.data);
-    setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
+    try {
+      const resp = await axios.get("http://localhost:8080/wishlist/");
+      setWishlist(resp.data);
+      setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
+      // 이미지 URL 로드
+      loadImages(resp.data);
+    } catch (error) {
+      console.error("Error loading wishlist", error);
+    }
+  }, []);
+
+  // 이미지 로드 함수
+  const loadImages = useCallback(async (wishlist) => {
+    const imageMap = {};
+    for (const game of wishlist) {
+      try {
+        const imageResp = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        if (imageResp.data && imageResp.data.length > 0) {
+          imageMap[game.wishListId] = `http://localhost:8080/game/download/${imageResp.data[0].attachmentNo}`;
+        } else {
+          imageMap[game.wishListId] = 'placeholder_image_url'; // 이미지 없을 경우
+        }
+      } catch (err) {
+        console.error("Error loading game image", err);
+        imageMap[game.wishListId] = 'placeholder_image_url';
+      }
+    }
+    setImageUrls(imageMap);
   }, []);
 
   // 장바구니에 게임 추가
   const addCart = useCallback(async (game) => {
     try {
-      const resp = await axios.post("/cart/add", game);
+      await axios.post("/cart/add", game);
       navigate("/cart/");
     } catch (error) {
       console.error("Error adding item to cart", error);
@@ -97,12 +119,6 @@ const WishList = () => {
     setWishlist(newWishList); // 전체 리스트도 업데이트
     e.target.style.opacity = 1; // 드래그 종료 시 불투명도 원래대로
   };
-
-  useEffect(() => {
-    if (login && memberId) {
-      loadWishlist();
-    }
-  }, [login, memberId, loadWishlist]);
 
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
