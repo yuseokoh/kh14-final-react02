@@ -28,6 +28,7 @@ const FeaturedGame = ({ game }) => {
 
   const [imageUrl, setImageUrl] = useState(null);  
   const navigate = useNavigate();
+  
 
   //이미지 로딩을 위한 useEffect 추가
   useEffect(() => {
@@ -248,6 +249,7 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
   // 현재 표시 중인 첫 번째 게임의 인덱스를 관리하는 상태
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const totalPages = Math.ceil(games.length / itemsPerPage);
 
   // 다음 슬라이드로 이동하는 함수  
   const nextSlide = () => {
@@ -276,6 +278,7 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
   };
 
   return (
+    <div>
     <div className={styles.horizontalSlider}>
       <div 
         className={styles.horizontalSliderContainer} 
@@ -320,6 +323,15 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
         <ChevronRight color="white" size={24} />
       </button>
     </div>
+     <div className={styles.dotsContainer}>
+     {Array.from({ length: totalPages }, (_, i) => (
+       <div
+         key={i}
+         className={`${styles.dot} ${Math.floor(currentIndex / itemsPerPage) === i ? styles.active : ''}`}
+       />
+     ))}
+   </div>
+ </div>
   );
 };
 
@@ -404,49 +416,78 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
 // 사이드바 컴포넌트
 const Sidebar = () => {
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
   
-  const categories = [
-    { name: 'Action', path: '/game/category/action' },
-    { name: 'Adventure', path: '/game/category/adventure' },
-    { name: 'Indie', path: '/game/category/indie' },
-    { name: 'RPG', path: '/game/category/rpg' },
-    { name: 'Simulation', path: '/game/category/simulation' },
-    { name: 'Strategy', path: '/game/category/strategy' },
-    { name: 'Open World', path: '/game/category/openworld' },
-    { name: 'Multiplayer', path: '/game/category/multiplayer' }
-  ];
-  return (
-
+    const device = [
+      { name : 'PC 게임', path: '/device/pc'},
+      { name : '모바일 게임', path: '/device/mobile'},
+      { name : '콘솔 게임', path: '/device/console'}
+    ]
+    const recommendations = [
+      {name : '친구 추천', path: '/recommendations/friends'},
+      {name : '큐레이터 추천', path: '/recommendations/curators'},
+      {name : '태그', path: '/recommendations/tags'}
+    ]
+    
+    const categories = [
+      { name: 'Action', path: '/game/category/action' },
+      { name: 'Adventure', path: '/game/category/adventure' },
+      { name: 'Indie', path: '/game/category/indie' },
+      { name: 'RPG', path: '/game/category/rpg' },
+      { name: 'Simulation', path: '/game/category/simulation' },
+      { name: 'Strategy', path: '/game/category/strategy' },
+      { name: 'Open World', path: '/game/category/openworld' },
+      { name: 'Multiplayer', path: '/game/category/multiplayer' },
+      { name: 'BaseBuilding', path: '/game/category/basebuilding' },
+      { name: 'Fantasy', path: '/game/category/fantasy' },
+      { name: 'PixelGraphics', path: '/game/category/pixelgraphics' },
+      { name: 'Roguelike', path: '/game/category/roguelike' },
+      { name: 'Sandbox', path: '/game/category/sandbox' },
+      { name: 'Survival', path: '/game/category/survival' }
+    ];
+  
+    const others = [
+      {name: 'Free to Play', path: '/other/freetoplay'},
+      {name: 'Early Access', path: '/other/earlyaccess'},
+      {name: 'Co-op', path: '/other/coop'},
+      {name: 'VR 지원', path: '/other/vr'},
+      {name: '컨트롤러 지원', path: '/other/contoller'}
+    ]
+  
+    const ageRatings = [
+      {name: '전체이용가', path: '/rating/all'},
+      {name: '12세이용가', path: '/rating/12'},
+      {name: '15세이용가', path: '/rating/15'},
+      {name: '19세이용가', path: '/rating/19'}
+    ]
+  
+  
+    return (
   <div className={styles.sidebar}>
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>게임 기기</h3>
-      <p className={styles.sidebarSectionContent}>어디서나 즐기는 게임</p>
-    </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>기프트 카드</h3>
-      <p className={styles.sidebarSectionContent}>게임 선물하기</p>
-    </div>
-    
     <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>최근 본 게임</h3>
       <p className={styles.sidebarSectionContent}>사이버펑크 2077</p>
     </div>
     
     <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>추천</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>친구 추천</li>
-        <li className={styles.sidebarSectionContent}>큐레이터 추천</li>
-        <li className={styles.sidebarSectionContent}>태그</li>  
-      </ul>
-    </div>
+    <h3 className={styles.sidebarSectionTitle}>추천</h3>
+        <ul className={styles.sidebarSectionList}>
+          {recommendations.map((rec, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(rec.path)}
+            >
+              {rec.name}
+            </li>
+          ))}
+        </ul>
+      </div>
     
-    <div className={styles.sidebarSection}>
+      <div className={styles.sidebarSection}>
       <h3 className={styles.sidebarSectionTitle}>카테고리</h3>
       <ul className={styles.sidebarSectionList}>
-        {categories.map((category, index) =>(
+      {categories.map((category, index) =>(
           <li
             key={index}
             className={styles.categoryLink}
@@ -459,40 +500,37 @@ const Sidebar = () => {
     </div>
     
     <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>테마</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Survival</li>
-        <li className={styles.sidebarSectionContent}>Sandbox</li>
-        <li className={styles.sidebarSectionContent}>Fantasy</li>
-        <li className={styles.sidebarSectionContent}>Sci-fi</li>
-        <li className={styles.sidebarSectionContent}>Roguelike</li>
-        <li className={styles.sidebarSectionContent}>Pixel Graphics</li>
-        <li className={styles.sidebarSectionContent}>Base Building</li>
-      </ul>
+    <h3 className={styles.sidebarSectionTitle}>기타</h3>
+        <ul className={styles.sidebarSectionList}>
+          {others.map((other, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(other.path)}
+            >
+              {other.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className={styles.sidebarSection}>
+        <h3 className={styles.sidebarSectionTitle}>연령 등급</h3>
+        <ul className={styles.sidebarSectionList}>
+          {ageRatings.map((rating, index) => (
+            <li
+              key={index}
+              className={styles.categoryLink}
+              onClick={() => navigate(rating.path)}
+            >
+              {rating.name}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>기타</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>Free to Play</li>
-        <li className={styles.sidebarSectionContent}>Early Access</li>
-        <li className={styles.sidebarSectionContent}>Co-op</li>
-        <li className={styles.sidebarSectionContent}>VR 지원</li>
-        <li className={styles.sidebarSectionContent}>컨트롤러 지원</li>
-      </ul>
-    </div>
-    
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>연령 등급</h3>
-      <ul className={styles.sidebarSectionList}>
-        <li className={styles.sidebarSectionContent}>전체이용가</li>
-        <li className={styles.sidebarSectionContent}>12세이용가</li>
-        <li className={styles.sidebarSectionContent}>15세이용가</li>
-        <li className={styles.sidebarSectionContent}>19세이용가</li>
-      </ul>
-    </div>
-  </div>
-  )};
+  );
+};
 
 //게임 리스트 아이템 컴포넌트
 const GameListItem = ({game}) => {
@@ -579,12 +617,11 @@ const Home = () => {
   const [visiblegames, setVisibleGames] = useState(10);
 
   const navigate = useNavigate();
-
   
   const handleShowMore = () =>{
     setVisibleGames(prev => Math.min(prev + 10, games.length));
-  }
-
+  } 
+ 
   // 컴포넌트 마운트 시 게임 데이터를 가져오기 위한 useEffect 훅
   useEffect(() => {
     //비동기로 게임데이터가져오는함수
