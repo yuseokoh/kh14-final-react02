@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import styles from './GameDetail.module.css';
 import { Tag, ThumbsUp, ThumbsDown, Share2, Flag } from 'lucide-react';
+import { useRecoilValue } from 'recoil';
+import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
 
 const GameDetail = () => {
     const navigate = useNavigate();
@@ -14,6 +16,12 @@ const GameDetail = () => {
     const [imageUrl, setImageUrl] = useState(null);
     const [images, setImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(0);
+
+
+    // Recoil 상태 사용
+  const login = useRecoilValue(loginState);
+  const memberId = useRecoilValue(memberIdState);
+  const memberLoading = useRecoilValue(memberLoadingState);
 
     // 게임 데이터 및 이미지 로딩
     const loadGameData = useCallback(async () => {
@@ -40,6 +48,45 @@ const GameDetail = () => {
         }
     }, [gameNo]);
 
+    // 장바구니에 추가
+    const addCart = useCallback(async (game) => {
+        try {
+            // 전달되는 game 데이터를 콘솔에 출력
+            console.log("Adding to cart:", game);
+
+            const resp = await axios.post("/cart/add", game, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/cart/");
+        } catch (error) {
+            console.error("Error adding item to cart", error);
+            window.alert("이미 장바구니에 있는 게임입니다");
+        }
+    }, [navigate]);
+
+    const addWishList = useCallback(async (game) => {
+        try {
+            // 전달되는 game 데이터를 콘솔에 출력하여 gameNo 확인
+            console.log("Adding to wishlist:", game);
+            
+            const token = sessionStorage.getItem('refreshToken');
+            const resp = await axios.post("/wishlist/add", game, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/wishlist/");
+        } catch (error) {
+            console.error("Error adding item to wishlist", error);
+            window.alert("이미 찜에 있는 게임입니다");
+        }
+    }, [navigate]);
+   
+
+    // 게임 데이터 로딩
     useEffect(() => {
         loadGameData();
     }, [loadGameData]);
@@ -145,8 +192,10 @@ const GameDetail = () => {
                             </div>
 
                             <div className={styles.purchaseButtons}>
-                                <button className={styles.addToCartButton}>장바구니에 추가</button>
-                                <button className={styles.wishlistButton}>위시리스트에 추가</button>
+
+                                <button className={styles.addToCartButton} onClick={() => addCart(game)}>장바구니에 추가</button>
+                                <button className={styles.wishlistButton} onClick={()=>addWishList(game)}>위시리스트에 추가</button>
+
                             </div>
                         </div>
 

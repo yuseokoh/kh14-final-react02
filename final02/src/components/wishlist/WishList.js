@@ -5,7 +5,7 @@ import debounce from 'lodash.debounce';
 import styles from './WishList.module.css';
 import { useNavigate } from "react-router";
 import { useRecoilValue } from 'recoil';
-import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
+import { loginState, memberIdState } from "../../utils/recoil";
 
 const WishList = () => {
   const navigate = useNavigate();
@@ -15,28 +15,62 @@ const WishList = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
   const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
-
-  // Recoil 상태 사용
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-  const memberLoading = useRecoilValue(memberLoadingState);
 
   // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/wishlist/");
-    setWishlist(resp.data);
-    setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
+    try {
+      const resp = await axios.get("http://localhost:8080/wishlist/");
+      setWishlist(resp.data);
+      setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
+      // 이미지 URL 로드
+      loadImages(resp.data);
+    } catch (error) {
+      console.error("Error loading wishlist", error);
+    }
+  }, []);
+
+  // 이미지 로드 함수
+  const loadImages = useCallback(async (wishlist) => {
+    const imageMap = {};
+    for (const game of wishlist) {
+      try {
+        const imageResp = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        if (imageResp.data && imageResp.data.length > 0) {
+          imageMap[game.wishListId] = `http://localhost:8080/game/download/${imageResp.data[0].attachmentNo}`;
+        } else {
+          imageMap[game.wishListId] = 'placeholder_image_url'; // 이미지 없을 경우
+        }
+      } catch (err) {
+        console.error("Error loading game image", err);
+        imageMap[game.wishListId] = 'placeholder_image_url';
+      }
+    }
+    setImageUrls(imageMap);
   }, []);
 
   // 장바구니에 게임 추가
   const addCart = useCallback(async (game) => {
     try {
-      const resp = await axios.post("/cart/add", game);
+      await axios.post("/cart/add", game);
       navigate("/cart/");
     } catch (error) {
       console.error("Error adding item to cart", error);
     }
   }, [navigate]);
+
+  // 찜 목록에서 게임 삭제
+  const delWishList = useCallback(async (wishListId) => {
+    try {
+      await axios.delete(`http://localhost:8080/wishlist/${wishListId}`);
+      // 찜 목록에서 삭제한 아이템을 필터링하여 새로운 리스트로 상태 업데이트
+      setWishlist((prevWishlist) => prevWishlist.filter((item) => item.wishListId !== wishListId));
+      setFilteredWishlist((prevFilteredWishlist) => prevFilteredWishlist.filter((item) => item.wishListId !== wishListId));
+    } catch (error) {
+      console.error("Error removing item from wishlist", error);
+    }
+  }, []);
 
   // 찜 목록 검색
   const searchWishlist = useCallback(() => {
@@ -49,17 +83,6 @@ const WishList = () => {
       setFilteredWishlist(wishlist); // 검색어가 없을 경우 전체 리스트 표시
     }
   }, [searchKeyword, wishlist]);
-
-  // 찜 목록에서 게임 제거
-  const delWishList = useCallback(async (wishListId) => {
-    try {
-      await axios.delete(`/wishlist/${wishListId}`);
-      setWishlist(prevList => prevList.filter(game => game.wishListId !== wishListId)); // 삭제된 아이템 필터링
-    } catch (error) {
-      console.error("Error deleting wishlist item", error);
-    }
-    loadWishlist();
-  }, [loadWishlist]);
 
   const debouncedSearch = useCallback(debounce(searchWishlist, 300), [searchWishlist]);
 
@@ -97,23 +120,17 @@ const WishList = () => {
     e.target.style.opacity = 1; // 드래그 종료 시 불투명도 원래대로
   };
 
-  useEffect(() => {
-    if (login && memberId) {
-      loadWishlist();
-    }
-  }, [login, memberId, loadWishlist]);
-
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
       <h1 className={styles.wishlist_title}>
-  {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
-</h1>
+        {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
+      </h1>
       <div className={styles.wishlist_search_container}>
-        <input 
-          type="text" 
-          placeholder="이름 또는 태그로 검색" 
-          className={styles.wishlist_search} 
-          value={searchKeyword} 
+        <input
+          type="text"
+          placeholder="이름 또는 태그로 검색"
+          className={styles.wishlist_search}
+          value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
@@ -143,7 +160,7 @@ const WishList = () => {
                 alt={game.gameTitle}
                 className={styles.gameThumbnail}
               />
-              
+
               {/* 게임 정보 */}
               <div className={styles.wishlist_game_details} style={{ maxWidth: '75%' }}>
                 <h2 className={styles.wishlist_game_title}>{game.gameTitle}</h2>

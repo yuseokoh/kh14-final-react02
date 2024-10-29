@@ -1,4 +1,4 @@
-/* 레이아웃 컨테이너 스타일 */
+/* 레이아웃 컨테이너 스타일 */ 
 .layout {
   display: flex; /* Flexbox를 사용하여 사이드바와 메인 컨텐츠를 나란히 배치 */
   max-width: 1000px; /* 최대 너비 설정 */
@@ -38,7 +38,7 @@
 
 /* 사이드바 섹션 스타일 */
 .sidebarSection {
-  margin-bottom: 20px; /* 섹션 간 여백 */
+  margin-bottom: 15px; /* 섹션 간 여백 */
 }
 
 /* 사이드바 섹션 제목 스타일 */
@@ -503,17 +503,21 @@
   display: flex;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 40px 20px 0; /* 오른쪽 패딩만 유지 */
 }
 
+/* sidebar 스타일 수정 */
 .sidebar {
-  width: 300px;
-  margin-right: 20px;
+  width: 240px; /* 너비 축소 */
+  margin-right: 30px;
+  padding-left: 20px; /* 왼쪽 패딩 추가 */
 }
 
+/* mainContent 스타일 수정 */
 .mainContent {
   flex: 1;
   min-width: 0;
+  padding-left: 20px; /* 왼쪽 여백 추가 */
 }
 
 .featuredBanner {
@@ -839,5 +843,22 @@
   display: flex;
   transition: transform 0.3s ease-in-out;
   /* overflow 관련 속성 제거 */
+}
+
+
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.sectionSubtitle {
+  font-size: 14px;
+  color: #8f98a0;
+  font-weight: normal;
 }
 

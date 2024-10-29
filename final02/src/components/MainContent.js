@@ -19,6 +19,7 @@ import SingUp from './member/SingUp';
 import SignupPage from './member/SignupPage';
 import SignupForm from './member/SignupForm';
 import KakaoLoginPage from './member/KakaoLoginPage';
+import KakaoEmail from './member/KakaoEmail';
 import { useTranslation } from 'react-i18next';
 import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
@@ -34,6 +35,7 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
+<<<<<<< HEAD
 // import ActionGame from "./game/gamecategory/ActionGame";
 // import AdventureGame from "./game/gamecategory/AdventureGame";
 // import IndieGame from "./game/gamecategory/IndieGame";
@@ -48,6 +50,24 @@ import GameEdit from "./game/GameEdit";
 // import Roguelike from "./game/gamecategory/Roguelike";
 // import Survival from "./game/gamecategory/Survival";
 // import SandBox from "./game/gamecategory/Sandbox";
+=======
+import ActionGame from "./game/gamecategory/ActionGame";
+import AdventureGame from "./game/gamecategory/AdventureGame";
+import IndieGame from "./game/gamecategory/IndieGame";
+import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
+import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
+import RpgGame from "./game/gamecategory/RpgGame";
+import SimulationGame from "./game/gamecategory/SimulationGame";
+import StrategyGame from "./game/gamecategory/StrategyGame";
+import BaseBuilding from "./game/gamecategory/BaseBuilding";
+import Fantasy from "./game/gamecategory/Fantasy";
+import PixelGraphics from "./game/gamecategory/PixelGraphics";
+import Roguelike from "./game/gamecategory/Roguelike";
+import Survival from "./game/gamecategory/Survival";
+import SandBox from "./game/gamecategory/Sandbox";
+import Library from "../components/library/Library";
+
+>>>>>>> 9f60141cbe343e4188d05329b869edc3aa161f44
 
 
 const MainContent = () => {
@@ -126,11 +146,15 @@ const MainContent = () => {
                     <Route path="/member/signup" element={<SingUp />} />
                     {/* 카카오로그인 테스트 */}
                     <Route path="/member/KakaoLoginPage" element={<KakaoLoginPage />} />
+                    <Route path="/member/KakaoEmail" element={<KakaoEmail/>}/>
                     {/* 찜 */}
                     <Route path="/wishlist" element={<WishList />} />
 
                     {/* 장바구니 */}
                     <Route path="/cart" element={<ShoppingCart />} />  {/* ShoppingCart로 통일 */}
+
+                    {/* 라이브러리 */}
+                    <Route path="/library" element={<Library />} />  {/* ShoppingCart로 통일 */}
 
 
 
