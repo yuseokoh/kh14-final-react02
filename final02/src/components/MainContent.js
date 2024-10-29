@@ -35,6 +35,7 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
+
 import ActionGame from "./game/gamecategory/ActionGame";
 import AdventureGame from "./game/gamecategory/AdventureGame";
 import IndieGame from "./game/gamecategory/IndieGame";
@@ -50,6 +51,9 @@ import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
 import Library from "../components/library/Library";
+import TestGame from "../gameComponents/TestGame";
+import KHSurvival from "../gameComponents/KHSurvival";
+
 
 
 
@@ -71,7 +75,7 @@ const MainContent = () => {
 
 
                      {/* 게임카테고리 */}
-                    <Route path="/game/category/action" element={<ActionGame />} />
+                    {/* <Route path="/game/category/action" element={<ActionGame />} />
                     <Route path="/game/category/adventure" element={<AdventureGame />} />
                     <Route path="/game/category/indie" element={<IndieGame />} />
                     <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
@@ -84,7 +88,7 @@ const MainContent = () => {
                     <Route path="/game/category/roguelike" element={<Roguelike />} />
                     <Route path="/game/category/sandbox" element={<SandBox />} />
                     <Route path="/game/category/survival" element={<Survival />} />
-                    <Route path="/game/category/strategy" element={<StrategyGame />} />
+                    <Route path="/game/category/strategy" element={<StrategyGame />} /> */}
 
 
 
@@ -139,7 +143,9 @@ const MainContent = () => {
                     {/* 라이브러리 */}
                     <Route path="/library" element={<Library />} />  {/* ShoppingCart로 통일 */}
 
-
+                    {/* 테스트 게임 */}
+                    <Route path="/testgame" element={<TestGame />} />  {/* ShoppingCart로 통일 */}
+                    <Route path="/testgame2" element={<KHSurvival />} />  {/* ShoppingCart로 통일 */}
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-use" element={<TermsOfUse />} />
