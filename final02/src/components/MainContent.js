@@ -35,22 +35,7 @@ import RefundPolicy from "../components/footer/RefundPolicy";
 import GameAdd from "./game/GameAdd";
 import GameDetail from "./game/GameDetail";
 import GameEdit from "./game/GameEdit";
-<<<<<<< HEAD
-// import ActionGame from "./game/gamecategory/ActionGame";
-// import AdventureGame from "./game/gamecategory/AdventureGame";
-// import IndieGame from "./game/gamecategory/IndieGame";
-// import MultiPlayerGame from "./game/gamecategory/MultiPlayerGame";
-// import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
-// import RpgGame from "./game/gamecategory/RpgGame";
-// import SimulationGame from "./game/gamecategory/SimulationGame";
-// import StrategyGame from "./game/gamecategory/StrategyGame";
-// import BaseBuilding from "./game/gamecategory/BaseBuilding";
-// import Fantasy from "./game/gamecategory/Fantasy";
-// import PixelGraphics from "./game/gamecategory/PixelGraphics";
-// import Roguelike from "./game/gamecategory/Roguelike";
-// import Survival from "./game/gamecategory/Survival";
-// import SandBox from "./game/gamecategory/Sandbox";
-=======
+
 import ActionGame from "./game/gamecategory/ActionGame";
 import AdventureGame from "./game/gamecategory/AdventureGame";
 import IndieGame from "./game/gamecategory/IndieGame";
@@ -66,8 +51,10 @@ import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
 import Library from "../components/library/Library";
+import TestGame from "../gameComponents/TestGame";
+import KHSurvival from "../gameComponents/KHSurvival";
 
->>>>>>> 9f60141cbe343e4188d05329b869edc3aa161f44
+
 
 
 const MainContent = () => {
@@ -156,7 +143,9 @@ const MainContent = () => {
                     {/* 라이브러리 */}
                     <Route path="/library" element={<Library />} />  {/* ShoppingCart로 통일 */}
 
-
+                    {/* 테스트 게임 */}
+                    <Route path="/testgame" element={<TestGame />} />  {/* ShoppingCart로 통일 */}
+                    <Route path="/testgame2" element={<KHSurvival />} />  {/* ShoppingCart로 통일 */}
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-use" element={<TermsOfUse />} />
