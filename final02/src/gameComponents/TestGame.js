@@ -1,15 +1,19 @@
 import { useEffect, useRef } from "react";
 import Phaser from 'phaser';
 import Config from './Config';
+import { useRecoilValue } from "recoil";
+import { memberIdState, memberLoadingState } from "../utils/recoil";
 
 let game;
 export const getGame = ()=> game;
 
 const TestGame = () => {
+  const memberId = useRecoilValue(memberIdState);
+  const memberLoading = useRecoilValue(memberLoadingState);
   const gameContainer = useRef(null);
 
   useEffect(() => {
-
+   
     const loadScenesAndStartGame = async () => {
       try {
         // 동적으로 씬을 import

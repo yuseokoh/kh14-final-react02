@@ -22,6 +22,7 @@ import expUpImg from '../assets/spritesheets/exp-up.png';
 import explosionImg from '../assets/spritesheets/explosion.png';
 
 export default class LoadingScene extends Phaser.Scene {
+    
     constructor() {
         super("bootGame"); // bootGame: 이 scene의 identifier
     }

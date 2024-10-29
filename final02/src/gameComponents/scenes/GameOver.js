@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import Button from "../ui/Button";
 import axios from "axios";
 
+
 export default class GameoverScene extends Phaser.Scene {
     constructor() {
         super("gameoverScene");
@@ -10,6 +11,7 @@ export default class GameoverScene extends Phaser.Scene {
     init(data) {
         this.m_enemyKilled = data.enemyKilled;
         this.m_level = data.level;
+        this.sendGameData = data.sendGameData;
     }
 
     create() {
@@ -32,8 +34,23 @@ export default class GameoverScene extends Phaser.Scene {
         });
         // startButton.addToScene(this);
 
+
+        //데이터 전송
+        if(this.sendGameData){
+            this.sendGameData({
+                enemyKilled: this.m_enemyKilled, 
+                level: this.m_level
+            });
+        }
+
+
         // 백엔드로 데이터 전송
-        axios.post('http://localhost:8080/testGame/', { enemyKilled: this.m_enemyKilled, level: this.m_level })
+        const token = localStorage.getItem('token');
+        axios.post('http://localhost:8080/play', { enemyKilled: this.m_enemyKilled, level: this.m_level }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
             .then(response => {
                 console.log('데이터 전송 성공:', response.data);
             })
