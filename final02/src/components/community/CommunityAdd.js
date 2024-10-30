@@ -3,6 +3,7 @@ import Jumbotron from "../Jumbotron";
 import { useCallback } from 'react';
 import { useState } from 'react';
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify"; 
 
 const CommunityAdd = () => {
     //navigate
@@ -18,6 +19,7 @@ const CommunityAdd = () => {
         communityWrite: "",
         communityContent: ""
     });
+    const [message, setMessage] = useState();
 
     //callback
     const changeInput = useCallback(e => {
@@ -28,6 +30,10 @@ const CommunityAdd = () => {
     }, [input]);
 
     const saveCommunity = useCallback(async () => {
+        if(input.communityTitle.length === 0 || input.communityContent.length === 0) {
+            setMessage("제목과 내용은 필수입니다.");
+            return;
+        }
         try {
             //input의 형식 검사 후 차단 또는 허용 
             const resp = await axios.post("/community/", input);
@@ -80,6 +86,12 @@ const CommunityAdd = () => {
             <div className="col">
                 <label>파일첨부(미정)</label>
             </div>   
+        </div>
+
+        <div className="row">
+            <div className="col text-danger text-center">
+                {message}
+            </div>
         </div>
 
         <div className="row mt-4">
