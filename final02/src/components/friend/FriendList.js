@@ -34,7 +34,7 @@ const FriendList = ()=>{
 
     //callback
     const loadMemberList = useCallback(async ()=>{
-        const resp = await axios.get("http://localhost:8080/friend/");
+        const resp = await axios.get("http://localhost:8080/friend/member");
         setMemberList(resp.data);
     }, [memberList]);
 

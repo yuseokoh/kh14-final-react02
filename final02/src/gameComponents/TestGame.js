@@ -13,7 +13,7 @@ const TestGame = () => {
   const gameContainer = useRef(null);
 
   useEffect(() => {
-   
+    if(memberLoading === false) return;
     const loadScenesAndStartGame = async () => {
       try {
         // 동적으로 씬을 import
@@ -27,6 +27,11 @@ const TestGame = () => {
           ...Config, // Config 기본 설정 사용
           scene: [LoadingScene, PlayingScene, MainScene, GameoverScene], // 씬 설정 추가
           parent: gameContainer.current,
+          callbacks: {
+            preBoot: (game) => {
+              game.registry.set('memberId', memberId);
+            }
+          }
         };
 
         // Phaser 게임 생성
@@ -44,7 +49,7 @@ const TestGame = () => {
         game.destroy(true);
       }
     };
-  }, []);
+  }, [memberId]);
 
   return <div ref={gameContainer}></div>;
 };
