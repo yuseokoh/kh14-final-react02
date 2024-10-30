@@ -707,7 +707,7 @@ const Home = () => {
                   <ChevronRight color="white" size={24} />
                 </button>
               </div>
-            </section>ni
+            </section>
             {/* 특별 할인 섹션 - 20% 이상 할인 게임 */}
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>특별 할인</h2>
@@ -716,13 +716,13 @@ const Home = () => {
 
             {/* 신작 게임 섹션 - 2021년 이후 출시 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>신작 및 인기 게임</h2>
+              <h2 className={styles.sectionTitle}>신작 게임</h2>
               <HorizontalSlider games={newGames} itemsPerPage={6} />
             </section>
 
             {/* 최고 인기 게임 섹션 - 평점 9점 이상 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>최고 인기 게임</h2>
+              <h2 className={styles.sectionTitle}>최고 평점</h2>
               <VerticalCardSlider games={topGames} itemsPerPage={8} />
             </section>
 
