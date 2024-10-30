@@ -9,12 +9,10 @@ const FriendList = ()=>{
     
     //state
     const [friendList, setFriendList] = useState([]);//친구 목록
-    const [memberList, setMemberList] = useState([]);//회원 목록
     const [keyword, setKeyword] = useState("");
     const [open, setOpen] = useState(false);
 
-    const [client, setClient] = useState(null);
-    const [connect, setConnect] = useState(false);
+    
     
 
     //recoil
@@ -29,14 +27,17 @@ const FriendList = ()=>{
 
     //effect
     useEffect(()=>{
-        loadMemberList();
-    }, []);
+        if(!memberId || memberLoading === false) return;
+        loadFriendList();
+    }, [memberLoading]);
 
     //callback
-    const loadMemberList = useCallback(async ()=>{
-        const resp = await axios.get("http://localhost:8080/friend/member");
-        setMemberList(resp.data);
-    }, [memberList]);
+  
+    
+    const loadFriendList = useCallback(async ()=>{
+        const resp = await axios.get("http://localhost:8080/friend/"+memberId);
+        setFriendList(resp.data);
+    }, [memberId]);
 
     const changeKeyword = useCallback(e=>{
         setKeyword(e.target.value);
@@ -46,17 +47,25 @@ const FriendList = ()=>{
         setKeyword(text);
         setOpen(false);
     }, [keyword]);
+    const deleteFriend = useCallback(async (target)=>{
+        if(!memberId || memberLoading === false) return;
+        const resp = await axios.delete("http://localhost:8080/friend/"+target.friendFk);
+        loadFriendList();
+      }, []);
 
     //memo
-    const searchResult = useMemo(()=>{
-        if(keyword.length === 0) return [];
-        return memberList.filter(member => member.memberId.includes(keyword));
-    }, [keyword, memberList]);
+    const searchResult = useMemo(() => {
+        if (keyword.length === 0) return [];
+        
+        return friendList.filter(friend => 
+            (friend.friendFrom.includes(keyword) || friend.friendTo.includes(keyword))
+        );
+    }, [keyword, friendList]);
 
     return (<>
     <div className="row mt-4">
         <div className="col">
-            <h3>친구 요청</h3>
+            <h3>친구 목록</h3>
         </div>
     </div>
     <div className="row mt-2">
@@ -66,15 +75,32 @@ const FriendList = ()=>{
             value={keyword} onChange={changeKeyword}/> 
             {open === true && (
                 <ul className="list-group">
-                    {searchResult.map(member=>(
-                        <li key={member.memberId} className="list-group-item" 
-                        onClick={e=>selectKeyword(member.memberId)}>
-                            {member.memberId}
-                            <button className="btn btn-success ms-4">친구 추가</button>
+                    {searchResult.map(friend=>(
+                        <li key={friend.friendFk} className="list-group-item" 
+                        onClick={e=>selectKeyword(friend.friendFk)}>
+                            {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
+                            <button className="btn btn-success ms-4">채팅</button>
                             <button className="btn btn-secondary ms-4">프로필 보기</button>
+                            <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
                     ))}
                 </ul>
+            )}
+        </div>
+    </div>
+    <div className="row mt-2">
+        <div className="col">
+    {open === false && (
+            <ul className="list-group">
+                {friendList.map(friend=>(
+                    <li key={friend.friendFk} className="list-group-item">
+                        {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
+                        <button className="btn btn-success ms-4">채팅</button>
+                        <button className="btn btn-secondary ms-4">프로필 보기</button>
+                        <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
+                    </li>
+                ))}
+            </ul>
             )}
         </div>
     </div>
