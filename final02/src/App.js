@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import MainContent from "./components/MainContent";
 import Menu from "./components/Menu";
 import Footer from './components/footer/Footer';
-
+import { Bounce, ToastContainer } from "react-toastify";
 
 
 import { useRecoilState } from "recoil";
@@ -63,7 +63,21 @@ const App = ()=>{
     <>
       <Menu/>
       <MainContent/>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+        />
       <Footer />
+
     </>
   );
 }

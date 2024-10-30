@@ -1,176 +1,216 @@
 import { Navigate, useNavigate, useParams } from "react-router";
 import Jumbotron from "../Jumbotron";
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect } from 'react';
+import { useCallback } from 'react';
 import axios from "axios";
+import { useState } from 'react';
+import { useMemo } from 'react';
 
-//ㅈㄴ 힘들어 살려주세요
+const CommunityDetail = ()=>{
+    //파라미터를 읽는 명령
+    const {communityNo} = useParams();
 
-const CommunityDetail = () => {
-    const { communityNo } = useParams();
+    //이동 도구
     const navigate = useNavigate();
+
+    //state
     const [community, setCommunity] = useState(null);
-    const [load, setLoad] = useState(false);
-    const [replyList, setReplyList] = useState([]);
-    const [newReply, setNewReply] = useState("");
-    const [newReplyParent, setNewReplyParent] = useState(null); 
+    const [load, setLoad] = useState(false);//통신이 완료되면 true
 
+    //댓글코드
+    const [replyInput, setReplyInput] = useState("");  //작성용
+    const [replyList, setReplyList] = useState([]) //댓글목록
+    const [replyEdit, setReplyEdit] = useState(""); //댓글 수정
+
+    const insertReply = useCallback (async (e) => {
+        e.preventDefault();
+        if (!replyInput) return; // 답글이 비어 있으면 무시
+        // try {
+            await axios.post(`/reply/${communityNo}`, { replyContent: replyInput }); // 답글 추가 API
+            setReplyInput(""); // 입력창 비우기
+            // loadReply(); // 답글 목록 새로 고침 이놈이 악의 근원
+            // toast.success("답글이 작성되었습니다!"); // 성공 알림
+        // } catch (e) {
+        //     console.error("Error adding reply", e);
+        // }
+    },[replyInput]);
+
+    //댓글목록 무한스크로롤로로로로로로로로로로로로로로로로로로로로로로로ㅗ로로로로로ㅗ로로
+    const loadReply = useCallback (async()=>{
+       const response = await axios.get(`/reply/${communityNo}`);
+        setReplyList(response.data);
+        console.log(response.data);
+    },[replyInput]);
+
+
+
+
+    //effect
     useEffect(() => {
+        console.log("communityNo:", communityNo); // 로그로 확인
         loadCommunity();
-        loadReplies();
-    }, [communityNo]);
+        loadReply();
+      }, [communityNo]);
 
+    //callback
     const loadCommunity = useCallback(async () => {
         try {
-            const resp = await axios.get(`/community/${communityNo}`);
-            setCommunity(resp.data);
+          const resp = await axios.get(`/community/${communityNo}`);
+          setCommunity(resp.data);
         } catch (e) {
-            setCommunity(null);
+          setCommunity(null);
         }
         setLoad(true);
-    }, [communityNo]);
+      }, [communityNo]);
+      
+      const deleteCommunity = useCallback(async () => {
+        await axios.delete(`/community/${communityNo}`);
+        navigate("/community/list");
+      }, [communityNo]);
 
-    const loadReplies = useCallback(async () => {
-        try {
-            const resp = await axios.get(`/reply/`);
-            setReplyList(resp.data);
-        } catch (e) {
-            console.error(e);
-        }
-    }, [communityNo]);
-
-    // 댓글 작성
-    const addReply = useCallback(async () => {
-        try {
-            const response = await axios.post("/reply/", {
-                replyContent: newReply,
-                replyOrigin: communityNo,
-                replyGroup: newReplyParent ? newReplyParent.replyGroup : null,
-                replyDepth: newReplyParent ? newReplyParent.replyDepth + 1 : 0
-            });
-    
-            console.log("댓글이 성공적으로 등록되었습니다:", response.data);
-    
-            // 댓글 등록 성공 시, 입력 필드를 초기화하고 댓글 목록을 새로고침
-            setNewReply("");
-            setNewReplyParent(null);
-            loadReplies();
-            
-        } catch (error) {
-            console.error("댓글 작성 중 오류 발생:", error);
-        }
-    }, [newReply, newReplyParent, communityNo, loadReplies]);
-    
-
-    // 댓글 삭제
-    const deleteReply = useCallback(async (replyNo) => {
-        try {
-            await axios.delete(`/reply/${replyNo}`);
-            loadReplies(); 
-        } catch (e) {
-            console.error(e);
-        }
-    }, [loadReplies]);
-
-    // 댓글 수정
-    const updateReply = useCallback(async (replyNo, updatedContent) => {
-        try {
-            await axios.put(`/reply/${replyNo}`, { replyContent: updatedContent });
-            loadReplies(); 
-        } catch (e) {
-            console.error(e);
-        }
-    }, [loadReplies]);
-
-    // 글 삭제 함수 추가
-    const deleteCommunity = useCallback(async () => {
-        try {
-            await axios.delete(`/community/${communityNo}`);
-            navigate("/community/list");
-        } catch (e) {
-            console.error(e);
-        }
-    }, [communityNo, navigate]);
-
-    const startReplyTo = (reply) => {
-        setNewReplyParent(reply);
-        setNewReply(`@${reply.replyWriter} `); 
-    };
-
-    const renderReplies = () => {
-        return replyList.map(reply => (
-            <div key={reply.replyNo} style={{ marginLeft: reply.replyDepth * 20 + 'px' }} className="mt-3">
-                <div><b>{reply.replyWriter}</b> - {reply.replyWtime}</div>
-                <div>{reply.replyContent}</div>
-                <button onClick={() => deleteReply(reply.replyNo)} className="btn btn-danger btn-sm">삭제</button>
-                <button onClick={() => startReplyTo(reply)} className="btn btn-secondary btn-sm">대댓글</button>
-            </div>
-        ));
-    };
-
-    if (load === false) {
+    //화면의 상태가 총 3가지로 존재할 수 있다.
+    //1. 로딩 전
+    //2. 로딩 후
+    //  (1) 데이터 있음
+    //  (2) 데이터 없음
+    if(load === false) {//1. 로딩 완료 전이면
         return (<>
-            <Jumbotron title={"?번 글상세정보"} />
-            {/* 로딩 중일 때 보일 플레이스홀더 */}
+            <Jumbotron title={"?번 글상세정보"}/>
+
+            <div className="row mt-4">
+                <div className="col-sm-3">
+                    제목
+                </div>
+                <div className="col-sm-9">
+                    <span className="placeholder col-6"></span>
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col-sm-3">
+                    상태
+                </div>
+                <div className="col-sm-9">
+                <span className="placeholder col-4"></span>
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col-sm-3">
+                    카테고리
+                </div>
+                <div className="col-sm-9">
+                <span className="placeholder col-4"></span>
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col-sm-3">
+                    내용
+                </div>
+                <div className="col-sm-9">
+                    <span className="placeholder col-3"></span>
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col-sm-3">
+                    파일첨부(미정)
+                </div>
+                <div className="col-sm-9">
+                    <span className="placeholder col-2"></span>
+                </div>
+            </div>
+
+
+            {/* 각종 버튼들 */}
+            <div className="row mt-4">
+                <div className="col text-end">
+                    <button className="btn btn-secondary placeholder col-2 ms-2">목록보기</button>
+                    <button className="btn btn-warning placeholder col-2 ms-2">수정하기</button>
+                    <button className="btn btn-danger placeholder col-2 ms-2">삭제하기</button>
+                </div>
+            </div>
+
+
+
+
         </>);
     }
 
-    if (community === null) {
-        return <Navigate to="/notFound" />
+    if(community === null) {//2-(2). 데이터가 없으면
+        return <Navigate to="/notFound"/>
     }
 
+    //view. 2-(1)
     return (<>
-        <Jumbotron title={communityNo + "번 글 상세정보"} />
-        <div className="row mt-4">
-            <div className="col-sm-3">제목</div>
-            <div className="col-sm-9">{community.communityTitle}</div>
-        </div>
+        <Jumbotron title={communityNo +"번 글 상세정보"}/>
 
         <div className="row mt-4">
-            <div className="col-sm-3">상태</div>
-            <div className="col-sm-9">{community.communityState}</div>
-        </div>
-
-        <div className="row mt-4">
-            <div className="col-sm-3">카테고리</div>
-            <div className="col-sm-9">{community.communityCategory}</div>
-        </div>
-
-        <div className="row mt-4">
-            <div className="col-sm-3">내용</div>
-            <div className="col-sm-9">{community.communityContent}</div>
-        </div>
-
-        {/* 댓글 작성 폼 */}
-        <div className="row mt-4">
-            <div className="col-sm-12">
-                <h4>댓글</h4>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={newReply}
-                    onChange={e => setNewReply(e.target.value)}
-                    placeholder="댓글을 입력하세요"
-                />
-                <button onClick={addReply} className="btn btn-primary mt-2">댓글 작성</button>
-                {newReplyParent && <div>대댓글 대상: {newReplyParent.replyWriter}</div>}
+            <div className="col-sm-3">
+                제목
+            </div>
+            <div className="col-sm-9">
+                {community.communityTitle}
             </div>
         </div>
 
-        {/* 댓글 목록 렌더링 */}
         <div className="row mt-4">
-            <div className="col-sm-12">
-                {renderReplies()}
+            <div className="col-sm-3">
+                상태
+            </div>
+            <div className="col-sm-9">
+                {community.communityState}
+            </div>
+        </div>
+
+        <div className="row mt-4">
+            <div className="col-sm-3">
+                카테고리
+            </div>
+            <div className="col-sm-9">
+                {community.communityCategory}
+            </div>
+        </div>
+
+        <div className="row mt-4">
+            <div className="col-sm-3">
+                내용
+            </div>
+            <div className="col-sm-9">
+                {community.communityContent}
+            </div>
+        </div>
+
+        <div className="row mt-4">
+            <div className="col-sm-3">
+                파일첨부(미정)
             </div>
         </div>
 
         {/* 각종 버튼들 */}
         <div className="row mt-4">
             <div className="col text-end">
-                <button className="btn btn-secondary ms-2" onClick={e => navigate("/community/list")}>목록</button>
-                <button className="btn btn-warning ms-2" onClick={e => navigate("/community/edit/" + communityNo)}>수정하기</button>
-                <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button>
+                <button className="btn btn-secondary ms-2"
+                    onClick={e=>navigate("/community/list")}>목록</button>
+                <button className="btn btn-warning ms-2"
+                    onClick={e=>navigate("/community/edit/"+communityNo)}>수정하기</button>
+                <button className="btn btn-danger ms-2"
+                    onClick={deleteCommunity}>삭제하기</button>
             </div>
         </div>
+
+                    {/* 댓글작성버튼 */}
+                    <div className="row mt-4">
+                <div className="col">
+                <input type="text" name="replyContent" className="form-control"
+                    value={replyInput} onChange={e=>setReplyInput (e.target.value)} />
+                    <button className="btn btn-success placeholder col-2 ms-2" onClick={insertReply}>작성하기</button>
+                    <button className="btn btn-warning placeholder col-2 ms-2">수정하기</button>
+                    <button className="btn btn-danger placeholder col-2 ms-2">삭제하기</button>
+                </div>
+            </div>
+
     </>);
 };
 

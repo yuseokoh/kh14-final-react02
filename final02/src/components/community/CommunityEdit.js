@@ -15,6 +15,7 @@ const CommunityEdit = ()=>{
 
     //state
     const [community, setCommunity] = useState(null);
+    const [message, setMessage] = useState();
 
     //effect
     //- effect에는 async를 쓸 수 없다
@@ -43,6 +44,10 @@ const CommunityEdit = ()=>{
     }, [community]);
 
     const updateCommunity = useCallback(async () => {
+        if(community.communityTitle.length === 0 || community.communityContent.length === 0) {
+            setMessage("제목과 내용은 필수입니다.");
+            return;
+        }
         // communityNo가 community 객체에 없다면 추가
         const updatedCommunity = { ...community, communityNo };
     
@@ -95,6 +100,14 @@ const CommunityEdit = ()=>{
                 <label>파일첨부(미정)</label>
             </div>
         </div>
+
+        
+        <div className="row">
+            <div className="col text-danger text-center">
+                {message}
+            </div>
+        </div>
+
         <div className="row mt-4">
             <div className="col text-center">
                 <button type="button" className="btn btn-lg btn-success"
