@@ -132,6 +132,28 @@ const MemberEdit = () => {
                 </div>
             </div>
 
+        </div>
+
+        {/* 숨겨진 필드들 */}
+        <input type="hidden" name="memberId" value={member.memberId} />
+        <input type="hidden" name="memberPw" value={member.memberPw} />
+        <input type="hidden" name="memberLogin" value={member.memberLogin} />
+        <input type="hidden" name="memberJoin" value={member.memberJoin} />
+        <input type="hidden" name="memberLogout" value={member.memberLogout} />
+        <input type="hidden" name="memberLevel" value={member.memberLevel} />
+        <input type="hidden" name="verificationToken" value={member.verificationToken} />
+        <input type="hidden" name="emailVerified" value={member.emailVerified} />
+        <input type="hidden" name="memberPoint" value={member.memberPoint} onChange={changeMember} />
+        <input type="hidden" name="kakaoUserId" value={member.kakaoUserId} />
+
+        <div className="row mt-4">
+            <div className="col text-center">
+                <button type="button" className="btn btn-lg btn-success"
+                    onClick={updateMember}>수정</button>
+                {/* <button type="button" className="btn btn-lg btn-secondary ms-2"
+                    onClick={e => navigate("/member/mypage/" + memberId)}></button> */}
+
+
             <div className="row mt-4">
                 <div className="col">
                     <label>주소</label>
@@ -140,19 +162,10 @@ const MemberEdit = () => {
                     <input type="text" name="memberAddress2" className="form-control mt-2"
                         value={member?.memberAddress2 || ''} onChange={changeMember} />
                 </div>
+
             </div>
 
-            {/* 숨겨진 필드들 */}
-            <input type="hidden" name="memberId" value={member?.memberId || ''} />
-            <input type="hidden" name="memberPw" value={member?.memberPw || ''} />
-            <input type="hidden" name="memberLogin" value={member?.memberLogin || ''} />
-            <input type="hidden" name="memberJoin" value={member?.memberJoin || ''} />
-            <input type="hidden" name="memberLogout" value={member?.memberLogout || ''} />
-            <input type="hidden" name="memberLevel" value={member?.memberLevel || ''} />
-            <input type="hidden" name="verificationToken" value={member?.verificationToken || ''} />
-            <input type="hidden" name="emailVerified" value={member?.emailVerified || ''} />
-            <input type="hidden" name="memberPoint" value={member?.memberPoint || ''} />
-            <input type="hidden" name="kakaoUserId" value={member?.kakaoUserId || ''} />
+
 
             <div className="row mt-4">
                 <div className="col text-center">
