@@ -1,62 +1,94 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import Jumbotron from "../Jumbotron";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { useRecoilValue } from 'recoil';
+import { loginState, memberIdState } from "../../utils/recoil";
+import { useNavigate } from 'react-router-dom';
 
-const MyPage = ()=>{
-    //state
+const MyPage = () => {
+    // state
     const [member, setMember] = useState({});
-    
-    //effect
-    useEffect(()=>{
-        loadMember();
+    const [image, setImage] = useState('');
+
+    // Recoil 상태 사용
+    const login = useRecoilValue(loginState);
+    const memberId = useRecoilValue(memberIdState);
+    const navigate = useNavigate(); 
+
+    // effect
+    useEffect(() => {
+        if (login && memberId) {
+            loadMember(memberId);  // Recoil에서 가져온 memberId로 로드
+        }
+    }, [login, memberId]);
+
+    // callback
+    const loadMember = useCallback(async (memberId) => {
+        try {
+            const resp = await axios.get(`http://localhost:8080/member/${memberId}`);
+            setMember(resp.data);
+
+            // 멤버 정보를 불러온 후 이미지도 로드
+            if (resp.data.memberId) {
+                loadImage(resp.data.memberId);
+            }
+        } catch (error) {
+            console.error("Error loading member data:", error);
+        }
     }, []);
 
-    //callback
-    const loadMember = useCallback(async ()=>{
-        const resp = await axios.get("http://localhost:8080/member/find");
-        setMember(resp.data);
-    }, [member]);
+    const loadImage = useCallback(async (memberId) => {
+        try {
+            const resp = await axios.get(`/member/image/${memberId}`);
+            const { attachment } = resp.data;
+    
+            if (attachment) {
+                // attachmentNo를 기반으로 이미지 URL 생성
+                const imageUrl = `/member/download/${attachment}`;
+                setImage(imageUrl); // 이미지 URL 설정
+            } else {
+                setImage(null); // attachmentNo가 없을 경우 처리 (예: 기본 이미지 설정)
+            }
+        } catch (error) {
+            console.error("Error loading image:", error);
+        }
+    }, []);
 
-    return (<>
-        <Jumbotron title={`${member.memberId} 님의 정보`}/>
-
-        <div className="row mt-4">
-            <div className="col-3">닉네임</div>
-            <div className="col-3">{member.memberNickname}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">전화번호</div>
-            <div className="col-3">{member.memberContact}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">이메일</div>
-            <div className="col-3">{member.memberEmail}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">생년월일</div>
-            <div className="col-3">{member.memberBirth}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">포인트</div>
-            <div className="col-3">{member.memberNickname}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">주소</div>
-            <div className="col-3">
-                [{member.memberPost}]
-                {member.memberAddress1}
-                {member.memberAddress2}
+    return (
+        <>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img
+                    src={image || '/default-profile.png'} // Fallback to default image
+                    alt="Profile"
+                    style={{ width: '100px', height: '100px', borderRadius: '50%', marginRight: '10px' }}
+                />
+                <h1>{`${member.memberId || ''} 님의 정보`}</h1>
             </div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">가입일</div>
-            <div className="col-3">{member.memberJoin}</div>
-        </div>
-        <div className="row mt-4">
-            <div className="col-3">최종로그인</div>
-            <div className="col-3">{member.memberLogin}</div>
-        </div>
-    </>);
+
+            <div className="row mt-4">
+                <div className="col-3">닉네임</div>
+                <div className="col-3">{member.memberNickname}</div>
+            </div>
+            <div className="row mt-4">
+                <div className="col-3">전화번호</div>
+                <div className="col-3">{member.memberContact}</div>
+            </div>
+            <div className="row mt-4">
+                <div className="col-3">이메일</div>
+                <div className="col-3">{member.memberEmail}</div>
+            </div>
+            <div className="row mt-4">
+                <div className="col-3">생년월일</div>
+                <div className="col-3">{member.memberBirth}</div>
+            </div>
+            
+            <div className="row mt-4">
+                <div className="col text-end">
+                    <button className="btn btn-warning ms-2"
+                        onClick={() => navigate(`/member/mypageedit/${memberId}`)}>수정하기</button>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default MyPage;

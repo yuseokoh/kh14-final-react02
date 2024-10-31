@@ -53,7 +53,10 @@ import SandBox from "./game/gamecategory/Sandbox";
 import Library from "../components/library/Library";
 import TestGame from "../gameComponents/TestGame";
 import KHSurvival from "../gameComponents/KHSurvival";
+import MyPage from "./member/MyPage";
+import MyPageEdit from "./member/MyPageEdit";
 import Ranking from "./play/Ranking";
+
 
 
 
@@ -111,6 +114,9 @@ const MainContent = () => {
                     <Route path="/member/signupPage" element={<SignupPage />} />
                     {/* 회원가입 아이디 비밀번호입력 */}
                     <Route path="/member/signupForm" element={<SignupForm />} />
+                    {/* 마이페이지 */}
+                    <Route path="/member/mypage/:memberId" element={<MyPage />} />
+                    <Route path="/member/mypageedit/:memberId" element={<MyPageEdit />} />
 
                     {/* 결제 */}
 
