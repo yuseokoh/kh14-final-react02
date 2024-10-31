@@ -149,7 +149,7 @@ const PaymentSuccessPage = () => {
                         {t('paymentSuccess.goToLibrary')}
                     </button>
                     <button onClick={handleGoToCancelPage} className="btn btn-danger">
-        결제 취소하기
+        결제 내역
       </button>
                 </div>
             </div>
