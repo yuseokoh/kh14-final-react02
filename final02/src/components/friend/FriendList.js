@@ -1,11 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { loginState, memberIdState, memberLoadingState, receiverIdState } from "../../utils/recoil";
 import axios from "axios";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const FriendList = ()=>{
-    
+    //navigate
+    const navigate = useNavigate();
+
+    const setReceiverId = useSetRecoilState(receiverIdState);
+
+    const chatClickFromId = (friend) => {
+        setReceiverId(friend.friendFrom);
+        navigate('/websocket');
+    };
+    const chatClickToId = (friend) => {
+        setReceiverId(friend.friendTo);
+        navigate('/websocket');
+    };
     
     //state
     const [friendList, setFriendList] = useState([]);//친구 목록
@@ -79,7 +91,9 @@ const FriendList = ()=>{
                         <li key={friend.friendFk} className="list-group-item" 
                         onClick={e=>selectKeyword(friend.friendFk)}>
                             {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                            <button className="btn btn-success ms-4">채팅</button>
+                            {memberId === friend.friendTo ? 
+                            <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
+                             : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
                             <button className="btn btn-secondary ms-4">프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
@@ -95,7 +109,9 @@ const FriendList = ()=>{
                 {friendList.map(friend=>(
                     <li key={friend.friendFk} className="list-group-item">
                         {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                        <button className="btn btn-success ms-4">채팅</button>
+                        {memberId === friend.friendTo ? 
+                            <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
+                             : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
                         <button className="btn btn-secondary ms-4">프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>

@@ -54,6 +54,8 @@ import Library from "../components/library/Library";
 import TestGame from "../gameComponents/TestGame";
 import KHSurvival from "../gameComponents/KHSurvival";
 import Ranking from "./play/Ranking";
+import Chat from "./chat/Chat";
+import WebsocketClient from "./websocket/WebsocketClient";
 
 
 
@@ -148,6 +150,9 @@ const MainContent = () => {
                     <Route path="/testgame" element={<TestGame />} />  
                     <Route path="/testgame2" element={<KHSurvival />} />  
                     <Route path="/play" element={<Ranking />} />  
+
+                    {/* 웹소켓 */}
+                    <Route path="/websocket" element={<WebsocketClient />} />  
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-use" element={<TermsOfUse />} />
