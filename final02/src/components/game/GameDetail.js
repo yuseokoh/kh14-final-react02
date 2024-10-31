@@ -40,6 +40,8 @@ const GameDetail = () => {
         reviewContent: "",
         reviewScore: 5
     });
+    const [ canWriteReview, setCanWriteReview] = useState(true);
+    //리뷰 작성 버튼을 표시하기전에 리뷰 작성 가능 여부 확인
 
     /**
      * 게임 데이터와 이미지를 로드하는 함수
@@ -73,17 +75,19 @@ const GameDetail = () => {
      * 리뷰 목록을 페이지별로 로드하는 함수
      * @param {number} page - 페이지 번호
      */
-    const loadReviews = useCallback(async (page) => {
-        try {
+    const loadReviews = useCallback(async (page)  => {
+        try {     
             const response = await axios.get(
                 `http://localhost:8080/game/${gameNo}/reviews?page=${page}&size=10`
             );
             setReviews(response.data.reviews);
             setTotalPages(response.data.totalPages);
+            setCurrentPage(response.data.currentPage);
         } catch (error) {
             console.error("리뷰 조회 실패:", error);
         }
     }, [gameNo]);
+    
 
     /**
      * 인기 리뷰 목록을 로드하는 함수
@@ -145,6 +149,30 @@ const GameDetail = () => {
         loadPopularReviews();
     }, [loadGameData, loadReviews, loadPopularReviews]);
 
+    //컴포넌트 마운트식 리뷰 작성 가능 여부 확인
+    useEffect(() => {
+        const checkReviewStatus = async () => {
+            if (login && memberId) {
+                try {
+                    const token = sessionStorage.getItem('refreshToken');
+                    const response = await axios.get(
+                        `http://localhost:8080/game/${gameNo}/review/check`, 
+                        {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        }
+                    );
+                    setCanWriteReview(!response.data.hasReview);
+                } catch (error) {
+                    console.error("리뷰 상태 확인 실패:", error);
+                }
+            }
+        };
+
+        checkReviewStatus();
+    }, [login, memberId, gameNo]);
+
     // 로딩 상태 처리
     if (loading) return <div className={styles.loading}>로딩 중...</div>;
     if (!game) return <div className={styles.error}>게임을 찾을 수 없습니다</div>;
@@ -197,18 +225,29 @@ const submitReview = async () => {
                 'Content-Type': 'application/json'
             }
         });
+
+        //성공시 처리
         setIsWritingReview(false);
         setNewReview({ reviewContent: "", reviewScore: 5 });
         loadReviews(1);
         loadGameData(); // 게임 평점 업데이트를 위한 새로고침
+
     } catch (error) {
-        if (error.response?.data.includes("이미 리뷰를 작성했습니다")) {
-            alert("이미 리뷰를 작성했습니다.");
+         // 에러 응답 처리
+         if (error.response) {
+            if (error.response.data.includes("이미 리뷰를 작성했습니다")) {
+                alert("이미 이 게임에 대한 리뷰를 작성하셨습니다.");
+            } else {
+                alert("리뷰 작성 중 오류가 발생했습니다.");
+            }
         } else {
-            console.error("리뷰 작성 실패:", error);
+            alert("서버와의 통신 중 오류가 발생했습니다.");
         }
+        console.error("리뷰 작성 실패:", error);
     }
 };
+
+
 
 return (
     <div className={styles.pageContainer}>
