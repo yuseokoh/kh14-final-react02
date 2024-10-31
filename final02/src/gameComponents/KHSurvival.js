@@ -3,55 +3,32 @@ import TestGame from "./TestGame";
 import { useRecoilValue } from "recoil";
 import { memberIdState, memberLoadingState } from "../utils/recoil";
 import axios from "axios";
+import Ranking from "../components/play/Ranking";
 
 const KHSurvival = () => {
-    //state
-    const [gameData, setGameData] = useState(null);
-    
-    const memberId = useRecoilValue(memberIdState);
-    const memberLoading = useRecoilValue(memberLoadingState);
+  //state
 
+  const memberId = useRecoilValue(memberIdState);
 
-
-    useEffect(()=>{
-        if(memberLoading === false) return;
-        console.log(memberId);
-    }, [memberLoading, memberId]);
-
-    useEffect(() => {
-        if (gameData) {
-            // 백엔드로 데이터 전송
-            const token = localStorage.getItem('token');
-            axios.post('http://localhost:8080/play', {
-                enemyKilled: gameData.enemyKilled,
-                level: gameData.level,
-                memberId: memberId // 추가로 memberId도 전송
-            })
-                .then(response => {
-                    console.log('데이터 전송 성공:', response.data);
-                })
-                .catch(error => {
-                    console.error('데이터 전송 실패:', error);
-                });
-        }
-    }, [gameData, memberId]);
-
-    const handleGameOver = (data) => {
-        setGameData(data);
-    };
-
-
-    return (<>
-        <div className="row mt-4">
-      <div className="col d-flex justify-content-center">
-        <div>
-          <h2>KH Survival</h2>
-          <TestGame onGameOver={handleGameOver}/>
-          <h1>{memberId}</h1>
+  return (
+    <>
+      <div className="row pt-4 pb-4"  style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
+        <div className="col d-flex justify-content-center">
+          <div>
+            <h2>KH Survival</h2>
+            <TestGame memberId={memberId} />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col">
+            <Ranking />
+          </div>
         </div>
       </div>
-    </div>
-    </>);
+      {/* <div className="row pt-4" style={{ backgroundColor: "#141d29" }}>
+      </div> */}
+    </>
+  );
 };
 
 export default KHSurvival;

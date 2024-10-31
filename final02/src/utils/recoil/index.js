@@ -27,19 +27,36 @@ const memberLevelState = atom({
     default:""
 });
 
+const kakaoIdState = atom({
+    key: "kakaoIdState",
+    default: "",
+});
+const kakaoAccessTokenState = atom({
+    key: "kakaoAccessTokenState",
+    default: "",
+});
+
+// 로그인 상태 계산 - get: (state)를 유지한 형태
 const loginState = selector({
-    key: "loginState",//식별자
-    get: (state)=>{//state에서 원하는 항목을 읽어서 계산한 뒤 반환
+    key: "loginState",
+    get: ({ get }) => {
+        // memberId, memberLevel, kakaoId 값을 가져옴
+        const memberId = get(memberIdState);
+        const memberLevel = get(memberLevelState);
+        const kakaoId = get(kakaoIdState);
 
-        //atom으로 만든 state 중에 memberIdState를 가져오세요
-        const memberId = state.get(memberIdState);
-        //atom으로 만든 state 중에 memberLevelState를 가져오세요
-        const memberLevel = state.get(memberLevelState);
-
-        return memberId.length > 0 && memberLevel.length > 0;
+        // 조건: memberId, memberLevel, kakaoId 중 하나라도 값이 있으면 로그인 상태
+        return (memberId.length > 0 && memberLevel.length > 0) || kakaoId.length > 0;
     }
 });
-export {memberIdState, memberLevelState, loginState};
+
+export {
+    memberIdState,
+    memberLevelState,
+    kakaoIdState,
+    kakaoAccessTokenState,
+    loginState
+};
 
 //로그인 처리 완료 여부
 const memberLoadingState = atom({

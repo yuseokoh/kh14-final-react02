@@ -6,7 +6,7 @@
 */
 
 import { NavLink, useNavigate } from "react-router-dom";
-import { loginState, memberIdState, memberLevelState } from "../utils/recoil";
+import { loginState, memberIdState, memberLevelState, kakaoIdState, kakaoAccessTokenState } from "../utils/recoil";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useCallback } from 'react';
 import axios from "axios";
@@ -23,26 +23,76 @@ const Menu = () => {
     //recoil state
     const [memberId, setMemberId] = useRecoilState(memberIdState);
     const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
-
+    const [kakaoId, setKakaoId] = useRecoilState(kakaoIdState);
+    const [kakaoAccessToken, setKakaoAccessToken] = useRecoilState(kakaoAccessTokenState);
     const login = useRecoilValue(loginState);//읽기전용 항목은 이렇게 읽음
 
-    //callback
-    const logout = useCallback((e) => {
-        //e.preventDefault();
+    // //callback
+    // const logout = useCallback((e) => {
+    //     //e.preventDefault();
 
-        //recoil에 저장된 memberId와 memberLevel을 제거
+    //     //recoil에 저장된 memberId와 memberLevel을 제거
+    //     setMemberId("");
+    //     setMemberLevel("");
+
+
+
+    //     //axios에 설정된 Authorization 헤더도 제거
+    //     delete axios.defaults.headers.common["Authorization"];
+
+    //     //localStorage, sessionStorage의 refreshToken을 제거
+    //     window.localStorage.removeItem("refreshToken");
+    //     window.sessionStorage.removeItem("refreshToken");
+
+    //     navigate("/");
+    // }, [memberId, memberLevel]);
+
+    // 로그아웃 기능 수정
+    const logout = useCallback((e) => {
+        // recoil에 저장된 memberId와 memberLevel을 제거
         setMemberId("");
         setMemberLevel("");
+        setKakaoId("");
+        setKakaoAccessToken("");
 
-        //axios에 설정된 Authorization 헤더도 제거
+
+        // axios에 설정된 Authorization 헤더도 제거
         delete axios.defaults.headers.common["Authorization"];
 
-        //localStorage, sessionStorage의 refreshToken을 제거
+        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
         window.localStorage.removeItem("refreshToken");
         window.sessionStorage.removeItem("refreshToken");
+        window.localStorage.removeItem("jwtToken");
+        window.localStorage.removeItem("kakaoAccessToken");
+        window.localStorage.removeItem("kakaoId");
 
+
+        // 카카오 로그인 관련 토큰 제거
+        const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
+        if (kakaoAccessToken) {
+            // 카카오 로그아웃 요청 부분 수정
+            axios.get("https://kapi.kakao.com/v1/user/logout", {
+                headers: {
+                    Authorization: `Bearer ${kakaoAccessToken}`
+                }
+            })
+
+                .then(response => {
+                    console.log("카카오 로그아웃 성공", response);
+                    // 로그아웃 후 localStorage에서 카카오 관련 정보 삭제
+                    window.localStorage.removeItem("kakaoAccessToken");
+                    window.localStorage.removeItem("kakaoId");
+                })
+                .catch(error => {
+                    console.error("카카오 로그아웃 실패", error);
+                });
+        } else {
+            console.warn("카카오 액세스 토큰이 없습니다.");
+        }
+
+        // 페이지 이동
         navigate("/");
-    }, [memberId, memberLevel]);
+    }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, kakaoAccessToken, navigate]);
 
     //view
     return (
@@ -95,11 +145,11 @@ const Menu = () => {
                                     aria-haspopup="true" aria-expanded="false">{t('menu.support')}</a>
                             </li>
                             <li className="nav-item">
-                            <NavLink className="nav-link" to="/member/KakaoLoginPage">카카오로그인 테스트</NavLink>
-                        </li>
-            
+                                <NavLink className="nav-link" to="/member/KakaoLoginPage">카카오로그인 테스트</NavLink>
+                            </li>
+
                             {login ? (<>
-                               
+
 
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/member/mypage/:memberId">
