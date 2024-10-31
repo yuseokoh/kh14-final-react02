@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
@@ -7,19 +7,18 @@ import { useNavigate } from 'react-router-dom';
 const MyPage = () => {
     // state
     const [member, setMember] = useState({});
+    const [image, setImage] = useState(null); // 이미지 URL 상태 추가
     const navigate = useNavigate(); 
 
     // Recoil 상태 사용
     const login = useRecoilValue(loginState);
     const memberId = useRecoilValue(memberIdState);
 
-    const navigate = useNavigate();
-
-
     // effect
     useEffect(() => {
         if (login && memberId) {
             loadMember(memberId);
+            loadImage(memberId);
         }
     }, [login, memberId]);
 
@@ -31,10 +30,9 @@ const MyPage = () => {
         } catch (error) {
             console.error("Error loading member data:", error);
         }
-
     }, []);
 
-
+    // 이미지 로드
     const loadImage = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`/member/image/${memberId}`);
@@ -45,18 +43,16 @@ const MyPage = () => {
                 const imageUrl = `/member/download/${attachment}`;
                 setImage(imageUrl); // 이미지 URL 설정
             } else {
-                setImage(null); // attachmentNo가 없을 경우 처리 (예: 기본 이미지 설정)
+                setImage('/default-profile.png'); // 기본 이미지 설정
             }
         } catch (error) {
             console.error("Error loading image:", error);
+            setImage('/default-profile.png'); // 에러 시 기본 이미지 설정
         }
     }, []);
 
-    // 이미지 URL 생성
-    const imageUrl = member.attachment 
-        ? `http://localhost:8080/member/download/${member.attachment}`
-        : '/default-profile.png';
-
+    // 이미지 URL을 선택할 때, 선택된 이미지가 없다면 기본 이미지 사용
+    const imageUrl = image || '/default-profile.png';
 
     return (
         <>
@@ -122,18 +118,12 @@ const MyPage = () => {
 
             <div className="row mt-4">
                 <div className="col text-end">
-                <button 
-    className="btn btn-warning ms-2"
-    onClick={() => {
-        console.log(memberId); // memberId 값 확인
-        // debugger;
-        navigate(`/member/mypageedit/${memberId}`);
-    }}
->
-    수정하기
-</button>
-
-                        
+                    <button 
+                        className="btn btn-warning ms-2"
+                        onClick={() => navigate(`/member/mypageedit/${memberId}`)}
+                    >
+                        수정하기
+                    </button>
                 </div>
             </div>
         </>
