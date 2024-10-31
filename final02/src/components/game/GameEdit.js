@@ -14,20 +14,26 @@ const GameEdit = () => {
     // Image handling states
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewUrls, setPreviewUrls] = useState([]);
+    const [existingImages, setExistingImages] = useState([]); // 기존 이미지 목록
+    const [deletedImageNos, setDeletedImageNos] = useState([]); // 삭제할 이미지 번호들
 
     // Load game data
     useEffect(() => {
-        loadGame();
-    }, []);
-
-    const loadGame = useCallback(async () => {
-        try {
-            const resp = await axios.get(`http://localhost:8080/game/${gameNo}`);
-            setGame(resp.data);
-        }
-        catch (e) {
-            setGame(null);
-        }
+        const loadData = async () => {
+            try {
+                // 게임 정보 로드
+                const gameResp = await axios.get(`http://localhost:8080/game/${gameNo}`);
+                setGame(gameResp.data);
+                
+                // 기존 이미지 로드
+                const imageResp = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+                setExistingImages(imageResp.data || []);
+            } catch (err) {
+                console.error("데이터 로딩 실패:", err);
+                setGame(null);
+            }
+        };
+        loadData();
     }, [gameNo]);
 
     // File handling functions
@@ -52,6 +58,25 @@ const GameEdit = () => {
         setPreviewUrls(newPreviewUrls);
     };
 
+    //첨부된 이미지를 삭제처리하는 코드
+    const handleExistingImageDelete = async (attachmentNo) => {
+        try {
+            // 서버로 삭제 요청 보내기
+            await axios.delete(`http://localhost:8080/game/image/${attachmentNo}`, {
+                params: { gameNo },
+            });
+            
+            // 삭제에 성공하면 화면에서 제거
+            setExistingImages(prev => 
+                prev.filter(img => img.attachmentNo !== attachmentNo)
+            );
+            setDeletedImageNos(prev => [...prev, attachmentNo]);
+        } catch (error) {
+            console.error("이미지 삭제 실패:", error);
+            alert("이미지 삭제에 실패했습니다");
+        }
+    };
+    
     const changeGame = useCallback(e => {
         setGame({
             ...game,
@@ -62,31 +87,36 @@ const GameEdit = () => {
     const updateGame = useCallback(async () => {
         try {
             const formData = new FormData();
-
+    
             formData.append('game', new Blob([JSON.stringify(game)], {
                 type: 'application/json'
             }));
-
+    
             selectedFiles.forEach(file => {
                 formData.append('files', file);
             });
-
+    
+            // 삭제할 이미지 번호들을 문자열 배열로 직접 추가
+            deletedImageNos.forEach(no => {
+                formData.append('deletedImageNos', no);
+            });
+    
             await axios.put("http://localhost:8080/game/", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
+    
             // Cleanup preview URLs
             previewUrls.forEach(url => URL.revokeObjectURL(url));
-
+    
             navigate("/game/detail/" + gameNo);
         } catch (error) {
             console.error("수정 실패:", error);
             alert("수정에 실패했습니다");
         }
-    }, [game, selectedFiles, gameNo, navigate]);
-
+    }, [game, selectedFiles, deletedImageNos, gameNo, navigate, previewUrls]);
+    
     return (game !== null ? (
         <div className={styles.container}>
             <h1 className={styles.title}>{game.gameTitle} 정보 수정</h1>
@@ -95,8 +125,27 @@ const GameEdit = () => {
             <div className={styles.imageUploadSection}>
                 <h3>게임 이미지</h3>
                 <div className={styles.imagePreviewArea}>
+                    {/* 기존 이미지들 */}
+                    {existingImages.map((img) => (
+                        <div key={img.attachmentNo} className={styles.previewContainer}>
+                            <img 
+                                src={`http://localhost:8080/game/download/${img.attachmentNo}`}
+                                alt="기존 게임 이미지"
+                                className={styles.previewImage}
+                            />
+                            <button 
+                                onClick={() => handleExistingImageDelete(img.attachmentNo)}
+                                className={styles.removeButton}
+                            >
+                                <X size={20} />
+                            </button>
+                            <div className={styles.imageLabel}>기존 이미지</div>
+                        </div>
+                    ))}
+                    
+                    {/* 새로 추가된 이미지들 */}
                     {previewUrls.map((url, index) => (
-                        <div key={index} className={styles.previewContainer}>
+                        <div key={`new-${index}`} className={styles.previewContainer}>
                             <img 
                                 src={url} 
                                 alt={`미리보기 ${index + 1}`} 
@@ -108,8 +157,10 @@ const GameEdit = () => {
                             >
                                 <X size={20} />
                             </button>
+                            <div className={styles.imageLabel}>새 이미지</div>
                         </div>
                     ))}
+                    
                     <label className={styles.uploadButton}>
                         <input
                             type="file"

@@ -7,35 +7,33 @@ import { useNavigate } from 'react-router-dom';
 const MyPage = () => {
     // state
     const [member, setMember] = useState({});
-    const [image, setImage] = useState('');
+    const navigate = useNavigate(); 
 
     // Recoil 상태 사용
     const login = useRecoilValue(loginState);
     const memberId = useRecoilValue(memberIdState);
+
     const navigate = useNavigate();
+
 
     // effect
     useEffect(() => {
         if (login && memberId) {
-            loadMember(memberId);  // Recoil에서 가져온 memberId로 로드
+            loadMember(memberId);
         }
     }, [login, memberId]);
 
-    // callback
+    // member 정보 로드
     const loadMember = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`http://localhost:8080/member/${memberId}`);
             setMember(resp.data);
-
-            // 멤버 정보를 불러온 후 이미지도 로드
-            if (resp.data.memberId) {
-                loadImage(resp.data.memberId);
-            }
         } catch (error) {
             console.error("Error loading member data:", error);
         }
 
     }, []);
+
 
     const loadImage = useCallback(async (memberId) => {
         try {
@@ -54,15 +52,21 @@ const MyPage = () => {
         }
     }, []);
 
+    // 이미지 URL 생성
+    const imageUrl = member.attachment 
+        ? `http://localhost:8080/member/download/${member.attachment}`
+        : '/default-profile.png';
+
+
     return (
         <>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img
-                    src={image || '/default-profile.png'} // Fallback to default image
+                    src={imageUrl}
                     alt="Profile"
                     style={{ width: '100px', height: '100px', borderRadius: '50%', marginRight: '10px' }}
                 />
-                <h1>{`${member.memberId || ''} 님의 정보`}</h1>
+                <h1>{`${member?.memberId || ''} 님의 정보`}</h1>
             </div>
             <div className="row mt-4">
                 <div className="col-3">레벨</div>
@@ -118,8 +122,18 @@ const MyPage = () => {
 
             <div className="row mt-4">
                 <div className="col text-end">
-                    <button className="btn btn-warning ms-2"
-                        onClick={() => navigate(`/member/mypageedit/${memberId}`)}>수정하기</button>
+                <button 
+    className="btn btn-warning ms-2"
+    onClick={() => {
+        console.log(memberId); // memberId 값 확인
+        // debugger;
+        navigate(`/member/mypageedit/${memberId}`);
+    }}
+>
+    수정하기
+</button>
+
+                        
                 </div>
             </div>
         </>
