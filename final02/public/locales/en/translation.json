@@ -8,7 +8,7 @@
     "signup": "Sign Up",
     "login": "Login",
     "logout": "Logout",
-    
+    "library" :"Library",
     "wishlist": "Wishlist",
     "cart": "Cart"
   },
