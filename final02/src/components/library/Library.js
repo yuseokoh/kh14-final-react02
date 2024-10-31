@@ -2,27 +2,26 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
-import styles from './Library.module.css'; // Add your CSS styling here
+import styles from './Library.module.css';
+import { useNavigate } from 'react-router';
 
 const Library = () => {
-  // State for library list and image URLs
+  const navigate = useNavigate();
   const [libList, setLibList] = useState([]);
-  const [imageUrls, setImageUrls] = useState({}); // Manage multiple image URLs
+  const [imageUrls, setImageUrls] = useState({});
   
-  // Recoil values for login state and member ID
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
 
-  // Load library games
   const loadLib = useCallback(async () => {
-    try{  
-    const resp = await axios.get("/library/");
+    try {
+      const resp = await axios.get("/library/");
       setLibList(resp.data);
-    }catch(error){
-      console.error(error);
+      loadImages(resp.data); // 이미지 로딩
+    } catch (error) {
+      console.error("Error loading library:", error);
     }
-  },[]);
-        
+  }, []);
 
   // Load game images
   const loadImages = useCallback(async (library) => {
@@ -33,41 +32,37 @@ const Library = () => {
         if (imageResp.data && imageResp.data.length > 0) {
           imageMap[game.libraryId] = `http://localhost:8080/game/download/${imageResp.data[0].attachmentNo}`;
         } else {
-          imageMap[game.libraryId] = 'placeholder_image_url'; // Placeholder for missing images
+          imageMap[game.libraryId] = 'placeholder_image_url';
         }
       } catch (err) {
         console.error("Error loading game image", err);
         imageMap[game.libraryId] = 'placeholder_image_url';
       }
     }
-    setImageUrls(imageMap); // Set image URLs in state
+    setImageUrls(imageMap);
   }, []);
 
-  // Load library on component mount or when login/memberId changes
   useEffect(() => {
     if (login && memberId) {
       loadLib();
     }
   }, [login, memberId, loadLib]);
 
-  // View rendering
   return (
     <div className={styles.library_container}>
+      
       <h1 className={styles.library_title}>
         {memberId ? `${memberId}님의 라이브러리` : '라이브러리'}
       </h1>
       
       <div className={styles.library_game_list}>
         {libList.map((game) => (
-          <div key={game.libraryId} className={styles.library_game_item}>
-            {/* Game Image */}
+          <div key={game.libraryId} className={styles.library_game_item} onClick={() => navigate('/testgame2')}>
             <img
               src={imageUrls[game.libraryId] || 'placeholder_image_url'}
               alt={game.gameTitle}
               className={styles.gameThumbnail}
             />
-            
-            {/* Game Info */}
             <div className={styles.library_game_details}>
               <h2 className={styles.library_game_title}>{game.gameTitle}</h2>
             </div>

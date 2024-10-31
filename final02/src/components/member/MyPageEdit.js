@@ -138,7 +138,7 @@ const MemberEdit = () => {
         <input type="hidden" name="memberLevel" value={member.memberLevel} />
         <input type="hidden" name="verificationToken" value={member.verificationToken} />
         <input type="hidden" name="emailVerified" value={member.emailVerified} />
-        <input type="hidden" name="memberPoint" value={member.memberPoint} />
+        <input type="hidden" name="memberPoint" value={member.memberPoint} onChange={changeMember} />
         <input type="hidden" name="kakaoUserId" value={member.kakaoUserId} />
 
         <div className="row mt-4">

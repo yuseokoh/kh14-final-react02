@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
@@ -12,7 +12,7 @@ const MyPage = () => {
     // Recoil 상태 사용
     const login = useRecoilValue(loginState);
     const memberId = useRecoilValue(memberIdState);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     // effect
     useEffect(() => {
@@ -34,13 +34,14 @@ const MyPage = () => {
         } catch (error) {
             console.error("Error loading member data:", error);
         }
+
     }, []);
 
     const loadImage = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`/member/image/${memberId}`);
             const { attachment } = resp.data;
-    
+
             if (attachment) {
                 // attachmentNo를 기반으로 이미지 URL 생성
                 const imageUrl = `/member/download/${attachment}`;
@@ -63,6 +64,40 @@ const MyPage = () => {
                 />
                 <h1>{`${member.memberId || ''} 님의 정보`}</h1>
             </div>
+            <div className="row mt-4">
+                <div className="col-3">레벨</div>
+                <div className="col-3">
+                    {(() => {
+                        let levelText = "";
+                        switch (true) {
+                            case member.memberPoint >= 20000:
+                                levelText = "challenger";
+                                break;
+                            case member.memberPoint >= 10000:
+                                levelText = "master";
+                                break;
+                            case member.memberPoint >= 5000:
+                                levelText = "diamond";
+                                break;
+                            case member.memberPoint >= 2000:
+                                levelText = "platinum";
+                                break;
+                            case member.memberPoint >= 1000:
+                                levelText = "Gold";
+                                break;
+                            case member.memberPoint >= 500:
+                                levelText = "Silver";
+                                break;
+                            case member.memberPoint >= 100:
+                                levelText = "Bronze";
+                                break;
+                            default:
+                                levelText = "iron";
+                        }
+                        return levelText;
+                    })()}
+                </div>
+            </div>
 
             <div className="row mt-4">
                 <div className="col-3">닉네임</div>
@@ -80,7 +115,7 @@ const MyPage = () => {
                 <div className="col-3">생년월일</div>
                 <div className="col-3">{member.memberBirth}</div>
             </div>
-            
+
             <div className="row mt-4">
                 <div className="col text-end">
                     <button className="btn btn-warning ms-2"
