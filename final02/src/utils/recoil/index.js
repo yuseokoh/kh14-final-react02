@@ -64,3 +64,9 @@ const memberLoadingState = atom({
     default:false
 });
 export {memberLoadingState};
+
+const receiverIdState = atom({
+    key: 'receiverIdState', 
+    default: null,
+});
+export {receiverIdState};
