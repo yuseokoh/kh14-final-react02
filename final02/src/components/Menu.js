@@ -152,8 +152,9 @@ const Menu = () => {
 
 
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to="/member/mypage/:memberId">
-                                        {memberId} ({memberLevel})
+                                    <NavLink className="nav-link" to="/member/mypage">
+                                        {/* {memberId} ({memberLevel}) */}
+                                        {memberId ? `${memberId} (${memberLevel})` : `Kakao User (${kakaoId})`}
                                     </NavLink>
                                 </li>
                                 <li className="nav-item">
