@@ -50,7 +50,7 @@ function KakaoLoginPage() {
         // 이메일 입력이 필요한 경우 이메일 입력 페이지로 이동
         if (emailRequired) {
           console.log("카카오 ID 저장: ", kakaoId);
-          // localStorage.setItem('kakaoId', kakaoId);
+          localStorage.setItem('kakaoId', kakaoId);
           navigate('/member/KakaoEmail');
         } else if (jwtToken && accessToken) {
           // JWT 토큰이 있을 경우 저장하고 메인 페이지로 이동

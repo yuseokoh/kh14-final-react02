@@ -117,6 +117,11 @@ const FriendRequest = () => {
 
       <div className="row mt-4 d-flex justify-content-center">
         <div className="col-6">
+          <h2 style={{ backgroundColor: "#2c3e50"}}>친구 요청</h2>
+        </div>
+      </div>
+      <div className="row mt-4 d-flex justify-content-center">
+        <div className="col-6">
           <h3>회원 검색</h3>
         </div>
       </div>

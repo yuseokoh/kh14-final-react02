@@ -58,6 +58,7 @@ import MyPageEdit from "./member/MyPageEdit";
 import Ranking from "./play/Ranking";
 import Chat from "./chat/Chat";
 import WebsocketClient from "./websocket/WebsocketClient";
+import Chatroom from "./chat/Chatroom";
 
 
 
@@ -159,6 +160,8 @@ const MainContent = () => {
 
                     {/* 웹소켓 */}
                     <Route path="/websocket" element={<WebsocketClient />} />  
+                    <Route path="/room" element={<Chatroom />} />  
+                    <Route path="/room-chat/:roomNo" element={<Chat />} />  
 
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-use" element={<TermsOfUse />} />

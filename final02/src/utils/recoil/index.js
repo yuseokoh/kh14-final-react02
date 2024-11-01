@@ -66,7 +66,7 @@ const memberLoadingState = atom({
 export {memberLoadingState};
 
 const receiverIdState = atom({
-    key: 'receiverIdState', 
+    key: "receiverIdState", 
     default: null,
 });
 export {receiverIdState};
