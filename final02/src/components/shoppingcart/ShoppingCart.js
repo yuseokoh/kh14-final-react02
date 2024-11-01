@@ -138,7 +138,7 @@ const ShoppingCart = () => {
               <h4 className={styles.gameTitle}>{cart.gameTitle}</h4>
               <p className={styles.gamePrice}>{cart.gamePrice.toLocaleString()}₩</p>
             </div>
-
+          
             {/* 추가 기능 (선물용 버튼 등) */}
             <div className={styles.actionButtons}>
               <button className={styles.giftButton}>선물용</button>
