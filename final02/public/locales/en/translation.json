@@ -55,15 +55,7 @@
     "errorDuringPurchase": "An error occurred during the payment preparation:",
     "errorPurchaseFailed": "Payment preparation failed. Please try again."
   },
-  "paymentCancellation": {
-    "loadingMessage": "Loading...",
-    "processingMessage": "Processing cancellation...",
-    "successMessage": "Payment successfully cancelled!",
-    "failureMessage": "Payment cancellation failed...",
-    "refundInfo": "The payment has been successfully cancelled, and the payment amount will be refunded.",
-    "goToStore": "Return to Store",
-    "goToLibrary": "Go to Library"
-  },
+
   "paymentSuccess": {
     "loading": "Processing payment...",
     "thankYouMessage": "Thank you for your purchase!",
@@ -74,7 +66,8 @@
     "totalAmount": "Total Amount",
     "goToStore": "Return to Store",
     "goToLibrary": "Go to Library",
-    "failureMessage": "Payment approval failed..."
+    "failureMessage": "Payment approval failed...",
+    "PaymentHistory": "PaymentHistory"
   },
   "languageButton": "Language",
   "privacyPolicy": {
@@ -201,7 +194,39 @@
         "steamAgreement": "Steam Subscriber Agreement",
         "refundPolicy": "Refund Policy"
       }
-    }
+      ,
+      
+        "cancelPayment": {
+          "invalidPaymentNo": "Invalid payment number.",
+          "noAuthToken": "Authentication token is missing.",
+          "paymentNotFound": "Payment information could not be found.",
+          "unableToFetch": "Unable to fetch payment information. Please contact the server administrator.",
+          "cancelRequestFailed": "Failed to process the cancel request.",
+          "errorWhileCanceling": "An error occurred while canceling the payment.",
+          "loadingError": "An error occurred while loading payment information.",
+          "productName": "Product Name",
+          "totalAmount": "Total Amount",
+          "buyerId": "Buyer ID",
+          "purchaseAmount": "Purchase Amount",
+          "vatIncluded": "VAT included",
+          "vat": "VAT",
+          "canceledAmount": "Canceled Amount",
+          "cancelAvailableAmount": "Cancel Available Amount",
+          "paymentStartDate": "Payment Start Date",
+          "paymentEndDate": "Payment End Date",
+          "canceledAt": "Canceled At",
+          "enterCancelReason": "Enter the reason for cancellation",
+          "cancelAll": "Cancel All",
+          "canceledProduct": "Product has been canceled.",
+          "cancelSuccess": "Payment Cancelled Successfully!",
+          "cancelSuccessMessage": "The payment has been successfully canceled.",
+          "currency": " KRW",
+          "am": "AM",
+          "pm": "PM"
+        }
+      }
+      
+    
     
   
   

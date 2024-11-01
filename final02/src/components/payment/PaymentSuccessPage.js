@@ -148,8 +148,8 @@ const PaymentSuccessPage = () => {
                     <button onClick={handleGoToLibrary} className="btn btn-secondary">
                         {t('paymentSuccess.goToLibrary')}
                     </button>
-                    <button onClick={handleGoToCancelPage} className="btn btn-danger">
-        결제 내역
+                    <button onClick={handleGoToCancelPage} className="btn btn-info">
+                    {t('paymentSuccess.PaymentHistory')}
       </button>
                 </div>
             </div>
