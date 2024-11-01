@@ -53,17 +53,21 @@ const GameDetail = () => {
                 axios.get(`http://localhost:8080/game/${gameNo}`),
                 axios.get(`http://localhost:8080/game/image/${gameNo}`)
             ]);
-
+    
             setGame(gameResponse.data);
-
+    
+            // 이미지가 있을 경우에만 URL 설정
             if (imageResponse.data && imageResponse.data.length > 0) {
-                const imageUrls = imageResponse.data.map(img => 
-                    `http://localhost:8080/game/download/${img.attachmentNo}`
-                );
-                setImages(imageUrls);
-                setImageUrl(imageUrls[0]);
+                const imageUrls = imageResponse.data
+                    .filter(img => img.attachmentNo) // attachmentNo가 있는 이미지만 필터링
+                    .map(img => `http://localhost:8080/game/download/${img.attachmentNo}`);
+                
+                if (imageUrls.length > 0) {
+                    setImages(imageUrls);
+                    setImageUrl(imageUrls[0]);
+                }
             }
-
+    
             setLoading(false);
         } catch (err) {
             console.error(err);
@@ -208,6 +212,36 @@ const handleLikeReview = async (reviewNo) => {
     }
 };
 
+const handleDeleteReview = async (reviewNo) => {
+    if(!login) {
+        alert("로그인이 필요합니다.");
+        return;
+    }
+
+    if (window.confirm("리뷰를 삭제하시겠습니까?")) {
+        try {
+            const token = sessionStorage.getItem('refreshToken');
+            await axios.delete(
+                `http://localhost:8080/game/${gameNo}/review/${reviewNo}`,
+                {
+                    headers : {'Authorization' :`Bearer ${token}`}
+                }
+            );
+
+            // 리뷰 목록 새로고침
+            loadReviews(currentPage);
+            // 리뷰 작성 가능 상태로 변경
+            setCanWriteReview(true);
+            // 게임 데이터 새로고침 (평점 갱신을 위해)
+            loadGameData();
+            
+        } catch (error) {
+            console.error("리뷰 삭제 실패:", error);
+            alert("리뷰 삭제 중 오류가 발생했습니다.");
+        }
+    }
+};
+
 /**
  * 리뷰 작성 제출 처리 함수
  */
@@ -219,31 +253,47 @@ const submitReview = async () => {
 
     try {
         const token = sessionStorage.getItem('refreshToken');
-        await axios.post(`http://localhost:8080/game/${gameNo}/review`, newReview, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
+        if (canWriteReview) {
+            // 새 리뷰 작성
+            await axios.post(`http://localhost:8080/game/${gameNo}/review`, newReview, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+             // 리뷰 작성 후 canWriteReview를 false로 설정
+             setCanWriteReview(false);
+        } else {
+            // 기존 리뷰 찾기
+            const userReview = reviews.find(review => review.memberId === memberId);
+            if (userReview) {
+                // 리뷰 수정
+                await axios.put(
+                    `http://localhost:8080/game/${gameNo}/review/${userReview.reviewNo}`, 
+                    newReview,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
             }
-        });
+        }
 
-        //성공시 처리
+        // 성공 시 처리
         setIsWritingReview(false);
         setNewReview({ reviewContent: "", reviewScore: 5 });
         loadReviews(1);
         loadGameData(); // 게임 평점 업데이트를 위한 새로고침
 
     } catch (error) {
-         // 에러 응답 처리
-         if (error.response) {
-            if (error.response.data.includes("이미 리뷰를 작성했습니다")) {
-                alert("이미 이 게임에 대한 리뷰를 작성하셨습니다.");
-            } else {
-                alert("리뷰 작성 중 오류가 발생했습니다.");
-            }
+        if (error.response) {
+            alert("리뷰 처리 중 오류가 발생했습니다.");
         } else {
             alert("서버와의 통신 중 오류가 발생했습니다.");
         }
-        console.error("리뷰 작성 실패:", error);
+        console.error("리뷰 처리 실패:", error);
     }
 };
 
@@ -364,30 +414,46 @@ return (
             </div>
 
             {/* 리뷰 섹션 */}
-            <div className={styles.reviewSection}>
-                <h2>고객 리뷰</h2>
-                <div className={styles.reviewSummary}>
+            <div className={styles.reviewSummary}>
                     <div className={styles.score}>
                         <span className={styles.scoreNumber}>{game.gameUserScore}</span>/10
                     </div>
                     <div className={styles.reviewCount}>
                         {game.gameReviewCount.toLocaleString()}개의 리뷰
                     </div>
-                    {login && (
+                    {login && canWriteReview  && (
                         <button 
                             className={styles.writeReviewButton}
                             onClick={() => setIsWritingReview(true)}
                         >
                             리뷰 작성
                         </button>
+                    )} 
+                    {login && !canWriteReview && (
+                        <button 
+                            className={`{styles.writeReviewButton} ${styles.editButton}`}
+                            onClick={() => {
+                                // 현재 사용자의 리뷰를 찾아서 수정 모드로 전환
+                                const userReview = reviews.find(review => review.memberId === memberId);
+                                if (userReview) {
+                                    setNewReview({
+                                        reviewContent: userReview.reviewContent,
+                                        reviewScore: userReview.reviewScore
+                                    });
+                                    setIsWritingReview(true);
+                                }
+                            }}
+                        >
+                            내 리뷰 수정
+                        </button>
                     )}
                 </div>
-
+                    
                 {/* 리뷰 작성 폼 */}
                 {isWritingReview && (
                     <div className={styles.reviewForm}>
                         <div className={styles.reviewFormHeader}>
-                            <h3>리뷰 작성</h3>
+                        <h3>{canWriteReview ? "리뷰 작성" : "리뷰 수정"}</h3>
                             <select 
                                 value={newReview.reviewScore}
                                 onChange={(e) => setNewReview({
@@ -428,55 +494,77 @@ return (
                 )}
 
                 {/* 인기 리뷰 목록 */}
-                {popularReviews.length > 0 && (
-                    <div className={styles.popularReviews}>
-                        <h3>가장 도움이 된 리뷰</h3>
-                        {popularReviews.map(review => (
-                            <div key={review.reviewNo} className={styles.reviewCard}>
-                                <div className={styles.reviewHeader}>
-                                    <span className={styles.reviewerName}>{review.memberNickname}</span>
-                                    <span className={styles.reviewScore}>{review.reviewScore}/10</span>
-                                </div>
-                                <div className={styles.reviewContent}>{review.reviewContent}</div>
-                                <div className={styles.reviewFooter}>
-                                    <button 
-                                        className={styles.likeButton}
-                                        onClick={() => handleLikeReview(review.reviewNo)}
-                                    >
-                                        <ThumbsUp size={16} /> {review.likes}
-                                    </button>
-                                    <span className={styles.reviewDate}>
-                                        {new Date(review.reviewDate).toLocaleDateString()}
-                                    </span>
-                                </div>
-                            </div>
-                        ))}
+{popularReviews.length > 0 && (
+    <div className={styles.popularReviews}>
+        <h3>가장 도움이 된 리뷰</h3>
+        {popularReviews.map(review => (
+            <div key={review.reviewNo} className={styles.reviewCard}>
+                <div className={styles.reviewHeader}>
+                    <span className={styles.reviewerName}>{review.memberNickname}</span>
+                    <div className={styles.reviewActions}>
+                        <span className={styles.reviewScore}>{review.reviewScore}/10</span>
+                        {/* 작성자인 경우에만 삭제 버튼 표시 */}
+                        {login && review.memberId === memberId && (
+                            <button 
+                                className={styles.deleteButton}
+                                onClick={() => handleDeleteReview(review.reviewNo)}
+                            >
+                                삭제
+                            </button>
+                        )}
                     </div>
-                )}
+                </div>
+                <div className={styles.reviewContent}>{review.reviewContent}</div>
+                <div className={styles.reviewFooter}>
+                    <button 
+                        className={styles.likeButton}
+                        onClick={() => handleLikeReview(review.reviewNo)}
+                    >
+                        <ThumbsUp size={16} /> {review.likes}
+                    </button>
+                    <span className={styles.reviewDate}>
+                        {new Date(review.reviewDate).toLocaleDateString()}
+                    </span>
+                </div>
+            </div>
+        ))}
+    </div>
+)}
 
-                {/* 전체 리뷰 목록 */}
-                <div className={styles.allReviews}>
-                    <h3>모든 리뷰</h3>
-                    {reviews.map(review => (
-                        <div key={review.reviewNo} className={styles.reviewCard}>
-                            <div className={styles.reviewHeader}>
-                                <span className={styles.reviewerName}>{review.memberNickname}</span>
-                                <span className={styles.reviewScore}>{review.reviewScore}/10</span>
-                            </div>
-                            <div className={styles.reviewContent}>{review.reviewContent}</div>
-                            <div className={styles.reviewFooter}>
-                                <button 
-                                    className={styles.likeButton}
-                                    onClick={() => handleLikeReview(review.reviewNo)}
-                                >
-                                    <ThumbsUp size={16} /> {review.likes}
-                                </button>
-                                <span className={styles.reviewDate}>
-                                    {new Date(review.reviewDate).toLocaleDateString()}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
+{/* 전체 리뷰 목록 */}
+<div className={styles.allReviews}>
+    <h3>모든 리뷰</h3>
+    {reviews.map(review => (
+        <div key={review.reviewNo} className={styles.reviewCard}>
+            <div className={styles.reviewHeader}>
+                <span className={styles.reviewerName}>{review.memberNickname}</span>
+                <div className={styles.reviewActions}>
+                    <span className={styles.reviewScore}>{review.reviewScore}/10</span>
+                    {/* 작성자인 경우에만 삭제 버튼 표시 */}
+                    {login && review.memberId === memberId && (
+                        <button 
+                            className={styles.deleteButton}
+                            onClick={() => handleDeleteReview(review.reviewNo)}
+                        >
+                            삭제
+                        </button>
+                    )}
+                </div>
+            </div>
+            <div className={styles.reviewContent}>{review.reviewContent}</div>
+            <div className={styles.reviewFooter}>
+                <button 
+                    className={styles.likeButton}
+                    onClick={() => handleLikeReview(review.reviewNo)}
+                >
+                    <ThumbsUp size={16} /> {review.likes}
+                </button>
+                <span className={styles.reviewDate}>
+                    {new Date(review.reviewDate).toLocaleDateString()}
+                </span>
+            </div>
+        </div>
+    ))}
 
                     {/* 페이지네이션 */}
                     <div className={styles.pagination}>
@@ -506,7 +594,6 @@ return (
                 </button>
             </div>
         </div>
-    </div>
 );
 };
 

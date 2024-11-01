@@ -5,6 +5,8 @@ import { ChevronLeft, ChevronRight, ChevronDown, Tag, Users, Gamepad } from 'luc
 import styles from './Home.module.css';
 import bannerImage from '../components/game/gameimg/webm_page_bg_koreana (1).gif';
 import { useNavigate } from 'react-router';
+import { useRecoilValue } from 'recoil';
+import { loginState, memberLevelState } from '../utils/recoil';
 
 /**
  * FeaturedBanner 컴포넌트
@@ -596,6 +598,9 @@ const Home = () => {
   const [visiblegames, setVisibleGames] = useState(10); // 표시할 게임 수
   const [activeFilter, setActiveFilter] = useState(''); // 활성화된 필터
 
+  const memberLevel = useRecoilValue(memberLevelState);
+  const isLoggedIn = useRecoilValue(loginState);
+
   const navigate = useNavigate();
 
   // 필터 옵션 정의
@@ -717,12 +722,15 @@ const Home = () => {
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
                 <h2 className={styles.sectionTitle}>전체 게임 목록</h2>
-                <button
-                  className={styles.addGameButton}
-                  onClick={() => navigate('/game/add')}
-                >
-                  게임 등록
-                </button>
+                {/* 개발자 회원만 게임 등록 버튼 표시 */}
+                {memberLevel === '개발자' && (
+                  <button
+                    className={styles.addGameButton}
+                    onClick={() => navigate('/game/add')}
+                  >
+                    게임 등록
+                  </button>
+                )}
               </div>
 
               {/* 게임 목록 표시 */}

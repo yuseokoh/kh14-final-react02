@@ -1,155 +1,371 @@
-.container {
+.pageContainer {
+    background-color: #1b2838;
+    color: #c6d4df;
+    min-height: 100vh;
+}
+
+.contentWrapper {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    color: #c6d4df;
 }
 
-.title {
-    font-size: 24px;
+.titleArea {
+    padding: 20px 0;
+}
+
+.titleArea h1 {
     color: #ffffff;
-    margin-bottom: 30px;
+    font-size: 26px;
+    margin: 0;
 }
 
-/* 이미지 업로드 섹션 */
-.imageUploadSection {
-    background: #16202d;
-    padding: 20px;
-    border-radius: 4px;
-    margin-bottom: 30px;
+.developerInfo {
+    color: #8f98a0;
+    margin-top: 8px;
 }
 
-.imageUploadSection h3 {
-    margin-bottom: 15px;
-    color: #ffffff;
+.developerInfo span {
+    margin-right: 20px;
 }
 
-.imagePreviewArea {
+.mainContent {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
+    gap: 20px;
+    margin-top: 20px;
 }
 
-.previewContainer {
+.mediaSection {
+    flex: 2;
+    min-width: 0;
+}
+
+.mainImageContainer {
+    width: 100%;
     position: relative;
-    width: 200px;
-    height: 113px; /* 16:9 비율 */
+    padding-top: 56.25%; /* 16:9 비율 */
+    background: #000;
     border-radius: 4px;
     overflow: hidden;
 }
 
-.previewImage {
+.mainImage {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.removeButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0, 0, 0, 0.7);
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
+.thumbnailStrip {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
+    gap: 4px;
+    margin-top: 8px;
+    overflow-x: auto;
+}
+
+.thumbnail {
+    width: 115px;
+    height: 65px;
+    object-fit: cover;
     cursor: pointer;
-    transition: background-color 0.2s;
+    border: 2px solid transparent;
+    opacity: 0.7;
+    transition: all 0.2s ease;
 }
 
-.removeButton:hover {
-    background: rgba(0, 0, 0, 0.9);
+.thumbnail:hover {
+    opacity: 1;
 }
 
-.uploadButton {
-    width: 200px;
-    height: 113px;
-    border: 2px dashed #375571;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.uploadButton:hover {
+.thumbnail.active {
     border-color: #66c0f4;
-    background: rgba(102, 192, 244, 0.1);
+    opacity: 1;
 }
 
-.uploadPlaceholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    color: #66c0f4;
+.infoSection {
+    flex: 1;
+    min-width: 324px;
 }
 
-.imageHelp {
+.infoImage {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.gameInfo {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: 4px;
+}
+
+.shortDescription {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.metaInfo {
     color: #8f98a0;
     font-size: 12px;
+    line-height: 1.6;
+}
+
+.tagSection {
+    margin: 20px 0;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
     margin-top: 8px;
 }
 
-/* 폼 섹션 */
-.formSection {
-    background: #16202d;
-    padding: 20px;
+.tag {
+    background: #67c1f5;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.tag:hover {
+    background: #66c0f4;
+}
+
+.priceSection {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    margin: 20px 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.discount {
+    background: #4c6b22;
+    color: #a4d007;
+    padding: 5px 10px;
+    border-radius: 2px;
+    font-size: 25px;
+    margin-right: 10px;
+}
+
+.prices {
+    display: flex;
+    flex-direction: column;
+}
+
+.originalPrice {
+    color: #738895;
+    text-decoration: line-through;
+    font-size: 12px;
+}
+
+.finalPrice {
+    color: #beee11;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.purchaseButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.addToCartButton {
+    background: linear-gradient(to right, #75b022, #588a1b);
+    border: none;
+    border-radius: 2px;
+    padding: 12px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.wishlistButton {
+    background: #67c1f5;
+    border: none;
+    border-radius: 2px;
+    padding: 12px;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.systemRequirements {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    margin-top: 20px;
     border-radius: 4px;
 }
 
-.formGroup {
+.description {
+    margin-top: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #acb2b8;
+}
+
+.reviewSection {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #2a475e;
+}
+
+.reviewSummary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.score {
+    font-size: 48px;
+    color: #66c0f4;
+}
+
+.adminActions {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #2a475e;
+}
+
+.editButton {
+    background: #2a475e;
+    color: #c6d4df;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.editButton:hover {
+    background: #66c0f4;
+    color: #fff;
+}
+
+@media (max-width: 1024px) {
+    .mainContent {
+        flex-direction: column;
+    }
+
+    .infoSection {
+        min-width: 100%;
+    }
+}
+/* 리뷰 섹션 스타일 */
+.reviewSection {
+    background: #16202d;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.reviewSummary {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #1b2838;
+    border-radius: 4px;
     margin-bottom: 20px;
 }
 
-.formGroup label {
-    display: block;
-    margin-bottom: 8px;
-    color: #ffffff;
+.score {
+    font-size: 24px;
+    color: #66c0f4;
 }
 
-.input {
-    width: 100%;
-    padding: 8px 12px;
-    background: #2a475e;
-    border: 1px solid #375571;
-    border-radius: 3px;
-    color: #c6d4df;
-    font-size: 14px;
+.scoreNumber {
+    font-size: 32px;
+    font-weight: bold;
 }
 
-.input:focus {
-    outline: none;
-    border-color: #66c0f4;
+.reviewCount {
+    color: #8f98a0;
+    font-size: 16px;
 }
 
-.buttonGroup {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-.submitButton, .cancelButton {
+.writeReviewButton {
+    margin-left: auto;
     padding: 10px 20px;
+    background: #66c0f4;
+    color: white;
     border: none;
     border-radius: 2px;
-    font-size: 16px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
-.submitButton {
-    background: #66c0f4;
-    color: #ffffff;
+.writeReviewButton:hover {
+    background: #7acbff;
 }
 
-.submitButton:hover {
+/* 리뷰 작성 폼 */
+.reviewForm {
+    background: #1b2838;
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.reviewFormHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.scoreSelect {
+    padding: 8px;
+    background: #2a475e;
+    border: 1px solid #375571;
+    color: #c6d4df;
+    border-radius: 3px;
+}
+
+.reviewTextarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 12px;
+    background: #2a475e;
+    border: 1px solid #375571;
+    color: #c6d4df;
+    border-radius: 3px;
+    resize: vertical;
+    margin-bottom: 15px;
+    font-family: inherit;
+}
+
+.reviewFormButtons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.submitReviewButton, .cancelButton {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submitReviewButton {
+    background: #66c0f4;
+    color: white;
+}
+
+.submitReviewButton:hover {
     background: #7acbff;
 }
 
@@ -162,83 +378,159 @@
     background: #3d4c5c;
 }
 
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .previewContainer, .uploadButton {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 16/9;
-    }
+/* 리뷰 카드 */
+.reviewCard {
+    background: #1b2838;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    border: 1px solid #375571;
 }
 
-.textarea {
-    resize: vertical;
-    min-height: 100px;
-    font-family: inherit;
-    line-height: 1.5;
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.formGroup textarea.input {
-    min-height: 120px;
-    padding: 12px;
+.reviewerName {
+    color: #66c0f4;
+    font-weight: 500;
 }
 
-/* 기존 스타일 유지하고 아래 내용 추가 */
-.imageLabel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.7);
-    color: white;
-    padding: 4px;
-    text-align: center;
+.reviewScore {
+    color: #8f98a0;
+}
+
+.reviewContent {
+    color: #c6d4df;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    white-space: pre-wrap;
+}
+
+.reviewFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #8f98a0;
+}
+
+.likeButton {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    background: #2a475e;
+    border: none;
+    border-radius: 2px;
+    color: #c6d4df;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.likeButton:hover {
+    background: #375571;
+}
+
+.reviewDate {
     font-size: 12px;
 }
 
-.previewContainer {
-    position: relative;
-    width: 200px;
-    height: 112px;
-    margin: 10px;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* 인기 리뷰 섹션 */
+.popularReviews {
+    margin-bottom: 30px;
 }
 
-.previewImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.popularReviews h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
 }
 
-.removeButton {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(0,0,0,0.7);
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.pageButton {
+    padding: 8px 12px;
+    background: #2a475e;
     border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
+    border-radius: 2px;
+    color: #c6d4df;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pageButton:hover {
+    background: #375571;
+}
+
+.activePage {
+    background: #66c0f4;
+    color: white;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .reviewSummary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .writeReviewButton {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .reviewFormButtons {
+        flex-direction: column;
+    }
+
+    .submitReviewButton, .cancelButton {
+        width: 100%;
+    }
+
+}
+
+/* 삭제버튼 */
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reviewActions {
     display: flex;
     align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    padding: 0;
-}
-
-.removeButton:hover {
-    background: rgba(0,0,0,0.9);
-}
-
-.imagePreviewArea {
-    display: flex;
-    flex-wrap: wrap;
     gap: 10px;
-    margin: 20px 0;
-    padding: 10px;
-    border: 2px dashed #ccc;
-    border-radius: 8px;
+}
+
+.deleteButton {
+    background-color: #e74c3c;
+    color: white;
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.deleteButton:hover {
+    background-color: #c0392b;
+}
+
+.editButton {
+    background-color: #4a9eff;
+}
+
+.editButton:hover {
+    background-color: #3d8be6;
 }
