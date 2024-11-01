@@ -55,15 +55,7 @@
     "errorDuringPurchase": "결제 준비 중 오류가 발생했습니다:",
     "errorPurchaseFailed": "결제 준비에 실패했습니다. 다시 시도해주세요."
   },
-  "paymentCancellation": {
-    "loadingMessage": "로딩 중...",
-    "processingMessage": "결제 취소 진행 중입니다...",
-    "successMessage": "결제가 성공적으로 취소되었습니다!",
-    "failureMessage": "결제 취소 실패...",
-    "refundInfo": "결제가 성공적으로 취소되었으며, 결제 금액은 환불 처리됩니다.",
-    "goToStore": "상점으로 돌아가기",
-    "goToLibrary": "라이브러리로 이동하기"
-  },
+
   "paymentSuccess": {
     "loading": "결제 진행 중입니다...",
     "thankYouMessage": "구매해 주셔서 감사합니다!",
@@ -74,7 +66,8 @@
     "totalAmount": "총액",
     "goToStore": "상점으로 돌아가기",
     "goToLibrary": "라이브러리로 이동하기",
-    "failureMessage": "결제 승인 실패..."
+    "failureMessage": "결제 승인 실패...",
+     "PaymentHistory": "결제 내역"
   },
   "languageButton": "언어",
   "privacyPolicy": {
@@ -198,7 +191,37 @@
         "steamAgreement": "Steam 이용 약관",
         "refundPolicy": "환불"
       }
-    }
+      ,
+        "cancelPayment": {
+          "invalidPaymentNo": "결제 번호가 올바르지 않습니다.",
+          "noAuthToken": "인증 토큰이 없습니다.",
+          "paymentNotFound": "결제 정보를 찾을 수 없습니다.",
+          "unableToFetch": "결제 정보를 확인할 수 없습니다. 서버 관리자에게 문의하세요.",
+          "cancelRequestFailed": "결제 취소 요청에 실패했습니다.",
+          "errorWhileCanceling": "결제 취소 중 오류가 발생했습니다.",
+          "loadingError": "결제 정보를 불러오는 중 오류가 발생했습니다.",
+          "productName": "결제상품명",
+          "totalAmount": "총 결제금액",
+          "buyerId": "구매자ID",
+          "purchaseAmount": "구매금액",
+          "vatIncluded": "부가세 포함",
+          "vat": "부가세",
+          "canceledAmount": "취소완료금액",
+          "cancelAvailableAmount": "취소가능금액",
+          "paymentStartDate": "결제시작일시",
+          "paymentEndDate": "결제완료일시",
+          "canceledAt": "결제취소일시",
+          "enterCancelReason": "취소 사유를 입력해주세요",
+          "cancelAll": "전체취소",
+          "canceledProduct": "취소된 상품입니다.",
+          "cancelSuccess": "결제 취소 성공!",
+          "cancelSuccessMessage": "결제가 성공적으로 취소되었습니다.",
+          "currency": "원",
+          "am": "오전",
+          "pm": "오후"
+        }
+      }
+      
     
   
   
