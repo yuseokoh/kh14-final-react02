@@ -6,7 +6,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 
 
 import { useRecoilState } from "recoil";
-import { memberIdState, memberLevelState, memberLoadingState } from "./utils/recoil";
+import { memberIdState, memberLevelState, memberLoadingState, receiverIdState } from "./utils/recoil";
 import axios from "axios";
 import './i18n'; // i18n 초기화 파일 import
 
@@ -18,7 +18,7 @@ const App = ()=>{
   const [memberId, setMemberId] = useRecoilState(memberIdState);
   const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
   const [memberLoading, setMemberLoading] = useRecoilState(memberLoadingState);
-
+  
   //최초 1회 실행
   useEffect(()=>{
     refreshLogin();
