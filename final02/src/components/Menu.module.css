@@ -46,3 +46,184 @@
 .navbar-nav.ml-auto {
   margin-left: auto;
 }
+/* 알림 컨테이너 스타일 */
+.notificationContainer {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+}
+
+/* 알림 버튼 스타일 */
+.notificationButton {
+  background: none;
+  border: none;
+  color: #969696;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.notificationButton:hover {
+  opacity: 1;
+  color: #ffffff;
+}
+
+/* 새로운 알림이 있을 때의 스타일 */
+.hasNewNotifications {
+  color: #66c0ff;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+      transform: scale(1);
+      opacity: 1;
+  }
+  50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+  }
+  100% {
+      transform: scale(1);
+      opacity: 1;
+  }
+}
+
+/* 알림 뱃지 스타일 */
+.notificationBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4b4b;
+  border-radius: 50%;
+}
+
+/* 알림 드롭다운 스타일 */
+.notificationDropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: #1a2533;
+  border: 1px solid #2A475E;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 8px;
+}
+
+/* 알림 항목 스타일 */
+.notificationItem {
+  padding: 12px 16px;
+  border-bottom: 1px solid #2A475E;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: #FFFFFF;
+}
+
+.notificationItem:last-child {
+  border-bottom: none;
+}
+
+.notificationItem:hover {
+  background-color: #2A475E;
+}
+
+.notificationItem.unread {
+  background-color: rgba(102, 192, 255, 0.1);
+}
+
+.notificationItem p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.notificationItem small {
+  color: #8F98A0;
+  font-size: 12px;
+  display: block;
+  margin-top: 4px;
+}
+
+/* 알림이 없을 때의 스타일 */
+.noNotifications {
+  padding: 16px;
+  text-align: center;
+  color: #8F98A0;
+  font-size: 14px;
+}
+
+/* 알림 아이콘 래퍼 스타일 */
+.notificationWrapper {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0.5rem 1rem;
+}
+
+/* 스크롤바 스타일링 */
+.notificationDropdown::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notificationDropdown::-webkit-scrollbar-track {
+  background: #1a2533;
+}
+
+.notificationDropdown::-webkit-scrollbar-thumb {
+  background: #2A475E;
+  border-radius: 4px;
+}
+
+.notificationDropdown::-webkit-scrollbar-thumb:hover {
+  background: #3d5a74;
+}
+
+/* 개발자 요청 버튼 스타일 (Footer용) */
+.developerRequestButton {
+  background: none;
+  border: none;
+  color: #66c0ff;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0 10px;
+  transition: color 0.2s ease;
+}
+
+.developerRequestButton:hover {
+  color: #99d6ff;
+}
+
+/* 메뉴 내 알림 아이콘 정렬 */
+.navItem .notificationContainer {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* 알림 드롭다운이 표시될 때 오버레이 효과 */
+.notificationOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 999;
+  display: none;
+}
+
+.notificationDropdown.show ~ .notificationOverlay {
+  display: block;
+}

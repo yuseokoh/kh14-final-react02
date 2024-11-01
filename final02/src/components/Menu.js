@@ -8,16 +8,89 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginState, memberIdState, memberLevelState, kakaoIdState, kakaoAccessTokenState } from "../utils/recoil";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import axios from "axios";
 import steamLogo from './steamlogo.svg';
 import styles from './Menu.module.css';
-import { useTranslation } from 'react-i18next'; // useTranslation import 추가
-import LanguageSelector from './LanguageSelector'; // LanguageSelector import 추가
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './LanguageSelector';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+
+// NotificationMenu 컴포넌트를 Menu 컴포넌트 외부로 이동
+const NotificationMenu = () => {
+    // 관리자 알림 관련 상태 추가
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [hasNewNotifications, setHasNewNotifications] = useState(false);
+    const memberLevel = useRecoilValue(memberLevelState);
+    const navigate = useNavigate();
+
+    // 관리자인 경우 개발자 권한 요청 목록 조회
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/member/admin/developer-requests", {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+                setNotifications(response.data);
+                setHasNewNotifications(response.data.some(notif => !notif.isRead));
+            } catch (error) {
+                console.error("알림 조회 실패:", error);
+            }
+        };
+
+        if (memberLevel === "관리자") {
+            fetchNotifications();
+            const intervalId = setInterval(fetchNotifications, 60000);
+            return () => clearInterval(intervalId);
+        }
+    }, [memberLevel]);
+
+    if (memberLevel !== "관리자") return null;
+
+    return (
+        <div className={styles.notificationContainer}>
+            <button
+                className={styles.notificationButton}
+                onClick={() => setShowNotifications(!showNotifications)}
+                title="개발자 권한 요청 알림"
+            >
+                <FontAwesomeIcon 
+                    icon={faEnvelope} 
+                    className={hasNewNotifications ? styles.hasNewNotifications : ''}
+                />
+                {hasNewNotifications && (
+                    <span className={styles.notificationBadge}></span>
+                )}
+            </button>
+
+            {showNotifications && (
+                <div className={styles.notificationDropdown}>
+                    {notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                            <div
+                                key={notification.memberId}
+                                className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`}
+                                onClick={() => navigate(`/member/admin/edit/${notification.memberId}`)}
+                            >
+                                <p>{notification.memberId}님의 개발자 권한 요청</p>
+                                <small>{new Date(notification.requestDate).toLocaleDateString()}</small>
+                            </div>
+                        ))
+                    ) : (
+                        <p className={styles.noNotifications}>새로운 알림이 없습니다</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const Menu = () => {
-    const { t } = useTranslation(); // useTranslation 훅 사용
-    //navigate
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     //recoil state
@@ -25,27 +98,7 @@ const Menu = () => {
     const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const [kakaoId, setKakaoId] = useRecoilState(kakaoIdState);
     const [kakaoAccessToken, setKakaoAccessToken] = useRecoilState(kakaoAccessTokenState);
-    const login = useRecoilValue(loginState);//읽기전용 항목은 이렇게 읽음
-
-    // //callback
-    // const logout = useCallback((e) => {
-    //     //e.preventDefault();
-
-    //     //recoil에 저장된 memberId와 memberLevel을 제거
-    //     setMemberId("");
-    //     setMemberLevel("");
-
-
-
-    //     //axios에 설정된 Authorization 헤더도 제거
-    //     delete axios.defaults.headers.common["Authorization"];
-
-    //     //localStorage, sessionStorage의 refreshToken을 제거
-    //     window.localStorage.removeItem("refreshToken");
-    //     window.sessionStorage.removeItem("refreshToken");
-
-    //     navigate("/");
-    // }, [memberId, memberLevel]);
+    const login = useRecoilValue(loginState);
 
     // 로그아웃 기능 수정
     const logout = useCallback((e) => {
@@ -54,7 +107,6 @@ const Menu = () => {
         setMemberLevel("");
         setKakaoId("");
         setKakaoAccessToken("");
-
 
         // axios에 설정된 Authorization 헤더도 제거
         delete axios.defaults.headers.common["Authorization"];
@@ -66,7 +118,6 @@ const Menu = () => {
         window.localStorage.removeItem("kakaoAccessToken");
         window.localStorage.removeItem("kakaoId");
 
-
         // 카카오 로그인 관련 토큰 제거
         const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
         if (kakaoAccessToken) {
@@ -76,10 +127,8 @@ const Menu = () => {
                     Authorization: `Bearer ${kakaoAccessToken}`
                 }
             })
-
                 .then(response => {
                     console.log("카카오 로그아웃 성공", response);
-                    // 로그아웃 후 localStorage에서 카카오 관련 정보 삭제
                     window.localStorage.removeItem("kakaoAccessToken");
                     window.localStorage.removeItem("kakaoId");
                 })
@@ -94,7 +143,6 @@ const Menu = () => {
         navigate("/");
     }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, kakaoAccessToken, navigate]);
 
-    //view
     return (
         <>
             <nav className={`navbar navbar-expand-lg fixed-top ${styles.navbar}`} data-bs-theme="dark">
@@ -125,7 +173,6 @@ const Menu = () => {
                                 </div>
                             </li>
 
-
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle"
                                     data-bs-toggle="dropdown" href="#" role="button"
@@ -149,37 +196,42 @@ const Menu = () => {
                             </li>
 
                             {login ? (<>
-
-
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/member/mypage/:memberId">
+                                    {memberId} ({memberLevel})
+                                </NavLink>
+                            </li>
+                            
+                            {/* 관리자 알림 메뉴를 여기로 이동하고 스타일 통일 */}
+                            {memberLevel === "관리자" && (
                                 <li className="nav-item">
-                                    <NavLink className="nav-link" to="/member/mypage/:memberId">
-                                        {/* {memberId} ({memberLevel}) */}
-                                        {memberId ? `${memberId} (${memberLevel})` : `Kakao User (${kakaoId})`}
-                                    </NavLink>
+                                    <div className={`nav-link ${styles.notificationWrapper}`}>
+                                        <NotificationMenu />
+                                    </div>
                                 </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="#"
-                                        onClick={logout}>
-                                        {t('menu.logout')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/wishlist">
-                                        {t('menu.wishlist')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/cart">
-                                        {t('menu.cart')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/library">
-                                        {t('menu.library')}
-                                    </NavLink>
-                                </li>
-                            </>) : (<>
-
+                            )}
+                            
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="#" onClick={logout}>
+                                    {t('menu.logout')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/wishlist">
+                                    {t('menu.wishlist')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/cart">
+                                    {t('menu.cart')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/library">
+                                    {t('menu.library')}
+                                </NavLink>
+                            </li>
+                        </>) : (<>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/member/MemberLogin">
                                         <i className="fa-solid fa-right-to-bracket"></i>
@@ -188,7 +240,6 @@ const Menu = () => {
                                 </li>
                             </>)}
                         </ul>
-                        {/* Language Selector 추가 */}
                         <LanguageSelector />
                     </div>
                 </div>
@@ -196,4 +247,5 @@ const Menu = () => {
         </>
     );
 };
+
 export default Menu;
