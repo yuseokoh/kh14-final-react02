@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { loginState, memberIdState, memberLoadingState, receiverIdState } from "../../utils/recoil";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router";
@@ -8,14 +8,16 @@ const FriendList = ()=>{
     //navigate
     const navigate = useNavigate();
 
-    const setReceiverId = useSetRecoilState(receiverIdState);
+    const [receiverId, setReceiverId] = useRecoilState(receiverIdState);
 
     const chatClickFromId = (friend) => {
         setReceiverId(friend.friendFrom);
+        if(receiverId === null) return;
         navigate('/websocket');
     };
     const chatClickToId = (friend) => {
         setReceiverId(friend.friendTo);
+        if(receiverId === null) return;
         navigate('/websocket');
     };
     
@@ -75,13 +77,15 @@ const FriendList = ()=>{
     }, [keyword, friendList]);
 
     return (<>
-    <div className="row mt-4">
-        <div className="col">
+    <div className="row pb-4" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
+    <div className="col">
+    <div className="row mt-4 d-flex justify-content-center">
+        <div className="col-3">
             <h3>친구 목록</h3>
         </div>
     </div>
-    <div className="row mt-2">
-        <div className="col">
+    <div className="row mt-2 d-flex justify-content-center">
+        <div className="col-3">
             {/* 입력값 useMemo로 memberList에서 조회후 출력*/}
             <input type="text" className="form-control" placeholder="아이디" 
             value={keyword} onChange={changeKeyword}/> 
@@ -93,7 +97,7 @@ const FriendList = ()=>{
                             {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
                             {memberId === friend.friendTo ? 
                             <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
-                             : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
+                            : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
                             <button className="btn btn-secondary ms-4">프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
@@ -102,16 +106,16 @@ const FriendList = ()=>{
             )}
         </div>
     </div>
-    <div className="row mt-2">
-        <div className="col">
+    <div className="row mt-2 d-flex justify-content-center">
+        <div className="col-3">
     {open === false && (
-            <ul className="list-group">
+        <ul className="list-group">
                 {friendList.map(friend=>(
                     <li key={friend.friendFk} className="list-group-item">
                         {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
                         {memberId === friend.friendTo ? 
                             <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
-                             : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
+                            : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
                         <button className="btn btn-secondary ms-4">프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>
@@ -120,6 +124,8 @@ const FriendList = ()=>{
             )}
         </div>
     </div>
+            </div>
+            </div>
 
     </>);
 };
