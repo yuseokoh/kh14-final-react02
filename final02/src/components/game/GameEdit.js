@@ -86,6 +86,7 @@ const GameEdit = () => {
 
     const updateGame = useCallback(async () => {
         try {
+            const token = sessionStorage.getItem('refreshToken');
             const formData = new FormData();
     
             formData.append('game', new Blob([JSON.stringify(game)], {
@@ -101,19 +102,30 @@ const GameEdit = () => {
                 formData.append('deletedImageNos', no);
             });
     
-            await axios.put("http://localhost:8080/game/", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            await axios.put(
+                `http://localhost:8080/game/${gameNo}`,  // URL 수정
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,  // 토큰 추가
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+    
     
             // Cleanup preview URLs
             previewUrls.forEach(url => URL.revokeObjectURL(url));
     
+            alert("수정이 완료되었습니다.");
             navigate("/game/detail/" + gameNo);
         } catch (error) {
             console.error("수정 실패:", error);
-            alert("수정에 실패했습니다");
+            if (error.response?.data) {
+                alert(error.response.data);
+            } else {
+                alert("게임 정보 수정 중 오류가 발생했습니다.");
+            }
         }
     }, [game, selectedFiles, deletedImageNos, gameNo, navigate, previewUrls]);
     
