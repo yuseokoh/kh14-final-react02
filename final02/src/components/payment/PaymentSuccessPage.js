@@ -43,11 +43,18 @@ const PaymentSuccessPage = () => {
             if (!tid || !checkedGameList || !token) {
                 throw new Error(t('payment.errorNoTokenOrData'));
             }
+
+             // 각 게임에 대해 `qty` 값이 없으면 기본값 설정
+        checkedGameList = checkedGameList.map(game => ({
+            ...game,
+            qty: game.qty || 1,
+        }));
+
     
             const resp = await axios.post("http://localhost:8080/game/approve", {
-                partnerOrderId,
+                partnerOrderId: partnerOrderId,
                 pgToken: new URLSearchParams(window.location.search).get("pg_token"),
-                tid,
+                tid: tid,
                 gameList: checkedGameList
             });
     
@@ -55,6 +62,7 @@ const PaymentSuccessPage = () => {
                 window.sessionStorage.setItem("paymentNo", partnerOrderId);
                 const updatedGameList = resp.data.paymentDetailList; // 각 게임에 paymentDetailNo 포함된 리스트
                 setGameList(updatedGameList);
+                setGameList(checkedGameList);
                 setResult(true);
     
                 for (const game of updatedGameList) {
