@@ -2,8 +2,10 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import styles from './MyPageEdit.module.css';
+import { useTranslation } from 'react-i18next';
 
 const MemberEdit = () => {
+  const { t } = useTranslation();
   const { memberId } = useParams();
   const navigate = useNavigate();
   const [member, setMember] = useState(null);
@@ -52,7 +54,7 @@ const MemberEdit = () => {
       navigate(`/member/mypage/${memberId}`);
     } catch (error) {
       console.error("Update failed:", error.response ? error.response.data : error.message);
-      alert("Update failed");
+      alert(t("updateFailed"));
     }
   }, [member, files, memberId]);
 
@@ -94,14 +96,14 @@ const MemberEdit = () => {
           <div className={styles.profileNameContainer}>
             <img
               src={levelInfo.frame}
-              alt={`${levelInfo.level} frame`}
+              alt={t(`levels.${levelInfo.level}`)}
               className={styles.levelImage}
             />
-            <h1 className={styles.username}>{`${member.memberId}의 정보수정`}</h1>
+            <h1 className={styles.username}>{t("editInfo", { memberId: member.memberId })}</h1>
           </div>
           <div className={styles.infoGrid}>
             <div className={styles.infoRow}>
-              <span className={styles.label}>닉네임</span>
+              <span className={styles.label}>{t("nickname")}</span>
               <input
                 type="text"
                 name="memberNickname"
@@ -111,7 +113,7 @@ const MemberEdit = () => {
               />
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.label}>이메일</span>
+              <span className={styles.label}>{t("email")}</span>
               <input
                 type="email"
                 name="memberEmail"
@@ -121,7 +123,7 @@ const MemberEdit = () => {
               />
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.label}>생년월일</span>
+              <span className={styles.label}>{t("birthDate")}</span>
               <input
                 type="date"
                 name="memberBirth"
@@ -131,7 +133,7 @@ const MemberEdit = () => {
               />
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.label}>전화번호</span>
+              <span className={styles.label}>{t("phoneNumber")}</span>
               <input
                 type="text"
                 name="memberContact"
@@ -141,7 +143,7 @@ const MemberEdit = () => {
               />
             </div>
             <div className={styles.infoRow}>
-              <span className={styles.label}>주소</span>
+              <span className={styles.label}>{t("address")}</span>
               <input
                 type="text"
                 name="memberAddress1"
@@ -161,7 +163,7 @@ const MemberEdit = () => {
           <div className="row mt-4">
             <div className="col text-center">
               <button type="button" className="btn btn-lg btn-success" onClick={updateMember}>
-                수정
+                {t("edit")}
               </button>
             </div>
           </div>

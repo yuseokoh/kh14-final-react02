@@ -237,7 +237,16 @@
               "bronze": "브론즈",
               "iron": "아이언"
           }
-      }
+          ,
+            "editInfo": "{{memberId}}의 정보수정",
+          
+            "address": "주소",
+            "addressDetail": "상세 주소"
+           
+            }
+        
+      
+      
       
       
       
