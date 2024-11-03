@@ -25,7 +25,7 @@ import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
 import CommunityEdit from "./community/CommunityEdit";
 import CommunityDetail from "./community/CommunityDetail";
-import CommunitySearch from "./community/CommunitySearch";
+// import CommunitySearch from "./community/CommunitySearch";
 
 
 import PrivacyPolicy from "../components/footer/PrivacyPolicy";
@@ -137,7 +137,7 @@ const MainContent = () => {
                     <Route path="/community/add" element={<CommunityAdd />} />
                     <Route path="/community/edit/:communityNo" element={<CommunityEdit />} />
                     <Route path="/community/detail/:communityNo" element={<CommunityDetail />} />
-                    <Route path="/community/search/title/:keyword" element={<CommunitySearch />} />
+                    {/* <Route path="/community/search/title/:keyword" element={<CommunitySearch />} /> */}
 
                     {/* 회원가입 */}
                     <Route path="/member/signup" element={<SingUp />} />
