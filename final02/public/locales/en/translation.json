@@ -224,7 +224,26 @@
           "am": "AM",
           "pm": "PM"
         }
+        ,
+          "myInfo": "{{memberId}}'s Information",
+          "nickname": "Nickname",
+          "phoneNumber": "Phone Number",
+          "email": "Email",
+          "birthDate": "Birth Date",
+          "edit": "Edit",
+          "levels": {
+              "challenger": "Challenger",
+              "master": "Master",
+              "diamond": "Diamond",
+              "platinum": "Platinum",
+              "gold": "Gold",
+              "silver": "Silver",
+              "bronze": "Bronze",
+              "iron": "Iron"
+          }
       }
+      
+      
       
     
     

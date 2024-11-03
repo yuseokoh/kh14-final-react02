@@ -220,7 +220,26 @@
           "am": "오전",
           "pm": "오후"
         }
+        ,
+          "myInfo": "{{memberId}} 님의 정보",
+          "nickname": "닉네임",
+          "phoneNumber": "전화번호",
+          "email": "이메일",
+          "birthDate": "생년월일",
+          "edit": "수정하기",
+          "levels": {
+              "challenger": "챌린저",
+              "master": "마스터",
+              "diamond": "다이아몬드",
+              "platinum": "플래티넘",
+              "gold": "골드",
+              "silver": "실버",
+              "bronze": "브론즈",
+              "iron": "아이언"
+          }
       }
+      
+      
       
     
   

@@ -4,18 +4,17 @@ import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
 import { useNavigate } from 'react-router-dom';
 import styles from './MyPage.module.css';
+import { useTranslation } from 'react-i18next';
 
 const MyPage = () => {
-    // state
+    const { t } = useTranslation();
     const [member, setMember] = useState({});
     const [image, setImage] = useState(null);
     const navigate = useNavigate(); 
 
-    // Recoil 상태 사용
     const login = useRecoilValue(loginState);
     const memberId = useRecoilValue(memberIdState);
 
-    // member 정보 로드
     const loadMember = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`http://localhost:8080/member/${memberId}`);
@@ -25,7 +24,6 @@ const MyPage = () => {
         }
     }, []);
 
-    // 이미지 로드
     const loadImage = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`/member/image/${memberId}`);
@@ -43,15 +41,13 @@ const MyPage = () => {
         }
     }, []);
 
-    // effect
     useEffect(() => {
         if (login && memberId) {
             loadMember(memberId);
             loadImage(memberId);
         }
-    }, [login, memberId]); // Removed loadMember and loadImage from dependencies
+    }, [login, memberId]);
 
-    // 이미지 URL을 선택할 때, 선택된 이미지가 없다면 기본 이미지 사용
     const imageUrl = image || '/default-profile.png';
 
     const levels = [
@@ -86,7 +82,7 @@ const MyPage = () => {
             <div className={styles.profileImageContainer}>
                 <img
                     src={levelInfo.frame}
-                    alt={`${levelInfo.level} frame`}
+                    alt={t(`levels.${levelInfo.level}`)}
                     className={styles.levelFrame}
                 />
             </div>
@@ -100,41 +96,41 @@ const MyPage = () => {
             <div className={styles.profileHeader}>
                 {renderProfileImage()}
                 <div className={styles.profileInfo}>
-                    <h1 className={styles.username}>{`${member?.memberId || ''} 님의 정보`}</h1>
+                    <h1 className={styles.username}>{t("myInfo", { memberId: member?.memberId || '' })}</h1>
                     <div className={`${styles.levelBadge} ${styles[levelInfo.level]}`}>
-                        {levelInfo.level.toUpperCase()}
+                        {t(`levels.${levelInfo.level}`).toUpperCase()}
                     </div>
                     <div>
                         <h1>{member.memberPoint} / {levelInfo.nextLevelPoints}</h1>
                     </div>
                 </div>
             </div>
-    
+
             <div className={styles.infoGrid}>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>닉네임</div>
+                    <div className={styles.label}>{t("nickname")}</div>
                     <div className={styles.value}>{member?.memberNickname}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>전화번호</div>
+                    <div className={styles.label}>{t("phoneNumber")}</div>
                     <div className={styles.value}>{member?.memberContact}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>이메일</div>
+                    <div className={styles.label}>{t("email")}</div>
                     <div className={styles.value}>{member?.memberEmail}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>생년월일</div>
+                    <div className={styles.label}>{t("birthDate")}</div>
                     <div className={styles.value}>{member?.memberBirth}</div>
                 </div>
             </div>
-    
+
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
                 <button 
                     className={styles.editButton}
                     onClick={() => navigate(`/member/mypageedit/${memberId}`)}
                 >
-                    수정하기
+                    {t("edit")}
                 </button>
             </div>
         </div>
