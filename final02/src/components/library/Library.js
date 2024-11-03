@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
 import styles from './Library.module.css';
-
 import { useNavigate } from 'react-router';
 
 const Library = () => {
@@ -17,16 +16,21 @@ const Library = () => {
   const loadLib = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
-      setLibList(resp.data);
-
-      // Load images for library items
-      loadImages(resp.data);
+      const uniqueLibList = resp.data.reduce((acc, current) => {
+        const isDuplicate = acc.some(item => item.gameNo === current.gameNo);
+        if (!isDuplicate) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+      
+      setLibList(uniqueLibList);
+      loadImages(uniqueLibList);
     } catch (error) {
       console.error("Error loading library:", error);
     }
   }, []);
 
-  // Load images based on library data
   const loadImages = useCallback(async (library) => {
     const imageMap = {};
 

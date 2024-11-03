@@ -14,17 +14,38 @@ const WishList = () => {
   const [wishlist, setWishlist] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
-  const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
+  const [imageUrls, setImageUrls] = useState({});
+  const [cartGames, setCartGames] = useState([]); // 장바구니에 있는 게임 목록
+  const [libraryGames, setLibraryGames] = useState([]); // 라이브러리에 있는 게임 목록
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
+
+  // 라이브러리 목록 불러오기
+  const loadLibraryGames = useCallback(async () => {
+    try {
+      const resp = await axios.get("/library/");
+      setLibraryGames(resp.data.map(game => game.gameNo)); // 라이브러리 게임의 gameNo만 저장
+    } catch (error) {
+      console.error("Error loading library games", error);
+    }
+  }, []);
+
+  // 장바구니 목록 불러오기
+  const loadCartGames = useCallback(async () => {
+    try {
+      const resp = await axios.get("/cart/");
+      setCartGames(resp.data.map(cart => cart.gameNo)); // 장바구니 게임의 gameNo만 저장
+    } catch (error) {
+      console.error("Error loading cart games", error);
+    }
+  }, []);
 
   // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
     try {
       const resp = await axios.get("http://localhost:8080/wishlist/");
       setWishlist(resp.data);
-      setFilteredWishlist(resp.data); // 초기 필터된 리스트 설정
-      // 이미지 URL 로드
+      setFilteredWishlist(resp.data);
       loadImages(resp.data);
     } catch (error) {
       console.error("Error loading wishlist", error);
@@ -40,7 +61,7 @@ const WishList = () => {
         if (imageResp.data && imageResp.data.length > 0) {
           imageMap[game.wishListId] = `http://localhost:8080/game/download/${imageResp.data[0].attachmentNo}`;
         } else {
-          imageMap[game.wishListId] = 'placeholder_image_url'; // 이미지 없을 경우
+          imageMap[game.wishListId] = 'placeholder_image_url';
         }
       } catch (err) {
         console.error("Error loading game image", err);
@@ -52,19 +73,28 @@ const WishList = () => {
 
   // 장바구니에 게임 추가
   const addCart = useCallback(async (game) => {
+    if (cartGames.includes(game.gameNo)) {
+      alert("이미 장바구니에 있는 게임입니다.");
+      return;
+    }
+    if (libraryGames.includes(game.gameNo)) {
+      alert("이미 라이브러리에 있는 게임입니다.");
+      return;
+    }
+
     try {
       await axios.post("/cart/add", game);
+      setCartGames((prevCartGames) => [...prevCartGames, game.gameNo]);
       navigate("/cart/");
     } catch (error) {
       console.error("Error adding item to cart", error);
     }
-  }, [navigate]);
+  }, [cartGames, libraryGames, navigate]);
 
   // 찜 목록에서 게임 삭제
   const delWishList = useCallback(async (wishListId) => {
     try {
       await axios.delete(`http://localhost:8080/wishlist/${wishListId}`);
-      // 찜 목록에서 삭제한 아이템을 필터링하여 새로운 리스트로 상태 업데이트
       setWishlist((prevWishlist) => prevWishlist.filter((item) => item.wishListId !== wishListId));
       setFilteredWishlist((prevFilteredWishlist) => prevFilteredWishlist.filter((item) => item.wishListId !== wishListId));
     } catch (error) {
@@ -80,7 +110,7 @@ const WishList = () => {
       );
       setFilteredWishlist(filtered);
     } else {
-      setFilteredWishlist(wishlist); // 검색어가 없을 경우 전체 리스트 표시
+      setFilteredWishlist(wishlist);
     }
   }, [searchKeyword, wishlist]);
 
@@ -93,22 +123,24 @@ const WishList = () => {
   useEffect(() => {
     if (login && memberId) {
       loadWishlist();
+      loadCartGames(); // 장바구니 목록도 불러옴
+      loadLibraryGames(); // 라이브러리 목록도 불러옴
     }
-  }, [login, memberId, loadWishlist]);
+  }, [login, memberId, loadWishlist, loadCartGames, loadLibraryGames]);
 
   // 드래그 관련 기능
   const dragStart = (e, position) => {
     dragItem.current = position;
-    e.target.style.opacity = 0.5; // 드래그 시작 시 불투명하게 만들기
+    e.target.style.opacity = 0.5;
   };
 
   const dragEnter = (e, position) => {
     dragOverItem.current = position;
-    e.preventDefault(); // 드래그 오버 시 기본 동작 방지
+    e.preventDefault();
   };
 
   const drop = (e) => {
-    e.preventDefault(); // 드랍 시 기본 동작 방지
+    e.preventDefault();
     const newWishList = [...filteredWishlist];
     const dragItemValue = newWishList[dragItem.current];
     newWishList.splice(dragItem.current, 1);
@@ -116,8 +148,8 @@ const WishList = () => {
     dragItem.current = null;
     dragOverItem.current = null;
     setFilteredWishlist(newWishList);
-    setWishlist(newWishList); // 전체 리스트도 업데이트
-    e.target.style.opacity = 1; // 드래그 종료 시 불투명도 원래대로
+    setWishlist(newWishList);
+    e.target.style.opacity = 1;
   };
 
   return (
@@ -134,56 +166,64 @@ const WishList = () => {
           onChange={(e) => setSearchKeyword(e.target.value)}
         />
       </div>
-      <TransitionGroup className={styles.wishlist_game_list}>
-        {filteredWishlist.map((game, index) => (
-          <CSSTransition
-            key={game.wishListId}
-            timeout={300}
-            classNames={{
-              enter: styles.itemEnter,
-              enterActive: styles.itemEnterActive,
-              exit: styles.itemExit,
-              exitActive: styles.itemExitActive,
-            }}
-          >
-            <div
-              className={styles.wishlist_game_item}
-              draggable
-              onDragStart={(e) => dragStart(e, index)}
-              onDragEnter={(e) => dragEnter(e, index)}
-              onDragEnd={drop}
-              onDragOver={(e) => e.preventDefault()}
+
+      {filteredWishlist.length === 0 ? (
+        <p className={styles.emptyWishlistMessage}>찜 목록이 비어있습니다.</p>
+      ) : (
+        <TransitionGroup className={styles.wishlist_game_list}>
+          {filteredWishlist.map((game, index) => (
+            <CSSTransition
+              key={game.wishListId}
+              timeout={300}
+              classNames={{
+                enter: styles.itemEnter,
+                enterActive: styles.itemEnterActive,
+                exit: styles.itemExit,
+                exitActive: styles.itemExitActive,
+              }}
             >
-              {/* 게임 이미지 */}
-              <img
-                src={imageUrls[game.wishListId] || 'placeholder_image_url'} // 이미지가 없으면 placeholder 사용
-                alt={game.gameTitle}
-                className={styles.gameThumbnail}
-              />
-
-              {/* 게임 정보 */}
-              <div className={styles.wishlist_game_details} style={{ maxWidth: '75%' }}>
-                <h2 className={styles.wishlist_game_title}>{game.gameTitle}</h2>
-                <div className={styles.game_meta_info}>
-                  <span className={styles.game_review}>종합 평가: {game.reviewSummary || '정보 없음'}</span>
-                  <span className={styles.game_release}>출시일: {game.releaseDate}</span>
+              <div
+                className={styles.wishlist_game_item}
+                draggable
+                onDragStart={(e) => dragStart(e, index)}
+                onDragEnter={(e) => dragEnter(e, index)}
+                onDragEnd={drop}
+                onDragOver={(e) => e.preventDefault()}
+              >
+                <img
+                  src={imageUrls[game.wishListId] || 'placeholder_image_url'}
+                  alt={game.gameTitle}
+                  className={styles.gameThumbnail}
+                />
+                <div className={styles.wishlist_game_details} style={{ maxWidth: '75%' }}>
+                <h2 
+                  className={styles.wishlist_game_title}
+                  onClick={() => navigate(`/game/detail/${game.gameNo}`)}
+                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                >{game.gameTitle}</h2>
+                  <div className={styles.game_meta_info}>
+                    <span className={styles.game_review}>종합 평가: {game.reviewSummary || '정보 없음'}</span>
+                    <span className={styles.game_release}>출시일: {game.releaseDate}</span>
+                  </div>
+                  <div className={styles.tag_container}>
+                    <span className={styles.tag}>싱글 플레이어</span>
+                    <span className={styles.tag}>멀티 플레이어</span>
+                  </div>
                 </div>
-                <div className={styles.tag_container}>
-                  <span className={styles.tag}>싱글 플레이어</span>
-                  <span className={styles.tag}>멀티 플레이어</span>
+                <div className={styles.wishlist_action_container}>
+                  <div className={styles.game_price}>${game.gamePrice}</div>
+                  {libraryGames.includes(game.gameNo) ? (
+                    <button className={styles.wishlist_cart_button} onClick={() => navigate(`/play/${game.gameNo}`)}>플레이하기</button>
+                  ) : (
+                    <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>장바구니에 추가</button>
+                  )}
+                  <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>제거</button>
                 </div>
               </div>
-
-              {/* 액션 버튼 */}
-              <div className={styles.wishlist_action_container}>
-                <div className={styles.game_price}>${game.gamePrice}</div>
-                <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>장바구니에 추가</button>
-                <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>제거</button>
-              </div>
-            </div>
-          </CSSTransition>
-        ))}
-      </TransitionGroup>
+            </CSSTransition>
+          ))}
+        </TransitionGroup>
+      )}
     </div>
   );
 };
