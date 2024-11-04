@@ -154,7 +154,7 @@
   color: #ffffff;
 }
 
-/* Animation classes remain the same */
+/* Animation classes */
 .itemEnter {
   opacity: 0;
   transform: translateY(-20px);
@@ -174,4 +174,86 @@
   opacity: 0;
   transform: translateY(-20px);
   transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+
+/* 추천 게임 섹션 스타일 */
+.recommendedSection {
+  margin-top: 20px;
+}
+
+.recommendedTitle {
+  font-size: 24px;
+  color: #ffffff;
+  margin-bottom: 15px;
+}
+
+.sliderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 중앙 정렬 */
+}
+
+.topRatedGamesWrapper {
+  overflow: hidden;
+  width: 100%;
+  max-width: 1100px; /* 슬라이더 너비 */
+  display: flex;
+  justify-content: center; /* 슬라이더 내부 콘텐츠 중앙 정렬 */
+}
+.topRatedGamesContainer {
+  display: flex;
+  gap: 30px; /* 아이템 사이의 간격을 넓혀 시각적 여유 추가 */
+  transition: transform 0.5s ease; /* 슬라이드 애니메이션 */
+}
+
+.topRatedGameItem {
+  flex: 0 0 calc(33.33% - 30px); /* 한 줄에 3개 표시되도록 너비 설정 */
+  background-color: rgba(42, 71, 94, 0.7);
+  padding: 20px; /* 아이템 내부 패딩 증가 */
+  border-radius: 8px; /* 둥근 모서리 설정 */
+  transition: transform 0.3s ease;
+}
+
+.topRatedGameItem:hover {
+  transform: translateY(-10px);
+}
+
+.topRatedGameThumbnail {
+  width: 100%;
+  height: 180px; /* 썸네일 높이를 키워 아이템을 더 크게 보이도록 설정 */
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.topRatedGameInfo {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.topRatedGameTitle {
+  font-size: 20px; /* 제목 크기를 더 크게 설정 */
+  color: #ffffff;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 8px 0;
+}
+
+.topRatedGamePrice {
+  font-size: 16px; /* 가격 폰트 크기 증가 */
+  color: #c7d5e0;
+  font-weight: bold;
+}
+
+.sliderButton {
+  background: none;
+  border: none;
+  color: #67c1f5;
+  font-size: 32px; /* 화살표 크기 증가 */
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 15px;
+}
+
+.sliderButton:hover {
+  color: #ffffff;
 }
