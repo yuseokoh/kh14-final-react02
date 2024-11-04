@@ -15,6 +15,7 @@ const Library = () => {
   const [gameList, setGameList] = useState([]); 
 
   // 라이브러리 목록 로드
+
   const loadLib = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
@@ -32,7 +33,28 @@ const Library = () => {
     }
   }, []);
 
+
   // 이미지 로딩 병렬화 (Promise.all 사용)
+
+  //게임 리스트 로드
+  const loadGameList = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/game/");
+      console.log("게임 목록 데이터:", response.data);
+  
+      // 배열을 섞는 함수
+      const shuffleArray = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+      };
+  
+      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
+      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
+    } catch (error) {
+      console.error("게임 목록을 불러오는 데 실패했습니다:", error);
+    }
+  }, []);
+
+
   const loadImages = useCallback(async (library) => {
     const imageRequests = library.map(async (game) => {
       try {
@@ -83,6 +105,18 @@ const Library = () => {
     }
   };
 
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 3);
+    }
+  };
+
   return (
     <div className={styles.library_container}>
       <h1 className={styles.library_title}>
@@ -112,7 +146,8 @@ const Library = () => {
         )}
       </div>
 
-      {/* 추천 게임 목록 슬라이드 섹션 */}
+
+      {/* 일반 게임 목록 슬라이드 섹션 */}
       <section className={styles.sliderSection}>
         <h2 className={styles.sectionTitle}>추천 게임 목록</h2>
         <div className={styles.sliderContainer}>

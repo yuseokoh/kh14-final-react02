@@ -11,8 +11,8 @@ const ShoppingCart = () => {
   const [imageUrls, setImageUrls] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [gameList, setGameList] = useState([]); 
-  const [libList, setLibList] = useState([]);
+  const [gameList, setGameList] = useState([]); // 게임 목록을 저장하는 상태 추가
+  const [libList, setLibList] = useState([]); // 구매한 게임 리스트 상태 추가
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -40,15 +40,25 @@ const ShoppingCart = () => {
     }
   }, []);
 
+
+  //게임 리스트 로드
   const loadGameList = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
-      const shuffledGames = response.data.sort(() => Math.random() - 0.5);
-      setGameList(shuffledGames.slice(0, 6));
+      console.log("게임 목록 데이터:", response.data);
+  
+      // 배열을 섞는 함수
+      const shuffleArray = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+      };
+  
+      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
+      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
     } catch (error) {
       console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
   }, []);
+
 
   const loadAllGameImages = useCallback(async () => {
     const imageRequests = cartList.map(async (cart) => {
@@ -67,6 +77,37 @@ const ShoppingCart = () => {
     const images = await Promise.all(imageRequests);
     const newImageUrls = images.reduce((acc, image) => ({ ...acc, ...image }), {});
     setImageUrls(newImageUrls);
+
+  const delCart = useCallback(async (gameNo) => {
+    try {
+      console.log("Deleting cart item with gameNo:", gameNo);
+      const resp = await axios.delete(`/cart/${gameNo}`);
+      setCartList(prevList => prevList.filter(cart => cart.gameNo !== gameNo));
+      setSelectedItems(prevItems => prevItems.filter(id => id !== gameNo));
+    } catch (error) {
+      console.error("Error deleting cart item", error);
+    }
+  }, []);
+
+  const loadAllGameImages = useCallback(async () => {
+    const imageMap = {};
+
+    try {
+      for (const cart of cartList) {
+        const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
+        if (response.data && response.data.length > 0) {
+          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+          imageMap[cart.gameNo] = imageUrl;
+        } else {
+          imageMap[cart.gameNo] = 'https://via.placeholder.com/200';
+        }
+      }
+
+      setImageUrls(imageMap);
+    } catch (error) {
+      console.error("이미지 로딩 에러:", error);
+    }
+
   }, [cartList]);
 
   useEffect(() => {
@@ -82,6 +123,10 @@ const ShoppingCart = () => {
       loadAllGameImages();
     }
   }, [cartList, loadAllGameImages]);
+
+  const getCurrentUrl = useCallback(() => {
+    return window.location.origin + window.location.pathname + (window.location.hash || '');
+  }, []);
 
   const handleItemSelection = (cartId) => {
     setSelectedItems(prevItems => {
@@ -106,6 +151,7 @@ const ShoppingCart = () => {
       }
 
       const selectedGames = cartList.filter(cart => selectedItems.includes(cart.cartId));
+      const totalSelectedPrice = selectedGames.reduce((sum, game) => sum + (game.gamePrice || 0), 0);
 
       const response = await axios.post(
         "http://localhost:8080/game/purchase",
@@ -125,6 +171,14 @@ const ShoppingCart = () => {
       alert(t('payment.errorPurchaseFailed'));
     }
   }, [cartList, selectedItems, t]);
+
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+
 
   const nextSlide = () => {
     if (currentIndex < gameList.length - 3) {

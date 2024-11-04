@@ -8,45 +8,43 @@ const FriendList = ()=>{
     //navigate
     const navigate = useNavigate();
 
-    const [receiverId, setReceiverId] = useRecoilState(receiverIdState);
-
-    const chatClickFromId = (friend) => {
-        setReceiverId(friend.friendFrom);
-        if(receiverId === null) return;
-        navigate('/websocket');
-    };
-    const chatClickToId = (friend) => {
-        setReceiverId(friend.friendTo);
-        if(receiverId === null) return;
-        navigate('/websocket');
-    };
     
     //state
+    const [receiverId, setReceiverId] = useState([]);
     const [friendList, setFriendList] = useState([]);//친구 목록
     const [keyword, setKeyword] = useState("");
     const [open, setOpen] = useState(false);
-
+    const [roomList, setRoomList] = useState([]);
     
     
-
+    
     //recoil
     const login = useRecoilValue(loginState);
     const memberId = useRecoilValue(memberIdState);
     const memberLoading = useRecoilValue(memberLoadingState);
-
+    
     //token
     const accessToken = axios.defaults.headers.common["Authorization"];
     const refreshToken = window.localStorage.getItem("refreshToken")
-                                        || window.sessionStorage.getItem("refreshToken");
-
+    || window.sessionStorage.getItem("refreshToken");
+    
+    
     //effect
     useEffect(()=>{
         if(!memberId || memberLoading === false) return;
         loadFriendList();
+        loadRoomList();
     }, [memberLoading]);
-
+    
     //callback
-  
+    
+    const chatClick = useCallback((friend)=>{
+        console.log("friend : ",friend);
+        const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
+        setReceiverId(targetId);
+        if(targetId === null) return;
+        createChatRoom(friend);
+    }, [memberId]);
     
     const loadFriendList = useCallback(async ()=>{
         const resp = await axios.get("http://localhost:8080/friend/"+memberId);
@@ -57,15 +55,42 @@ const FriendList = ()=>{
         setKeyword(e.target.value);
         setOpen(e.target.value.length > 0);
     }, [keyword]);
+
     const selectKeyword = useCallback(text=>{
         setKeyword(text);
         setOpen(false);
     }, [keyword]);
+
     const deleteFriend = useCallback(async (target)=>{
         if(!memberId || memberLoading === false) return;
         const resp = await axios.delete("http://localhost:8080/friend/"+target.friendFk);
         loadFriendList();
       }, []);
+
+      const loadRoomList = useCallback(async ()=>{
+        const resp = await axios.get("/room/");
+        setRoomList(resp.data);
+      }, [roomList]);
+
+      const createChatRoom = useCallback(async (friend)=>{
+        if (!memberId || memberLoading === false) return;
+        try{
+            const roomName = friend.friendFrom+", "+friend.friendTo;
+            console.log("friendFK"+friend.friendFk)
+            const resp = await axios.post("/room/", { roomNo : friend.friendFk, roomName : roomName});
+            loadRoomList();
+        } catch {
+            const resp = await axios.post("/room/enter", {roomNo : friend.friendFk });
+            loadRoomList();
+        }
+
+      }, [memberLoading, memberId]);
+
+      const enterRoom = useCallback(async (friend)=>{
+        // await axios.post("/room/enter", { roomNo : friend.friendFk });
+        //방으로 이동     
+        navigate(`/room-chat/${friend.friendFk}`);   
+    }, []);
 
     //memo
     const searchResult = useMemo(() => {
@@ -95,9 +120,8 @@ const FriendList = ()=>{
                         <li key={friend.friendFk} className="list-group-item" 
                         onClick={e=>selectKeyword(friend.friendFk)}>
                             {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                            {memberId === friend.friendTo ? 
-                            <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
-                            : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
+                            <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                            <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
                             <button className="btn btn-secondary ms-4">프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
@@ -113,9 +137,8 @@ const FriendList = ()=>{
                 {friendList.map(friend=>(
                     <li key={friend.friendFk} className="list-group-item">
                         {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                        {memberId === friend.friendTo ? 
-                            <button className="btn btn-success ms-4" onClick={()=> chatClickFromId(friend)}>채팅</button>
-                            : <button className="btn btn-success ms-4" onClick={()=> chatClickToId(friend)}>채팅</button>}
+                        <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                        <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
                         <button className="btn btn-secondary ms-4">프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>
