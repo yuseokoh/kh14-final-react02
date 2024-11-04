@@ -108,7 +108,7 @@ const ShoppingCart = () => {
     }
     // 특정 조건이나 디버깅 로그 추가로 확인할 수 있음
     console.log('useEffect 호출됨: Cart, Library, Game 목록 로드');
-  }, [login, memberId]); // 의존성 배열을 최소화
+  }, [login, memberId]); 
   
 
   useEffect(() => {
@@ -117,7 +117,7 @@ const ShoppingCart = () => {
     }
   }, [cartList, loadAllGameImages]);
 
- const getCurrentUrl = useCallback(() => {
+  const getCurrentUrl = useCallback(() => {
     const basePath = window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     return `${window.location.origin}${basePath}`;
 }, []);
