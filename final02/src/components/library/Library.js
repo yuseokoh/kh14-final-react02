@@ -12,29 +12,24 @@ const Library = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-  const [gameList, setGameList] = useState([]); 
-
-  // 라이브러리 목록 로드
-
+  const [gameList, setGameList] = useState([]); // 게임 목록을 저장하는 상태 추가
   const loadLib = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
       const uniqueLibList = resp.data.reduce((acc, current) => {
-        if (!acc.some(item => item.gameNo === current.gameNo)) {
+        const isDuplicate = acc.some(item => item.gameNo === current.gameNo);
+        if (!isDuplicate) {
           acc.push(current);
         }
         return acc;
       }, []);
       
       setLibList(uniqueLibList);
-      await loadImages(uniqueLibList);  // 이미지 로드 호출
+      loadImages(uniqueLibList);
     } catch (error) {
       console.error("Error loading library:", error);
     }
   }, []);
-
-
-  // 이미지 로딩 병렬화 (Promise.all 사용)
 
   //게임 리스트 로드
   const loadGameList = useCallback(async () => {
@@ -54,36 +49,24 @@ const Library = () => {
     }
   }, []);
 
-
   const loadImages = useCallback(async (library) => {
-    const imageRequests = library.map(async (game) => {
+    const imageMap = {};
+
+    for (const game of library) {
       try {
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        const imageUrl = response.data?.length > 0 
-            ? `http://localhost:8080/game/download/${response.data[0].attachmentNo}`
-            : '/default-profile.png';
-        return { [game.libraryId]: imageUrl };
+        if (response.data && response.data.length > 0) {
+          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+          imageMap[game.libraryId] = imageUrl;
+        } else {
+          imageMap[game.libraryId] = '/default-profile.png';
+        }
       } catch (error) {
         console.error("Error loading game image:", error);
-        return { [game.libraryId]: '/default-profile.png' };
+        imageMap[game.libraryId] = '/default-profile.png';
       }
-    });
-
-    // 모든 이미지 요청 완료 후 업데이트
-    const results = await Promise.all(imageRequests);
-    const newImageUrls = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
-    setImageUrls(newImageUrls);
-  }, []);
-
-  // 추천 게임 목록 로드
-  const loadGameList = useCallback(async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/game/");
-      const shuffledGames = response.data.sort(() => Math.random() - 0.5); // 데이터 섞기
-      setGameList(shuffledGames.slice(0, 6)); // 랜덤으로 6개만 표시
-    } catch (error) {
-      console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
+    setImageUrls(imageMap);
   }, []);
 
   useEffect(() => {
@@ -91,19 +74,7 @@ const Library = () => {
       loadLib();
       loadGameList();
     }
-  }, [login, memberId, loadLib, loadGameList]);
-
-  const nextSlide = () => {
-    if (currentIndex < gameList.length - 3) {
-      setCurrentIndex(currentIndex + 3);
-    }
-  };
-
-  const prevSlide = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 3);
-    }
-  };
+  }, [login, memberId, loadLib]);
 
   const nextSlide = () => {
     if (currentIndex < gameList.length - 3) {
@@ -145,8 +116,6 @@ const Library = () => {
           ))
         )}
       </div>
-
-
       {/* 일반 게임 목록 슬라이드 섹션 */}
       <section className={styles.sliderSection}>
         <h2 className={styles.sectionTitle}>추천 게임 목록</h2>
