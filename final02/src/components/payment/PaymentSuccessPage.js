@@ -118,7 +118,7 @@ const PaymentSuccessPage = () => {
       };
       
 
-    const handleGoToStore = () => navigate("/store");
+    const handleGoToStore = () => navigate("/");
     const handleGoToLibrary = () => navigate("/library");
 
     if (isLoading) {
@@ -151,14 +151,14 @@ const PaymentSuccessPage = () => {
                 <p>{t('paymentSuccess.successMessage')}</p>
 
                 <div className={styles.purchaseReceipt}>
-                    <h2>{t('paymentSuccess.purchaseReceipt')}</h2>
-                    <p>{t('paymentSuccess.accountName')}: {memberId}</p>
+                    
+                    <p>{t('paymentSuccess.buyer')}: {memberId}</p>
                     <p>{t('paymentSuccess.totalAmount')}: {totalAmount}$</p>
                 </div>
 
                 <div className={styles.navigationButtons}>
                     <button onClick={handleGoToStore} className="btn btn-primary">
-                        {t('paymentSuccess.goToStore')}
+                        {t('paymentSuccess.goToMainPage')}
                     </button>
                     <button onClick={handleGoToLibrary} className="btn btn-secondary">
                         {t('paymentSuccess.goToLibrary')}
