@@ -127,7 +127,7 @@
     "termsOfUse": {
       "title": "Legal Notice",
       "copyrightTitle": "COPYRIGHT",
-      "copyrightContent": "© 2024 Valve Corporation. All rights reserved. Valve, the Valve logo, Half-Life, the Half-Life logo, the Lambda logo, Steam, the Steam logo, Team Fortress, the Team Fortress logo, Opposing Force, Day of Defeat, the Day of Defeat logo, Counter-Strike, the Counter-Strike logo, Source, the Source logo, Counter-Strike: Condition Zero, Portal, the Portal logo, Dota, the Dota 2 logo, and Defense of the Ancients are trademarks and/or registered trademarks of Valve Corporation. All other trademarks are property of their respective owners.",
+      "copyrightContent": "Â© 2024 Valve Corporation. All rights reserved. Valve, the Valve logo, Half-Life, the Half-Life logo, the Lambda logo, Steam, the Steam logo, Team Fortress, the Team Fortress logo, Opposing Force, Day of Defeat, the Day of Defeat logo, Counter-Strike, the Counter-Strike logo, Source, the Source logo, Counter-Strike: Condition Zero, Portal, the Portal logo, Dota, the Dota 2 logo, and Defense of the Ancients are trademarks and/or registered trademarks of Valve Corporation. All other trademarks are property of their respective owners.",
       "videoPolicyTitle": "VALVE VIDEO POLICY",
       "videoPolicyContent": "Click here for information.",
       "thirdPartyTitle": "THIRD PARTY LEGAL NOTICES",
@@ -149,13 +149,13 @@
       "section1SubTitleB": "Hardware, Subscriptions; Content and Services",
       "section1SubContentB": "As a Subscriber you may obtain access to certain services, software and content available to Subscribers or purchase certain Hardware (as defined below) on Steam. The Steam client software and any other software, content, and updates you download or access via Steam, including but not limited to Valve or third-party video games and in-game content, software associated with Hardware and any virtual items you trade, sell or purchase in a Steam Subscription Marketplace are referred to in this Agreement as \"Content and Services;\" the rights to access and/or use any Content and Services accessible through Steam are referred to in this Agreement as \"Subscriptions.\"",
       "section1SubTitleC": "Your Account",
-      "section1SubContentC": "When you complete Steam’s registration process, you create a Steam account (\"Account\"). Your Account may also include billing information you provide to Valve for transactions concerning Subscriptions, Content and Services and the purchase of any physical goods through Steam (\"Hardware\"). You may not reveal, share or otherwise allow others to use your password or Account except as otherwise specifically authorized by Valve. You are responsible for the confidentiality of your login and password and for the security of your computer system. Valve is not responsible for the use of your password and Account or for all of the communication and activity on Steam that results from use of your login name and password by you, or by any person to whom you may have intentionally or by negligence disclosed your login and/or password in violation of this confidentiality provision.",
+      "section1SubContentC": "When you complete Steamâ€™s registration process, you create a Steam account (\"Account\"). Your Account may also include billing information you provide to Valve for transactions concerning Subscriptions, Content and Services and the purchase of any physical goods through Steam (\"Hardware\"). You may not reveal, share or otherwise allow others to use your password or Account except as otherwise specifically authorized by Valve. You are responsible for the confidentiality of your login and password and for the security of your computer system. Valve is not responsible for the use of your password and Account or for all of the communication and activity on Steam that results from use of your login name and password by you, or by any person to whom you may have intentionally or by negligence disclosed your login and/or password in violation of this confidentiality provision.",
       "section1SubTitleD": "Acceptance of Agreements",
-      "section1SubContentD": "Your order through Steam is an offer to Valve to agree on the delivery of the ordered Subscriptions, Content and Services and/or Hardware (the “Product(s)”) in exchange for the listed price.\n\nWhen you place an order on Steam, we will send you a message confirming receipt of your order and containing the details of your order (the “Order Confirmation”). The Order Confirmation is acknowledgement that we have received your order and does not confirm acceptance of your offer to enter into an agreement."
+      "section1SubContentD": "Your order through Steam is an offer to Valve to agree on the delivery of the ordered Subscriptions, Content and Services and/or Hardware (the â€œProduct(s)â€) in exchange for the listed price.\n\nWhen you place an order on Steam, we will send you a message confirming receipt of your order and containing the details of your order (the â€œOrder Confirmationâ€). The Order Confirmation is acknowledgement that we have received your order and does not confirm acceptance of your offer to enter into an agreement."
     },
     "refundPolicy": {
       "title": "Steam Refund Policy",
-      "overview": "You can request a refund for nearly any purchase on Steam—for any reason. Perhaps your PC doesn't meet the hardware requirements; perhaps you bought the game by mistake; perhaps you played the title for an hour and just didn't like it.",
+      "overview": "You can request a refund for nearly any purchase on Steamâ€”for any reason. Perhaps your PC doesn't meet the hardware requirements; perhaps you bought the game by mistake; perhaps you played the title for an hour and just didn't like it.",
       "refundScopeTitle": "Scope of Refund Policy",
       "refundScopeContent": "Steam refunds are available for games and software purchased from the Steam store within 14 days of purchase and less than 2 hours of playtime.",
       "dlcRefundTitle": "Refunds on Downloadable Content (DLC)",
@@ -183,7 +183,7 @@
       "euRightsTitle": "EU Right of Withdrawal",
       "euRightsContent": "For more information on how EU Right of Withdrawal applies to Steam customers, click here.",
       "abuseTitle": "Abuse",
-      "abuseContent": "Refunds are designed to remove the risk from purchasing titles on Steam—not as a way to get free games. If it appears that you are abusing refunds, we may stop offering them to you."
+      "abuseContent": "Refunds are designed to remove the risk from purchasing titles on Steamâ€”not as a way to get free games. If it appears that you are abusing refunds, we may stop offering them to you."
     }
     ,
       "footer": {
@@ -243,18 +243,55 @@
           }
           ,
             "editInfo": "Edit {{memberId}}'s Information",
-           
             "address": "Address",
-            "addressDetail": "Detailed Address"
-           
-            }
-        
-        
-      
-      
-      
-      
-    
-    
-  
-  
+            "addressDetail": "Detailed Address",
+            "loading": "Loading...",
+            "errorLoadingGames": "Failed to load game data.",
+            "noGames": "No games available.",
+            "recommendedGames": "Recommended Games",
+            "specialDiscounts": "Special Discounts",
+            "newGames": "New Games",
+            "topRated": "Top Rated",
+            "allGamesList": "All Games",
+            "addGame": "Add Game",
+            "showMore": "Show More",
+            "freeGames": "Free Games",
+            "controllerSupport": "Controller Support",
+            "rating": "Rating",
+            "reviews": "Reviews",
+            "recentlyViewed": "Recently Viewed Games",
+            "cyberpunk": "Cyberpunk 2077",
+            "recommendations.friends": "Friends' Recommendations",
+            "recommendations.curators": "Curators' Recommendations",
+            "recommendations.tags": "Tags",
+            "others": "Others",
+            "ageRatings": "Age Ratings",
+            "device.pc": "PC Games",
+            "device.mobile": "Mobile Games",
+            "device.console": "Console Games",
+            "recommendations":"recommendations",
+            "categories":"categories",
+            "categories.action": "Action",
+            "categories.adventure": "Adventure",
+            "categories.indie": "Indie",
+            "categories.rpg": "RPG",
+            "categories.simulation": "Simulation",
+            "categories.strategy": "Strategy",
+            "categories.openWorld": "Open World",
+            "categories.multiplayer": "Multiplayer",
+            "categories.baseBuilding": "Base Building",
+            "categories.fantasy": "Fantasy",
+            "categories.pixelGraphics": "Pixel Graphics",
+            "categories.roguelike": "Roguelike",
+            "categories.sandbox": "Sandbox",
+            "categories.survival": "Survival",
+            "others.freeToPlay": "Free to Play",
+            "others.earlyAccess": "Early Access",
+            "others.coop": "Co-op",
+            "others.vr": "VR Supported",
+            "others.controllerSupport": "Controller Support",
+            "ageRatings.all": "All Ages",
+            "ageRatings.12": "Ages 12 and up",
+            "ageRatings.15": "Ages 15 and up",
+            "ageRatings.19": "Ages 19 and up"
+          }

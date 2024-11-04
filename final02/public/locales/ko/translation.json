@@ -238,18 +238,57 @@
               "iron": "아이언"
           }
           ,
-            "editInfo": "{{memberId}}의 정보수정",
-          
+            "editInfo": "{{memberId}}님의 정보 수정",
             "address": "주소",
-            "addressDetail": "상세 주소"
-           
-            }
-        
-      
-      
-      
-      
-      
-    
-  
-  
+            "addressDetail": "상세 주소",
+            "loading": "로딩 중...",
+            "errorLoadingGames": "게임 데이터를 불러오는 데 실패했습니다.",
+            "noGames": "게임이 없습니다.",
+            "recommendedGames": "추천 게임",
+            "specialDiscounts": "특별 할인",
+            "newGames": "신작 게임",
+            "topRated": "최고 평점",
+            "allGamesList": "전체 게임 목록",
+            "addGame": "게임 등록",
+            "showMore": "더 보기",
+            "freeGames": "무료 게임",
+            "controllerSupport": "컨트롤러 지원",
+            "rating": "평점",
+            "reviews": "리뷰",
+            "recentlyViewed": "최근 본 게임",
+            "cyberpunk": "사이버펑크 2077",
+            "recommendations.friends": "친구 추천",
+            "recommendations.curators": "큐레이터 추천",
+            "recommendations.tags": "태그",
+            "others": "기타",
+            "ageRatings": "연령 등급",
+            "device.pc": "PC 게임",
+            "device.mobile": "모바일 게임",
+            "device.console": "콘솔 게임",
+            "recommendations":"추천",
+            "categories":"카테고리",
+            "categories.action": "액션",
+            "categories.adventure": "어드벤처",
+            "categories.indie": "인디",
+            "categories.rpg": "RPG",
+            "categories.simulation": "시뮬레이션",
+            "categories.strategy": "전략",
+            "categories.openWorld": "오픈 월드",
+            "categories.multiplayer": "멀티플레이어",
+            "categories.baseBuilding": "기지 구축",
+            "categories.fantasy": "판타지",
+            "categories.pixelGraphics": "픽셀 그래픽",
+            "categories.roguelike": "로그라이크",
+            "categories.sandbox": "샌드박스",
+            "categories.survival": "생존",
+            "others.freeToPlay": "무료 플레이",
+            "others.earlyAccess": "앞서 해보기",
+            "others.coop": "협동",
+            "others.vr": "VR 지원",
+            "others.controllerSupport": "컨트롤러 지원",
+            "ageRatings.all": "전체이용가",
+            "ageRatings.12": "12세이용가",
+            "ageRatings.15": "15세이용가",
+            "ageRatings.19": "19세이용가"
+          }
+          

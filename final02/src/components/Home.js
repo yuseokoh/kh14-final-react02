@@ -7,6 +7,7 @@ import bannerImage from '../components/game/gameimg/webm_page_bg_koreana (1).gif
 import { useNavigate } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberLevelState } from '../utils/recoil';
+import { useTranslation } from 'react-i18next';
 
 /**
  * FeaturedBanner 컴포넌트
@@ -389,64 +390,64 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
  * 카테고리, 필터, 추천 등의 네비게이션 옵션을 포함합니다.
  */
 const Sidebar = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
-  // 네비게이션 옵션 정의
   const device = [
-    { name : 'PC 게임', path: '/device/pc'},
-    { name : '모바일 게임', path: '/device/mobile'},
-    { name : '콘솔 게임', path: '/device/console'}
-  ];
-  
-  const recommendations = [
-    {name : '친구 추천', path: '/recommendations/friends'},
-    {name : '큐레이터 추천', path: '/recommendations/curators'},
-    {name : '태그', path: '/recommendations/tags'}
-  ];
-  
-  const categories = [
-    { name: 'Action', path: '/game/category/action' },
-    { name: 'Adventure', path: '/game/category/adventure' },
-    { name: 'Indie', path: '/game/category/indie' },
-    { name: 'RPG', path: '/game/category/rpg' },
-    { name: 'Simulation', path: '/game/category/simulation' },
-    { name: 'Strategy', path: '/game/category/strategy' },
-    { name: 'Open World', path: '/game/category/openworld' },
-    { name: 'Multiplayer', path: '/game/category/multiplayer' },
-    { name: 'BaseBuilding', path: '/game/category/basebuilding' },
-    { name: 'Fantasy', path: '/game/category/fantasy' },
-    { name: 'PixelGraphics', path: '/game/category/pixelgraphics' },
-    { name: 'Roguelike', path: '/game/category/roguelike' },
-    { name: 'Sandbox', path: '/game/category/sandbox' },
-    { name: 'Survival', path: '/game/category/survival' }
-  ];
-  
-  const others = [
-    {name: 'Free to Play', path: '/other/freetoplay'},
-    {name: 'Early Access', path: '/other/earlyaccess'},
-    {name: 'Co-op', path: '/other/coop'},
-    {name: 'VR 지원', path: '/other/vr'},
-    {name: '컨트롤러 지원', path: '/other/contoller'}
-  ];
-  
-  const ageRatings = [
-    {name: '전체이용가', path: '/rating/all'},
-    {name: '12세이용가', path: '/rating/12'},
-    {name: '15세이용가', path: '/rating/15'},
-    {name: '19세이용가', path: '/rating/19'}
-  ];
+    { name: t('device.pc'), path: '/device/pc' },
+    { name: t('device.mobile'), path: '/device/mobile' },
+    { name: t('device.console'), path: '/device/console' }
+];
+
+const recommendations = [
+    { name: t('recommendations.friends'), path: '/recommendations/friends' },
+    { name: t('recommendations.curators'), path: '/recommendations/curators' },
+    { name: t('recommendations.tags'), path: '/recommendations/tags' }
+];
+
+const categories = [
+    { name: t('categories.action'), path: '/game/category/action' },
+    { name: t('categories.adventure'), path: '/game/category/adventure' },
+    { name: t('categories.indie'), path: '/game/category/indie' },
+    { name: t('categories.rpg'), path: '/game/category/rpg' },
+    { name: t('categories.simulation'), path: '/game/category/simulation' },
+    { name: t('categories.strategy'), path: '/game/category/strategy' },
+    { name: t('categories.openWorld'), path: '/game/category/openworld' },
+    { name: t('categories.multiplayer'), path: '/game/category/multiplayer' },
+    { name: t('categories.baseBuilding'), path: '/game/category/basebuilding' },
+    { name: t('categories.fantasy'), path: '/game/category/fantasy' },
+    { name: t('categories.pixelGraphics'), path: '/game/category/pixelgraphics' },
+    { name: t('categories.roguelike'), path: '/game/category/roguelike' },
+    { name: t('categories.sandbox'), path: '/game/category/sandbox' },
+    { name: t('categories.survival'), path: '/game/category/survival' }
+];
+
+const others = [
+    { name: t('others.freeToPlay'), path: '/other/freetoplay' },
+    { name: t('others.earlyAccess'), path: '/other/earlyaccess' },
+    { name: t('others.coop'), path: '/other/coop' },
+    { name: t('others.vr'), path: '/other/vr' },
+    { name: t('others.controllerSupport'), path: '/other/contoller' }
+];
+
+const ageRatings = [
+    { name: t('ageRatings.all'), path: '/rating/all' },
+    { name: t('ageRatings.12'), path: '/rating/12' },
+    { name: t('ageRatings.15'), path: '/rating/15' },
+    { name: t('ageRatings.19'), path: '/rating/19' }
+];
 
   return (
     <div className={styles.sidebar}>
-      {/* 최근 본 게임 섹션 */}
-      <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>최근 본 게임</h3>
-        <p className={styles.sidebarSectionContent}>사이버펑크 2077</p>
-      </div>
+    {/* 최근 본 게임 섹션 */}
+    <div className={styles.sidebarSection}>
+      <h3 className={styles.sidebarSectionTitle}>{t("recentlyViewed")}</h3>
+      <p className={styles.sidebarSectionContent}>{t("cyberpunk")}</p>
+    </div>
       
-      {/* 추천 섹션 */}
-      <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>추천</h3>
+    {/* 추천 섹션 */}
+    <div className={styles.sidebarSection}>
+        <h3 className={styles.sidebarSectionTitle}>{t("recommendations")}</h3>
         <ul className={styles.sidebarSectionList}>
           {recommendations.map((rec, index) => (
             <li
@@ -460,11 +461,11 @@ const Sidebar = () => {
         </ul>
       </div>
       
-      {/* 카테고리 섹션 */}
-      <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>카테고리</h3>
+       {/* 카테고리 섹션 */}
+       <div className={styles.sidebarSection}>
+        <h3 className={styles.sidebarSectionTitle}>{t("categories")}</h3>
         <ul className={styles.sidebarSectionList}>
-          {categories.map((category, index) =>(
+          {categories.map((category, index) => (
             <li
               key={index}
               className={styles.categoryLink}
@@ -478,7 +479,7 @@ const Sidebar = () => {
       
       {/* 기타 섹션 */}
       <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>기타</h3>
+        <h3 className={styles.sidebarSectionTitle}>{t("others")}</h3>
         <ul className={styles.sidebarSectionList}>
           {others.map((other, index) => (
             <li
@@ -492,9 +493,9 @@ const Sidebar = () => {
         </ul>
       </div>
 
-      {/* 연령 등급 섹션 */}
-      <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>연령 등급</h3>
+       {/* 연령 등급 섹션 */}
+       <div className={styles.sidebarSection}>
+        <h3 className={styles.sidebarSectionTitle}>{t("ageRatings")}</h3>
         <ul className={styles.sidebarSectionList}>
           {ageRatings.map((rating, index) => (
             <li
@@ -510,13 +511,13 @@ const Sidebar = () => {
     </div>
   );
 };
-
 /**
  * GameListItem 컴포넌트
  * 게임 목록에서 개별 게임 항목을 표시하는 컴포넌트입니다.
  * @param {Object} game - 게임 정보 객체
  */
 const GameListItem = ({ game }) => {
+  const { t } = useTranslation();
   const [imageUrl, setImageUrl] = useState(null);
   const navigate = useNavigate();
 
@@ -577,8 +578,8 @@ const GameListItem = ({ game }) => {
         </div>
         <div className={styles.gameListMeta}>
           <span>{game.gameGrade}</span>
-          <span>평점: {game.gameUserScore}/10</span>
-          <span>리뷰: {game.gameReviewCount.toLocaleString()}</span>
+          <span>{t("rating")}: {game.gameUserScore}/10</span>
+          <span>{t("reviews")}: {game.gameReviewCount.toLocaleString()}</span>
         </div>
       </div>
     </div>
@@ -597,22 +598,23 @@ const Home = () => {
   const [error, setError] = useState(null); // 에러 상태
   const [visiblegames, setVisibleGames] = useState(10); // 표시할 게임 수
   const [activeFilter, setActiveFilter] = useState(''); // 활성화된 필터
+  const { t } = useTranslation();
 
   const memberLevel = useRecoilValue(memberLevelState);
   const isLoggedIn = useRecoilValue(loginState);
 
   const navigate = useNavigate();
 
-  // 필터 옵션 정의
   const filterOptions = [
-    { id: 'all', name: '전체' },
-    { id: 'action', name: '액션' },
-    { id: 'adventure', name: '어드벤처' },
+    { id: 'all', name: t('all') },
+    { id: 'action', name: t('action') },
+    { id: 'adventure', name: t('adventure') },
     { id: 'rpg', name: 'RPG' },
-    { id: 'simulation', name: '시뮬레이션' },
-    { id: 'strategy', name: '전략' },
-    { id: 'indie', name: '인디' }
+    { id: 'simulation', name: t('simulation') },
+    { id: 'strategy', name: t('strategy') },
+    { id: 'indie', name: t('indie') }
   ];
+
 
   // 할인 게임 필터링 (20% 이상)
   const discountedGames = useMemo(() => {
@@ -669,20 +671,20 @@ const Home = () => {
   };
 
   // 로딩, 에러, 빈 데이터 처리
-  if (loading) return <div>로딩 중...</div>;
+  if (loading) return <div>{t('loading')}</div>;
   if (error) return <div>{error}</div>;
-  if (games.length === 0) return <div>게임이 없습니다.</div>;
+  if (games.length === 0) return <div>{t('noGames')}</div>;
 
-  return (
+
+   return (
     <div className={styles.homeContainer}>
       <FeaturedBanner bannerAlt="Steam Next Fest Banner" />
       <div className={styles.contentWrapper}>
-      <Sidebar />
+        <Sidebar />
         <div className={styles.contentContainer}>
           <div className={styles.mainContent}>
-            {/* 추천 게임 섹션 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>추천 게임</h2>
+              <h2 className={styles.sectionTitle}>{t('recommendedGames')}</h2>
               <div style={{ position: 'relative' }}>
                 <FeaturedGame game={games[featuredIndex]} />
                 <button
@@ -700,55 +702,44 @@ const Home = () => {
               </div>
             </section>
 
-            {/* 특별 할인 섹션 - 20% 이상 할인 게임 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>특별 할인</h2>
+              <h2 className={styles.sectionTitle}>{t('specialDiscounts')}</h2>
               <HorizontalSlider games={discountedGames} itemsPerPage={4} />
             </section>
 
-            {/* 신작 게임 섹션 - 2021년 이후 출시 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>신작 게임</h2>
+              <h2 className={styles.sectionTitle}>{t('newGames')}</h2>
               <HorizontalSlider games={newGames} itemsPerPage={6} />
             </section>
 
-            {/* 최고 인기 게임 섹션 - 평점 9점 이상 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>최고 평점</h2>
+              <h2 className={styles.sectionTitle}>{t('topRated')}</h2>
               <VerticalCardSlider games={topGames} itemsPerPage={8} />
             </section>
 
-            {/* 전체 게임 목록 섹션 */}
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>전체 게임 목록</h2>
-                {/* 개발자 회원만 게임 등록 버튼 표시 */}
+                <h2 className={styles.sectionTitle}>{t('allGamesList')}</h2>
                 {memberLevel === '개발자' && (
                   <button
                     className={styles.addGameButton}
                     onClick={() => navigate('/game/add')}
                   >
-                    게임 등록
+                    {t('addGame')}
                   </button>
                 )}
               </div>
 
-              {/* 게임 목록 표시 */}
               <div className={styles.gameList}>
                 {games.slice(0, visiblegames).map(game => (
                   <GameListItem key={game.gameNo} game={game} />
                 ))}
-
-                {/* 더보기 버튼 */}
                 {visiblegames < games.length && (
                   <div className={styles.showMoreContainer}>
-                    <button
-                      onClick={handleShowMore}
-                      className={styles.showMoreTrigger}
-                    >
+                    <button onClick={handleShowMore} className={styles.showMoreTrigger}>
                       <div className={styles.showMoreContent}>
                         <ChevronDown size={20} />
-                        <span>더 보기</span>
+                        <span>{t('showMore')}</span>
                       </div>
                     </button>
                   </div>
@@ -756,13 +747,12 @@ const Home = () => {
               </div>
             </section>
 
-            {/* 카테고리 섹션 */}
             <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>카테고리</h2>
+              <h2 className={styles.sectionTitle}>{t('categories')}</h2>
               <div className={styles.grid}>
-                <CategoryCard icon={<Tag color="white" size={24} />} title="무료 게임" />
-                <CategoryCard icon={<Users color="white" size={24} />} title="멀티플레이어" />
-                <CategoryCard icon={<Gamepad color="white" size={24} />} title="컨트롤러 지원" />
+                <CategoryCard icon={<Tag color="white" size={24} />} title={t('freeGames')} />
+                <CategoryCard icon={<Users color="white" size={24} />} title={t('multiplayer')} />
+                <CategoryCard icon={<Gamepad color="white" size={24} />} title={t('controllerSupport')} />
               </div>
             </section>
           </div>
@@ -772,5 +762,4 @@ const Home = () => {
   );
 };
 
-// Home 컴포넌트 내보내기
 export default Home;
