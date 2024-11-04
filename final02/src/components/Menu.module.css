@@ -227,3 +227,100 @@
 .notificationDropdown.show ~ .notificationOverlay {
   display: block;
 }
+
+.steamPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.steamPopup {
+  background: linear-gradient(to bottom, #2a475e, #1b2838);
+  border: 1px solid #66c0f4;
+  border-radius: 3px;
+  width: 500px;
+  color: #c6d4df;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.steamPopupHeader {
+  background: linear-gradient(to bottom, #66c0f4, #2a475e);
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #66c0f4;
+}
+
+.steamPopupHeader h3 {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.steamPopupContent {
+  padding: 20px;
+}
+
+.memberInfo {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 3px;
+  margin-bottom: 20px;
+}
+
+.memberInfo p {
+  margin: 10px 0;
+  color: #acb2b8;
+}
+
+.memberInfo strong {
+  color: #ffffff;
+}
+
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.approveButton {
+  background: linear-gradient(to bottom, #75b022, #588a1b);
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.approveButton:hover {
+  background: linear-gradient(to bottom, #8ed629, #6db022);
+}
+
+.rejectButton {
+  background: linear-gradient(to bottom, #b01f1f, #8a1b1b);
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.rejectButton:hover {
+  background: linear-gradient(to bottom, #d62929, #b02222);
+}

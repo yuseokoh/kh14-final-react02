@@ -38,35 +38,50 @@ const MemberLogin = () => {
   // 로그인 요청
   const sendLoginRequest = useCallback(async () => {
     try {
-      // 로그인 요청
-      const resp = await axios.post("/member/login", input);
-      console.log(resp.data); // 응답 데이터 로그
+        // 로그인 요청 URL 수정
+        const resp = await axios.post("http://localhost:8080/member/login", input);
+        console.log("로그인 응답:", resp.data); // 디버깅용 로그
 
-      // 성공적으로 로그인했을 경우
-      setMemberId(resp.data.memberId);
-      setMemberLevel(resp.data.memberLevel);
+        // 성공적으로 로그인했을 경우
+        setMemberId(resp.data.memberId);
+        setMemberLevel(resp.data.memberLevel);
 
-      // Authorization 헤더에 토큰 설정
-      axios.defaults.headers.common["Authorization"] = "Bearer " + resp.data.accessToken;
+        // JWT 토큰 localStorage에 저장
+        window.localStorage.setItem("jwtToken", resp.data.accessToken);
+        console.log("JWT 토큰 저장됨:", resp.data.accessToken); // 디버깅용
+        
+        // Authorization 헤더에 토큰 설정
+        axios.defaults.headers.common["Authorization"] = `Bearer ${resp.data.accessToken}`;
 
-      // refreshToken 저장
-      if (stay) {
-        window.localStorage.setItem("refreshToken", resp.data.refreshToken);
-      } else {
-        window.sessionStorage.setItem("refreshToken", resp.data.refreshToken);
-      }
+        // refreshToken 저장
+        if (stay) {
+            window.localStorage.setItem("refreshToken", resp.data.refreshToken);
+        } else {
+            window.sessionStorage.setItem("refreshToken", resp.data.refreshToken);
+        }
 
-      // 홈 화면으로 이동
-      navigate("/");
+        // 디버깅용 로그
+        console.log("저장된 토큰 확인:", {
+            jwtToken: window.localStorage.getItem("jwtToken"),
+            refreshToken: stay 
+                ? window.localStorage.getItem("refreshToken") 
+                : window.sessionStorage.getItem("refreshToken"),
+            memberLevel: resp.data.memberLevel
+        });
+
+        // 홈 화면으로 이동
+        navigate("/");
     } catch (e) {
-      // 에러 핸들링
-      if (e.response && e.response.status === 404) {
-        console.log("아이디가 없거나 비밀번호가 틀립니다.");
-      } else {
-        console.log("로그인 요청 중 오류가 발생했습니다.");
-      }
+        // 에러 핸들링
+        console.error("로그인 에러:", e); // 상세 에러 로그
+        console.error("에러 응답:", e.response?.data); // 서버 에러 응답 확인
+        if (e.response && e.response.status === 404) {
+            alert("아이디가 없거나 비밀번호가 틀립니다.");
+        } else {
+            alert("로그인 요청 중 오류가 발생했습니다.");
+        }
     }
-  }, [input, stay]);
+}, [input, stay, navigate, setMemberId, setMemberLevel]);
 
 
 
