@@ -53,33 +53,57 @@ const ShoppingCart = () => {
     }
   }, []);
 
-  const delCart = useCallback(async (cartId) => {
+  const delCart = useCallback(async (gameNo) => {
     try {
-      await axios.delete(`/cart/${cartId}`);
-      setCartList(prevList => prevList.filter(cart => cart.cartId !== cartId));
-      setSelectedItems(prevItems => prevItems.filter(id => id !== cartId));
+      console.log("Deleting cart item with gameNo:", gameNo); // 전달되는 gameNo 값을 콘솔에 출력
+      const resp = await axios.delete(`/cart/${gameNo}`);
+      setCartList(prevList => prevList.filter(cart => cart.gameNo !== gameNo)); // gameNo를 사용하여 목록 필터링
+      setSelectedItems(prevItems => prevItems.filter(id => id !== gameNo)); // gameNo를 사용하여 선택 항목 필터링
     } catch (error) {
       console.error("Error deleting cart item", error);
     }
   }, []);
 
-  const loadGameImages = useCallback(async (cartListData) => {
+
+  // const loadGameImages = useCallback(async (cartListData) => {
+  //   const imageMap = {};
+  //   try {
+  //     for (const cart of cartListData) {
+  //       const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
+  //       if (response.data && response.data.length > 0) {
+  //         const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+  //         imageMap[cart.cartId] = imageUrl;
+  //       } else {
+  //         imageMap[cart.cartId] = 'https://via.placeholder.com/200';
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("이미지 로딩 에러:", error);
+  //   }
+  //   setImageUrls(imageMap);
+  // }, []);
+
+  const loadAllGameImages = useCallback(async () => {
     const imageMap = {};
+
     try {
-      for (const cart of cartListData) {
-        const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
-        if (response.data && response.data.length > 0) {
-          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          imageMap[cart.cartId] = imageUrl;
-        } else {
-          imageMap[cart.cartId] = 'https://via.placeholder.com/200';
+        for (const cart of cartList) {
+            const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
+            
+            // 게임에 이미지가 있을 경우 해당 URL을, 없으면 기본 이미지를 사용
+            if (response.data && response.data.length > 0) {
+                const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+                imageMap[cart.gameNo] = imageUrl;
+            } else {
+                imageMap[cart.gameNo] = 'https://via.placeholder.com/200';
+            }
         }
-      }
+
+        setImageUrls(imageMap);
     } catch (error) {
-      console.error("이미지 로딩 에러:", error);
+        console.error("이미지 로딩 에러:", error);
     }
-    setImageUrls(imageMap);
-  }, []);
+}, [cartList]);
 
   useEffect(() => {
     if (login && memberId) {
@@ -89,11 +113,16 @@ const ShoppingCart = () => {
     }
   }, [login, memberId, loadCartList, loadLibraryList, loadTopRatedGames]);
 
+  // useEffect(() => {
+  //   if (cartList.length > 0) {
+  //     loadGameImages(cartList);
+  //   }
+  // }, [cartList, loadGameImages]);
   useEffect(() => {
     if (cartList.length > 0) {
-      loadGameImages(cartList);
+        loadAllGameImages(); // 단순화된 이미지 로딩 함수 호출
     }
-  }, [cartList, loadGameImages]);
+}, [cartList, loadAllGameImages]);
 
   const getCurrentUrl = useCallback(() => {
     return window.location.origin + window.location.pathname + (window.location.hash || '');
@@ -158,7 +187,7 @@ const ShoppingCart = () => {
   return (
     <div className={styles.cartPageContainer}>
       <h1 className={styles.cart_title}>
-        {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
+        {memberId ? `${memberId}님의 장바구니` : '장바구니'}
       </h1>
 
       <div className={styles.cartItemsContainer}>
@@ -173,12 +202,12 @@ const ShoppingCart = () => {
                 onChange={() => handleItemSelection(cart.cartId)}
               />
               <img
-                src={imageUrls[cart.cartId] || 'https://via.placeholder.com/200'}
+                src={imageUrls[cart.gameNo] || 'https://via.placeholder.com/200'}
                 alt={cart.gameTitle}
                 className={styles.gameThumbnail}
               />
               <div className={styles.gameInfo}>
-              <h4 
+                <h4 
                   className={styles.gameTitle} 
                   onClick={() => navigate(`/game/detail/${cart.gameNo}`)} // 게임 제목 클릭 시 상세 페이지로 이동
                   style={{ cursor: 'pointer', textDecoration: 'underline' }}
@@ -196,7 +225,7 @@ const ShoppingCart = () => {
                 ) : (
                   <>
                     <button className={styles.giftButton}>선물용</button>
-                    <button className={styles.removeButton} onClick={() => delCart(cart.cartId)}>제거</button>
+                    <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
                   </>
                 )}
               </div>
