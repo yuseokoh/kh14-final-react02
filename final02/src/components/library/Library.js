@@ -9,53 +9,79 @@ const Library = () => {
   const navigate = useNavigate();
   const [libList, setLibList] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
-
+  const [currentIndex, setCurrentIndex] = useState(0);
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
+  const [gameList, setGameList] = useState([]); 
 
+  // 라이브러리 목록 로드
   const loadLib = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
       const uniqueLibList = resp.data.reduce((acc, current) => {
-        const isDuplicate = acc.some(item => item.gameNo === current.gameNo);
-        if (!isDuplicate) {
+        if (!acc.some(item => item.gameNo === current.gameNo)) {
           acc.push(current);
         }
         return acc;
       }, []);
       
       setLibList(uniqueLibList);
-      loadImages(uniqueLibList);
+      await loadImages(uniqueLibList);  // 이미지 로드 호출
     } catch (error) {
       console.error("Error loading library:", error);
     }
   }, []);
 
+  // 이미지 로딩 병렬화 (Promise.all 사용)
   const loadImages = useCallback(async (library) => {
-    const imageMap = {};
-
-    for (const game of library) {
+    const imageRequests = library.map(async (game) => {
       try {
         const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        if (response.data && response.data.length > 0) {
-          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          imageMap[game.libraryId] = imageUrl;
-        } else {
-          imageMap[game.libraryId] = '/default-profile.png';
-        }
+        const imageUrl = response.data?.length > 0 
+            ? `http://localhost:8080/game/download/${response.data[0].attachmentNo}`
+            : '/default-profile.png';
+        return { [game.libraryId]: imageUrl };
       } catch (error) {
         console.error("Error loading game image:", error);
-        imageMap[game.libraryId] = '/default-profile.png';
+        return { [game.libraryId]: '/default-profile.png' };
       }
+    });
+
+    // 모든 이미지 요청 완료 후 업데이트
+    const results = await Promise.all(imageRequests);
+    const newImageUrls = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    setImageUrls(newImageUrls);
+  }, []);
+
+  // 추천 게임 목록 로드
+  const loadGameList = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/game/");
+      const shuffledGames = response.data.sort(() => Math.random() - 0.5); // 데이터 섞기
+      setGameList(shuffledGames.slice(0, 6)); // 랜덤으로 6개만 표시
+    } catch (error) {
+      console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
-    setImageUrls(imageMap);
   }, []);
 
   useEffect(() => {
     if (login && memberId) {
       loadLib();
+      loadGameList();
     }
-  }, [login, memberId, loadLib]);
+  }, [login, memberId, loadLib, loadGameList]);
+
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 3);
+    }
+  };
 
   return (
     <div className={styles.library_container}>
@@ -85,6 +111,30 @@ const Library = () => {
           ))
         )}
       </div>
+
+      {/* 추천 게임 목록 슬라이드 섹션 */}
+      <section className={styles.sliderSection}>
+        <h2 className={styles.sectionTitle}>추천 게임 목록</h2>
+        <div className={styles.sliderContainer}>
+          <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
+          <div className={styles.library_game_wrapper}>
+            <div
+              className={styles.library_game_list}
+              style={{ transform: `translateX(-${currentIndex * (100 / 4)}%)` }}
+            >
+              {gameList.map((game) => (
+                <div key={game.gameNo} className={styles.library_game_item}>
+                  <img src={game.imageUrl || 'https://via.placeholder.com/200'} alt={game.gameTitle} className={styles.gameThumbnail} />
+                  <div className={styles.library_game_details}>
+                    <h3 className={styles.library_game_title}>{game.gameTitle}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button onClick={nextSlide} className={styles.sliderButton}>&gt;</button>
+        </div>
+      </section>
     </div>
   );
 };

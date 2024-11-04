@@ -9,38 +9,36 @@ import { loginState, memberIdState } from "../../utils/recoil";
 
 const WishList = () => {
   const navigate = useNavigate();
-  const dragItem = useRef(); // 드래그할 아이템의 인덱스
-  const dragOverItem = useRef(); // 드랍할 위치의 아이템의 인덱스
+  const dragItem = useRef();
+  const dragOverItem = useRef();
   const [wishlist, setWishlist] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
   const [imageUrls, setImageUrls] = useState({});
-  const [cartGames, setCartGames] = useState([]); // 장바구니에 있는 게임 목록
-  const [libraryGames, setLibraryGames] = useState([]); // 라이브러리에 있는 게임 목록
+  const [cartGames, setCartGames] = useState([]);
+  const [libraryGames, setLibraryGames] = useState([]);
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-
-  // 라이브러리 목록 불러오기
+  const [gameList, setGameList] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const loadLibraryGames = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
-      setLibraryGames(resp.data.map(game => game.gameNo)); // 라이브러리 게임의 gameNo만 저장
+      setLibraryGames(resp.data.map(game => game.gameNo));
     } catch (error) {
       console.error("Error loading library games", error);
     }
   }, []);
 
-  // 장바구니 목록 불러오기
   const loadCartGames = useCallback(async () => {
     try {
       const resp = await axios.get("/cart/");
-      setCartGames(resp.data.map(cart => cart.gameNo)); // 장바구니 게임의 gameNo만 저장
+      setCartGames(resp.data.map(cart => cart.gameNo));
     } catch (error) {
       console.error("Error loading cart games", error);
     }
   }, []);
 
-  // 찜 목록 불러오기
   const loadWishlist = useCallback(async () => {
     try {
       const resp = await axios.get("http://localhost:8080/wishlist/");
@@ -52,7 +50,6 @@ const WishList = () => {
     }
   }, []);
 
-  // 이미지 로드 함수
   const loadImages = useCallback(async (wishlist) => {
     const imageMap = {};
     for (const game of wishlist) {
@@ -71,7 +68,6 @@ const WishList = () => {
     setImageUrls(imageMap);
   }, []);
 
-  // 장바구니에 게임 추가
   const addCart = useCallback(async (game) => {
     if (cartGames.includes(game.gameNo)) {
       alert("이미 장바구니에 있는 게임입니다.");
@@ -81,17 +77,17 @@ const WishList = () => {
       alert("이미 라이브러리에 있는 게임입니다.");
       return;
     }
-
+  
     try {
       await axios.post("/cart/add", game);
       setCartGames((prevCartGames) => [...prevCartGames, game.gameNo]);
+      delWishList(game.wishListId);
       navigate("/cart/");
     } catch (error) {
       console.error("Error adding item to cart", error);
     }
   }, [cartGames, libraryGames, navigate]);
 
-  // 찜 목록에서 게임 삭제
   const delWishList = useCallback(async (wishListId) => {
     try {
       await axios.delete(`http://localhost:8080/wishlist/${wishListId}`);
@@ -102,7 +98,6 @@ const WishList = () => {
     }
   }, []);
 
-  // 찜 목록 검색
   const searchWishlist = useCallback(() => {
     if (searchKeyword.trim() !== '') {
       const filtered = wishlist.filter((game) =>
@@ -123,12 +118,12 @@ const WishList = () => {
   useEffect(() => {
     if (login && memberId) {
       loadWishlist();
-      loadCartGames(); // 장바구니 목록도 불러옴
-      loadLibraryGames(); // 라이브러리 목록도 불러옴
+      loadCartGames();
+      loadLibraryGames();
+      loadGameList();
     }
   }, [login, memberId, loadWishlist, loadCartGames, loadLibraryGames]);
 
-  // 드래그 관련 기능
   const dragStart = (e, position) => {
     dragItem.current = position;
     e.target.style.opacity = 0.5;
@@ -152,6 +147,32 @@ const WishList = () => {
     e.target.style.opacity = 1;
   };
 
+  const loadGameList = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/game/");
+      // 배열을 섞는 함수
+      const shuffleArray = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+      };
+  
+      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
+      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
+    } catch (error) {
+      console.error("게임 목록을 불러오는 데 실패했습니다:", error);
+    }
+  }, []);
+
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 3);
+    }
+  };
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
       <h1 className={styles.wishlist_title}>
@@ -224,6 +245,40 @@ const WishList = () => {
           ))}
         </TransitionGroup>
       )}
+        {/* 추천 게임 목록 슬라이더 */}
+      <section className={styles.recommendedSection}>
+        <h2 className={styles.recommendedTitle}>회원님에게 추천하는 게임</h2>
+        <div className={styles.sliderContainer}>
+          <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
+          <div className={styles.topRatedGamesWrapper}>
+            <div
+              className={styles.topRatedGamesContainer}
+              style={{ transform: `translateX(-${currentIndex * (100 / 3)}%)` }}
+            >
+              {gameList.map((game) => (
+                <div key={game.gameNo} className={styles.topRatedGameItem}>
+                  <img
+                    src={game.imageUrl || 'https://via.placeholder.com/150'}
+                    alt={game.gameTitle}
+                    className={styles.topRatedGameThumbnail}
+                  />
+                  <div className={styles.topRatedGameInfo}>
+                    <h4
+                      className={styles.topRatedGameTitle}
+                      onClick={() => navigate(`/game/detail/${game.gameNo}`)}
+                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                      {game.gameTitle}
+                    </h4>
+                    <p className={styles.topRatedGamePrice}>{(game.gamePrice || 0).toLocaleString()}₩</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button onClick={nextSlide} className={styles.sliderButton}>&gt;</button>
+        </div>
+      </section>
     </div>
   );
 };

@@ -11,6 +11,7 @@
   padding: 20px;
   min-height: 100vh;
   font-family: Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 .library_title {
@@ -18,19 +19,39 @@
   color: #ffffff;
   margin-bottom: 20px;
   font-weight: 300;
+}
+
+.sectionTitle {
+  font-size: 20px;
+  color: #ffffff;
+  margin-bottom: 10px;
+  margin-top: 50px;
+}
+
+.sliderSection {
+  margin-top: 20px;
+}
+
+.sliderContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+}
+
+.library_game_wrapper {
+  overflow: hidden;
+  width: 100%;
 }
 
 .library_game_list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: flex;
+  transition: transform 0.5s ease;
   gap: 1.5rem;
   padding: 1rem 0;
 }
 
 .library_game_item {
+  flex: 0 0 calc(25% - 1.5rem); /* 한 줄에 4개씩 표시 */
   background-color: rgba(42, 71, 94, 0.7);
   border-radius: 0.5rem;
   overflow: hidden;
@@ -50,9 +71,9 @@
 
 .gameThumbnail {
   width: 100%;
-  height: 200px; /* 기본 높이 설정 */
-  object-fit: cover; /* 이미지 비율 유지 */
-  background-color: #f0f0f0; /* 이미지가 없는 경우 배경색 */
+  height: 200px;
+  object-fit: cover;
+  background-color: #f0f0f0;
 }
 
 .library_game_details {
@@ -75,43 +96,51 @@
   text-overflow: ellipsis;
 }
 
+.sliderButton {
+  background: none;
+  border: none;
+  color: #67c1f5;
+  font-size: 32px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 15px;
+}
+
+.sliderButton:hover {
+  color: #ffffff;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 1024px) {
   .library_game_list {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .library_game_list {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
+  }
+
+  .library_game_item {
+    flex: 0 0 calc(33.33% - 1rem); /* 줄당 3개의 항목 표시 */
   }
 
   .gameThumbnail {
     height: 180px;
   }
-
-  .library_game_title {
-    font-size: 0.9rem;
-  }
 }
 
-@media (max-width: 480px) {
-  .library_container {
-    padding: 1rem;
-  }
-
-  .library_game_list {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 0.8rem;
+@media (max-width: 768px) {
+  .library_game_item {
+    flex: 0 0 calc(50% - 1rem); /* 줄당 2개의 항목 표시 */
   }
 
   .gameThumbnail {
     height: 160px;
   }
+}
 
-  .library_game_title {
-    font-size: 0.85rem;
+@media (max-width: 480px) {
+  .library_game_item {
+    flex: 0 0 100%; /* 한 번에 한 항목씩 표시 */
+  }
+
+  .gameThumbnail {
+    height: 140px;
   }
 }

@@ -162,7 +162,7 @@ const MemberEdit = () => {
           </div>
           <div className="row mt-4">
             <div className="col text-center">
-              <button type="button" className="btn btn-lg btn-success" onClick={updateMember}>
+              <button type="button" className={styles.editButton} onClick={updateMember}>
                 {t("edit")}
               </button>
             </div>
