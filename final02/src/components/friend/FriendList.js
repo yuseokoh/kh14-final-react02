@@ -15,7 +15,7 @@ const FriendList = ()=>{
     const [keyword, setKeyword] = useState("");
     const [open, setOpen] = useState(false);
     const [roomList, setRoomList] = useState([]);
-    
+    const [memberJoin, setMemberJoin] = useState([]);
     
     
     //recoil
@@ -34,11 +34,13 @@ const FriendList = ()=>{
         if(!memberId || memberLoading === false) return;
         loadFriendList();
         loadRoomList();
+        checkMemberJoin();
     }, [memberLoading]);
     
     //callback
     
     const chatClick = useCallback((friend)=>{
+        if(memberId === null) return;
         console.log("friend : ",friend);
         const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
         setReceiverId(targetId);
@@ -78,13 +80,17 @@ const FriendList = ()=>{
             const roomName = friend.friendFrom+", "+friend.friendTo;
             console.log("friendFK"+friend.friendFk)
             const resp = await axios.post("/room/", { roomNo : friend.friendFk, roomName : roomName});
-            loadRoomList();
         } catch {
             const resp = await axios.post("/room/enter", {roomNo : friend.friendFk });
-            loadRoomList();
         }
 
       }, [memberLoading, memberId]);
+
+      const checkMemberJoin = useCallback(async ()=>{
+
+        const resp = await axios.get("/room/member");
+        setMemberJoin(resp.data);
+      }, []);
 
       const enterRoom = useCallback(async (friend)=>{
         // await axios.post("/room/enter", { roomNo : friend.friendFk });
@@ -120,8 +126,13 @@ const FriendList = ()=>{
                         <li key={friend.friendFk} className="list-group-item" 
                         onClick={e=>selectKeyword(friend.friendFk)}>
                             {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                            <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
-                            <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
+                            {memberJoin.map(member=>(
+                                member.join === 'N' ? (
+                                    <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                                ) : (
+                                    <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
+                                )
+                            ))}
                             <button className="btn btn-secondary ms-4">프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
@@ -137,8 +148,13 @@ const FriendList = ()=>{
                 {friendList.map(friend=>(
                     <li key={friend.friendFk} className="list-group-item">
                         {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                        <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
-                        <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
+                        {memberJoin.map(member=>(
+                                member.join === 'N' ? (
+                                    <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                                ) : (
+                                    <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
+                                )
+                            ))}
                         <button className="btn btn-secondary ms-4">프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>
