@@ -15,6 +15,7 @@ const CommunityAdd = () => {
         communityContent: ""
     });
     const [files, setFiles] = useState([]); // 여러 파일 첨부를 위해 배열로 변경
+    const [previewUrls, setPreviewUrls] = useState([]); // 새로 추가할 파일의 미리보기 URL
     const [message, setMessage] = useState();
 
     // 입력 변경 처리 함수
@@ -25,9 +26,24 @@ const CommunityAdd = () => {
         });
     }, [input]);
 
-    // 파일 선택 처리 함수
+    // 파일 선택 처리 함수 (다중 파일 업로드)
     const changeFiles = (e) => {
-        setFiles(Array.from(e.target.files)); // 선택된 파일들을 배열로 저장
+        const selectedFiles = Array.from(e.target.files);
+        setFiles(prevFiles => [...prevFiles, ...selectedFiles]); // 기존 파일에 새로 선택한
+         // 미리보기 URL 생성
+         const urls = selectedFiles.map(file => URL.createObjectURL(file));
+         setPreviewUrls(prevUrls => [...prevUrls, ...urls]);
+     };
+     
+      // 미리보기 삭제 함수
+    const removePreview = (index) => {
+        const newFiles = files.filter((_, i) => i !== index);
+        const newUrls = previewUrls.filter((_, i) => i !== index);
+
+        // 기존 미리보기 URL 해제
+        URL.revokeObjectURL(previewUrls[index]);
+        setFiles(newFiles);
+        setPreviewUrls(newUrls);
     };
 
     // 게시글 저장 함수
@@ -53,11 +69,14 @@ const CommunityAdd = () => {
             // 성공적으로 등록되면 목록으로 이동
             toast.success("게시글이 등록되었습니다.");
             navigate("/community/list");
+
+        // 미리보기 URL 해제
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
         } catch (error) {
             console.error("Error while saving the community post:", error);
             toast.error("게시글 등록에 실패했습니다.");
         }
-    }, [input, files, navigate]);
+    }, [input, files, navigate, previewUrls]);
 
     // 화면 렌더링
     return (
@@ -100,8 +119,23 @@ const CommunityAdd = () => {
             </div>
             <div className="row mt-4">
                 <div className="col">
-                    <label>파일 첨부</label>
-                    <input type="file" multiple onChange={changeFiles} />
+                <label>파일 첨부</label>
+                    <input type="file" multiple onChange={changeFiles} className="form-control" />
+                    <div className="mt-2">
+                        {previewUrls.map((url, index) => (
+                            <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
+                                <img src={url} alt="미리보기" style={{ maxWidth: "100px", maxHeight: "100px" }} />
+                                <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => removePreview(index)}
+                                    style={{ position: 'absolute', top: '0', right: '0' }}
+                                >
+                                    삭제
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 

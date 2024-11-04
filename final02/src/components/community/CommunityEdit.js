@@ -9,14 +9,17 @@ const CommunityEdit = () => {
 
     const [community, setCommunity] = useState(null);
     const [message, setMessage] = useState("");
-    const [selectedFiles, setSelectedFiles] = useState([]); // State for selected files
-    const [existingImages, setExistingImages] = useState([]); // State to store existing images
+    const [selectedFiles, setSelectedFiles] = useState([]); // 새로 추가할 파일
+    const [previewUrls, setPreviewUrls] = useState([]); // 새로 추가할 파일의 미리보기 URL
+    const [existingImages, setExistingImages] = useState([]); // 기존 이미지 목록
+    const [deletedImageNos, setDeletedImageNos] = useState([]); // 삭제할 이미지 번호들
 
     useEffect(() => {
         loadCommunity();
         loadCommunityImages();
     }, []);
 
+    // 게시글 정보 로드
     const loadCommunity = useCallback(async () => {
         try {
             const resp = await axios.get(`/community/${communityNo}`);
@@ -26,15 +29,17 @@ const CommunityEdit = () => {
         }
     }, [communityNo]);
 
+    // 기존 이미지 로드
     const loadCommunityImages = useCallback(async () => {
         try {
             const resp = await axios.get(`/community/image/${communityNo}`);
-            setExistingImages(resp.data); // Set existing images
+            setExistingImages(resp.data || []);
         } catch (e) {
             console.error("Failed to load images:", e);
         }
     }, [communityNo]);
 
+    // 게시글 정보 변경 핸들러
     const changeCommunity = useCallback(e => {
         setCommunity({
             ...community,
@@ -42,10 +47,40 @@ const CommunityEdit = () => {
         });
     }, [community]);
 
+    // 새 파일 선택 핸들러
     const handleFileChange = (e) => {
-        setSelectedFiles(e.target.files); // Set selected files
+        const files = Array.from(e.target.files);
+        setSelectedFiles(prevFiles => [...prevFiles, ...files]);
+
+        const urls = files.map(file => URL.createObjectURL(file));
+        setPreviewUrls(prevUrls => [...prevUrls, ...urls]);
     };
 
+    // 새로 선택한 이미지 삭제 핸들러
+    const removeImage = (index) => {
+        const newFiles = selectedFiles.filter((_, i) => i !== index);
+        const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+        
+        URL.revokeObjectURL(previewUrls[index]);
+        setSelectedFiles(newFiles);
+        setPreviewUrls(newPreviewUrls);
+    };
+
+    // 기존 이미지 삭제 핸들러
+    // 기존 이미지 삭제 핸들러
+    const handleExistingImageDelete = async (attachmentNo) => {
+        try {
+            await axios.delete(`/community/image/${attachmentNo}`);
+            
+            setExistingImages(prev => prev.filter(img => img.attachmentNo !== attachmentNo));
+        } catch (error) {
+            console.error("이미지 삭제 실패:", error);
+            alert("이미지 삭제에 실패했습니다.");
+        }
+    };
+    
+
+    // 게시글 업데이트 요청
     const updateCommunity = useCallback(async () => {
         if (!community.communityTitle || !community.communityContent) {
             setMessage("제목과 내용은 필수입니다.");
@@ -55,9 +90,15 @@ const CommunityEdit = () => {
         const formData = new FormData();
         formData.append("community", new Blob([JSON.stringify({ ...community, communityNo })], { type: 'application/json' }));
         
-        // Append new files
-        Array.from(selectedFiles).forEach(file => {
-            formData.append("files", file);
+        // 새로 추가할 파일
+    selectedFiles.forEach(file => {
+        formData.append("files", file);
+    });
+
+
+        // 삭제할 이미지 번호들을 추가
+        deletedImageNos.forEach(no => {
+            formData.append("deletedImageNos", no);
         });
 
         try {
@@ -66,22 +107,15 @@ const CommunityEdit = () => {
                     "Content-Type": "multipart/form-data"
                 }
             });
+
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
+            alert("수정이 완료되었습니다.");
             navigate(`/community/detail/${communityNo}`);
         } catch (error) {
             console.error("Update failed:", error);
             setMessage("수정 중 오류가 발생했습니다.");
         }
-    }, [community, communityNo, selectedFiles, navigate]);
-
-    const deleteExistingImage = async (attachmentNo) => {
-        try {
-            await axios.delete(`/community/image/${attachmentNo}`);
-            setExistingImages(existingImages.filter(img => img.attachmentNo !== attachmentNo));
-        } catch (error) {
-            console.error("Failed to delete image:", error);
-            setMessage("이미지 삭제 중 오류가 발생했습니다.");
-        }
-    };
+    }, [community, communityNo, selectedFiles, deletedImageNos, previewUrls, navigate]);
 
     return (community !== null ? (
         <>
@@ -119,7 +153,7 @@ const CommunityEdit = () => {
             <div className="row mt-4">
                 <div className="col">
                     <label>내용</label>
-                    <input type="text" name="communityContent" className="form-control"
+                    <textarea name="communityContent" className="form-control"
                         value={community.communityContent} onChange={changeCommunity} />
                 </div>
             </div>
@@ -140,7 +174,7 @@ const CommunityEdit = () => {
                                     <button 
                                         type="button" 
                                         className="btn btn-sm btn-danger" 
-                                        onClick={() => deleteExistingImage(image.attachmentNo)}
+                                        onClick={() => handleExistingImageDelete(image.attachmentNo)}
                                         style={{ position: 'absolute', top: '0', right: '0' }}
                                     >
                                         삭제
@@ -157,10 +191,25 @@ const CommunityEdit = () => {
                 <div className="col">
                     <label>새 파일 첨부</label>
                     <input type="file" className="form-control" onChange={handleFileChange} multiple />
+                    <div className="mt-2">
+                        {previewUrls.map((url, index) => (
+                            <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
+                                <img src={url} alt="미리보기" style={{ maxWidth: "100px", maxHeight: "100px" }} />
+                                <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => removeImage(index)}
+                                    style={{ position: 'absolute', top: '0', right: '0' }}
+                                >
+                                    삭제
+                                </button>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            <div className="row">
+            <div className="row mt-4">
                 <div className="col text-danger text-center">
                     {message}
                 </div>
