@@ -15,7 +15,7 @@ const StarRating = ({ score }) => {
         <div className={styles.starRating}>
             <div className={styles.starRatingOuter}>
                 <div className={styles.starsBackground}>★★★★★</div>
-                <div 
+                <div
                     className={styles.starRatingInner}
                     style={{ width: `${starPercentage}%` }}
                 >
@@ -34,44 +34,80 @@ const SystemRequirements = ({ minimum, recommended }) => {
 
     return (
         <div className={styles.systemRequirementsContainer}>
-            <h2 className={styles.sectionTitle}>시스템 요구사항</h2>
+            <h2>시스템 요구사항</h2>
             <div className={styles.requirementsGrid}>
                 {minimum && (
                     <div className={styles.requirementColumn}>
-                        <h3>최소 사양</h3>
+                        <h3>최소</h3>
                         <div className={styles.requirementsList}>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>운영체제:</span>
-                                <span>{minimum.os}</span>
+                                {minimum.os}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>프로세서:</span>
-                                <span>{minimum.processor}</span>
+                                {minimum.processor}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>메모리:</span>
-                                <span>{minimum.memory}</span>
+                                {minimum.memory}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>그래픽:</span>
-                                <span>{minimum.graphics}</span>
+                                {minimum.graphics}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>DirectX:</span>
-                                <span>{minimum.directxVersion}</span>
+                                {minimum.directxVersion}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>저장공간:</span>
-                                <span>{minimum.storage}</span>
+                                {minimum.storage}
                             </div>
                             <div className={styles.requirementItem}>
                                 <span className={styles.requirementLabel}>사운드카드:</span>
-                                <span>{minimum.soundCard}</span>
+                                {minimum.soundCard}
                             </div>
                         </div>
                     </div>
                 )}
-                
+
+                {recommended && (
+                    <div className={styles.requirementColumn}>
+                        <h3>권장</h3>
+                        <div className={styles.requirementsList}>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>운영체제:</span>
+                                {recommended.os}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>프로세서:</span>
+                                {recommended.processor}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>메모리:</span>
+                                {recommended.memory}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>그래픽:</span>
+                                {recommended.graphics}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>DirectX:</span>
+                                {recommended.directxVersion}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>저장공간:</span>
+                                {recommended.storage}
+                            </div>
+                            <div className={styles.requirementItem}>
+                                <span className={styles.requirementLabel}>사운드카드:</span>
+                                {recommended.soundCard}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {recommended && (
                     <div className={styles.requirementColumn}>
                         <h3>권장 사양</h3>
@@ -126,12 +162,14 @@ const GameDetail = () => {
         minimum: null,
         recommended: null
     });
+
     const [loading, setLoading] = useState(true);
     const [imageUrl, setImageUrl] = useState(null);
     const [images, setImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(0);
 
     // 리뷰 관련 상태
+    const [editingReview, setEditingReview] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -141,6 +179,45 @@ const GameDetail = () => {
         reviewContent: "",
         reviewScore: 5
     });
+
+
+    /**
+     * 장바구니에 게임을 추가하는 함수
+     * @param {Object} game - 추가할 게임 정보
+     */
+    const addCart = useCallback(async (game) => {
+        try {
+            const resp = await axios.post("/cart/add", game, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/cart/");
+        } catch (error) {
+            console.error("Error adding item to cart", error);
+            window.alert("이미 장바구니에 있는 게임입니다");
+        }
+    }, [navigate]);
+
+    /**
+     * 위시리스트에 게임을 추가하는 함수
+     * @param {Object} game - 추가할 게임 정보
+     */
+    const addWishList = useCallback(async (game) => {
+        try {
+            const token = sessionStorage.getItem('refreshToken');
+            const resp = await axios.post("/wishlist/add", game, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            navigate("/wishlist/");
+        } catch (error) {
+            console.error("Error adding item to wishlist", error);
+            window.alert("이미 찜에 있는 게임입니다");
+        }
+    }, [navigate]);
 
     // 초기 데이터 로드
     const loadGameData = useCallback(async () => {
@@ -158,7 +235,7 @@ const GameDetail = () => {
                 const imageUrls = imageResponse.data
                     .filter(img => img.attachmentNo)
                     .map(img => `http://localhost:8080/game/download/${img.attachmentNo}`);
-                
+
                 if (imageUrls.length > 0) {
                     setImages(imageUrls);
                     setImageUrl(imageUrls[0]);
@@ -180,29 +257,29 @@ const GameDetail = () => {
     }, [gameNo]);
 
     // 리뷰 목록 로드
+    // GameDetail.js의 loadReviews 함수 수정
     const loadReviews = useCallback(async (page) => {
         try {
-            const response = await axios.get(`http://localhost:8080/game/${gameNo}/reviews`, {
-                params: {
-                    page,
-                    size: 10
-                }
-            });
-            
+            const response = await axios.get(
+                `http://localhost:8080/game/${gameNo}/reviews?page=${page}&size=10`,
+            );
+
             if (response.data) {
                 setReviews(response.data.reviews);
                 setTotalPages(response.data.totalPages);
-                setCurrentPage(page);
+                setCurrentPage(response.data.currentPage);
             }
         } catch (error) {
             console.error("리뷰 로드 실패:", error);
         }
     }, [gameNo]);
 
+
+
     // 리뷰 작성 가능 여부 확인
     useEffect(() => {
         const checkReviewStatus = async () => {
-            if (login && memberId) {
+            if (login && memberId && memberLevel === '일반회원') {  // memberLevel 체크 추가
                 try {
                     const token = sessionStorage.getItem('refreshToken');
                     const response = await axios.get(
@@ -217,11 +294,40 @@ const GameDetail = () => {
                 } catch (error) {
                     console.error("리뷰 상태 확인 실패:", error);
                 }
+            } else {
+                setCanWriteReview(false);  // 일반회원이 아니면 리뷰 작성 불가
             }
         };
 
         checkReviewStatus();
-    }, [login, memberId, gameNo]);
+    }, [login, memberId, memberLevel, gameNo]);
+
+    useEffect(() => {
+        const fetchSystemRequirements = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/game/requirements/${gameNo}`);
+                const requirements = response.data;
+                setSystemRequirements({
+                    minimum: requirements.find(r => r.requirementType === 'minimum'),
+                    recommended: requirements.find(r => r.requirementType === 'recommended')
+                });
+            } catch (error) {
+                console.error("시스템 요구사항 로드 실패:", error);
+            }
+        };
+        fetchSystemRequirements();
+    }, [gameNo]);
+
+    // 리뷰 수정 핸들러
+    const handleEditClick = (review) => {
+        setEditingReview(review);
+        setNewReview({
+            reviewContent: review.reviewContent,
+            reviewScore: review.reviewScore
+        });
+        setIsWritingReview(true);
+    };
+
 
     // 초기 데이터 로드
     useEffect(() => {
@@ -229,22 +335,28 @@ const GameDetail = () => {
         loadReviews(1);
     }, [loadGameData, loadReviews]);
 
-    // 리뷰 제출 처리
+    if (loading) return <div className={styles.loading}>로딩 중...</div>;
+    if (!game) return <div className={styles.error}>게임을 찾을 수 없습니다</div>;
+
+
     const submitReview = async () => {
         if (!login) {
             alert("로그인이 필요합니다.");
             return;
         }
 
+        if (memberLevel !== '일반회원') {
+            alert("일반회원만 리뷰를 작성할 수 있습니다.");
+            return;
+        }
+
         try {
             const token = sessionStorage.getItem('refreshToken');
-            if (canWriteReview) {
-                await axios.post(
-                    `http://localhost:8080/game/${gameNo}/review`,
-                    {
-                        ...newReview,
-                        gameNo: gameNo
-                    },
+            if (editingReview) {
+                // 리뷰 수정
+                await axios.put(
+                    `http://localhost:8080/game/${gameNo}/review/${editingReview.reviewNo}`,
+                    newReview,
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -252,40 +364,43 @@ const GameDetail = () => {
                         }
                     }
                 );
-                setCanWriteReview(false);
             } else {
-                const userReview = reviews.find(review => review.memberId === memberId);
-                if (userReview) {
-                    await axios.put(
-                        `http://localhost:8080/game/${gameNo}/review/${userReview.reviewNo}`,
-                        {
-                            ...newReview,
-                            gameNo: gameNo
-                        },
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            }
+                // 새 리뷰 작성
+                await axios.post(
+                    `http://localhost:8080/game/${gameNo}/review`,
+                    newReview,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
                         }
-                    );
-                }
+                    }
+                );
             }
 
             setIsWritingReview(false);
+            setEditingReview(null);
             setNewReview({ reviewContent: "", reviewScore: 5 });
-            loadReviews(1);
+            loadReviews(currentPage);
             loadGameData();
         } catch (error) {
-            console.error("리뷰 제출 실패:", error);
-            alert("리뷰 처리 중 오류가 발생했습니다.");
+            console.error("리뷰 처리 실패:", error);
+            if (error.response?.data?.includes("이미 리뷰를 작성했습니다")) {
+                alert("이미 리뷰를 작성했습니다.");
+            } else {
+                alert("리뷰 처리 중 오류가 발생했습니다.");
+            }
         }
     };
 
-    // 리뷰 삭제 처리
     const handleDeleteReview = async (reviewNo) => {
         if (!login) {
             alert("로그인이 필요합니다.");
+            return;
+        }
+
+        if (memberLevel !== '일반회원') {
+            alert("일반회원만 리뷰를 삭제할 수 있습니다.");
             return;
         }
 
@@ -295,11 +410,11 @@ const GameDetail = () => {
                 await axios.delete(
                     `http://localhost:8080/game/${gameNo}/review/${reviewNo}`,
                     {
-                        headers: { 'Authorization': `Bearer ${token}` }
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
                     }
                 );
-
-                setCanWriteReview(true);
                 loadReviews(currentPage);
                 loadGameData();
             } catch (error) {
@@ -309,7 +424,6 @@ const GameDetail = () => {
         }
     };
 
-    // 리뷰 좋아요 처리
     const handleLikeReview = async (reviewNo) => {
         if (!login) {
             alert("로그인이 필요합니다.");
@@ -322,7 +436,9 @@ const GameDetail = () => {
                 `http://localhost:8080/game/${gameNo}/review/${reviewNo}/like`,
                 null,
                 {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 }
             );
             loadReviews(currentPage);
@@ -345,23 +461,23 @@ const GameDetail = () => {
                         <span>배급: {game.gamePublisher}</span>
                     </div>
                 </div>
-    
+
                 {/* 메인 콘텐츠 영역 */}
                 <div className={styles.mainContent}>
                     {/* 좌측: 미디어 섹션 */}
                     <div className={styles.mediaSection}>
                         <div className={styles.mainImageContainer}>
                             {imageUrl && (
-                                <img 
-                                    src={imageUrl} 
-                                    alt={game.gameTitle} 
+                                <img
+                                    src={imageUrl}
+                                    alt={game.gameTitle}
                                     className={styles.mainImage}
                                 />
                             )}
                         </div>
                         <div className={styles.thumbnailStrip}>
                             {images.map((img, index) => (
-                                <img 
+                                <img
                                     key={index}
                                     src={img}
                                     alt={`${game.gameTitle} 스크린샷 ${index + 1}`}
@@ -373,25 +489,25 @@ const GameDetail = () => {
                                 />
                             ))}
                         </div>
-                        
+
                         {/* 게임 설명 */}
                         <div className={styles.description}>
                             <div dangerouslySetInnerHTML={{ __html: game.gameDescription }} />
                         </div>
-    
+
                         {/* 시스템 요구사항 */}
-                        <SystemRequirements 
+                        <SystemRequirements
                             minimum={systemRequirements.minimum}
                             recommended={systemRequirements.recommended}
                         />
                     </div>
-    
+
                     {/* 우측: 게임 정보 섹션 */}
                     <div className={styles.infoSection}>
                         {imageUrl && (
-                            <img 
-                                src={imageUrl} 
-                                alt={game.gameTitle} 
+                            <img
+                                src={imageUrl}
+                                alt={game.gameTitle}
                                 className={styles.infoImage}
                             />
                         )}
@@ -399,13 +515,13 @@ const GameDetail = () => {
                             <div className={styles.shortDescription}>
                                 {game.gameShortDescription}
                             </div>
-                            
+
                             <div className={styles.metaInfo}>
                                 <div>출시일: {new Date(game.gamePublicationDate).toLocaleDateString()}</div>
                                 <div>개발사: {game.gameDeveloper}</div>
                                 <div>이용등급: {game.gameGrade}</div>
                             </div>
-    
+
                             <div className={styles.tagSection}>
                                 <h3>인기 태그:</h3>
                                 <div className={styles.tags}>
@@ -416,7 +532,7 @@ const GameDetail = () => {
                                     ))}
                                 </div>
                             </div>
-    
+
                             {/* 가격 정보 섹션 */}
                             <div className={styles.priceSection}>
                                 {game.gameDiscount > 0 ? (
@@ -437,26 +553,95 @@ const GameDetail = () => {
                                     </div>
                                 )}
                             </div>
-    
+
                             {/* 구매 버튼 영역 */}
                             <div className={styles.purchaseButtons}>
-                                <button 
-                                    className={styles.addToCartButton}
-                                    onClick={() => navigate('/cart/add', { state: { game } })}
-                                >
+                                <button className={styles.addToCartButton} onClick={() => addCart(game)}>
                                     장바구니에 추가
                                 </button>
-                                <button 
-                                    className={styles.wishlistButton}
-                                    onClick={() => navigate('/wishlist/add', { state: { game } })}
-                                >
+                                <button className={styles.wishlistButton} onClick={() => addWishList(game)}>
                                     위시리스트에 추가
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-    
+
+                {/* 시스템 요구사항 섹션 */}
+                <div className={styles.systemRequirementsSection}>
+                    <h2 className={styles.sectionTitle}>시스템 요구사항</h2>
+                    {systemRequirements && (
+                        <div className={styles.requirementsGrid}>
+                            {/* 최소 사양 */}
+                            {systemRequirements.minimum && (
+                                <div className={styles.requirementColumn}>
+                                    <h3>최소 사양</h3>
+                                    <div className={styles.requirementsList}>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>운영체제:</span>
+                                            <span>{systemRequirements.minimum.os}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>프로세서:</span>
+                                            <span>{systemRequirements.minimum.processor}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>메모리:</span>
+                                            <span>{systemRequirements.minimum.memory}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>그래픽:</span>
+                                            <span>{systemRequirements.minimum.graphics}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>DirectX:</span>
+                                            <span>{systemRequirements.minimum.directxVersion}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>저장공간:</span>
+                                            <span>{systemRequirements.minimum.storage}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 권장 사양 */}
+                            {systemRequirements.recommended && (
+                                <div className={styles.requirementColumn}>
+                                    <h3>권장 사양</h3>
+                                    <div className={styles.requirementsList}>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>운영체제:</span>
+                                            <span>{systemRequirements.recommended.os}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>프로세서:</span>
+                                            <span>{systemRequirements.recommended.processor}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>메모리:</span>
+                                            <span>{systemRequirements.recommended.memory}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>그래픽:</span>
+                                            <span>{systemRequirements.recommended.graphics}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>DirectX:</span>
+                                            <span>{systemRequirements.recommended.directxVersion}</span>
+                                        </div>
+                                        <div className={styles.requirementItem}>
+                                            <span className={styles.requirementLabel}>저장공간:</span>
+                                            <span>{systemRequirements.recommended.storage}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+
+
                 {/* 리뷰 섹션 */}
                 <div className={styles.reviewSection}>
                     <div className={styles.reviewSummary}>
@@ -466,39 +651,31 @@ const GameDetail = () => {
                                 {game.gameReviewCount?.toLocaleString() || 0}개의 리뷰
                             </div>
                         </div>
-                        {login && canWriteReview && (
-                            <button 
+                        {login && memberLevel === '일반회원' && canWriteReview && (
+                            <button
                                 className={styles.writeReviewButton}
                                 onClick={() => setIsWritingReview(true)}
                             >
                                 리뷰 작성
                             </button>
                         )}
-                        {login && !canWriteReview && (
-                            <button 
+
+                        {login && !canWriteReview && editingReview && (
+                            <button
                                 className={`${styles.writeReviewButton} ${styles.editButton}`}
-                                onClick={() => {
-                                    const userReview = reviews.find(review => review.memberId === memberId);
-                                    if (userReview) {
-                                        setNewReview({
-                                            reviewContent: userReview.reviewContent,
-                                            reviewScore: userReview.reviewScore
-                                        });
-                                        setIsWritingReview(true);
-                                    }
-                                }}
+                                onClick={() => handleEditClick(editingReview)}
                             >
                                 내 리뷰 수정
                             </button>
                         )}
                     </div>
-    
+
                     {/* 리뷰 작성 폼 */}
                     {isWritingReview && (
                         <div className={styles.reviewForm}>
                             <div className={styles.reviewFormHeader}>
                                 <h3>{canWriteReview ? "리뷰 작성" : "리뷰 수정"}</h3>
-                                <select 
+                                <select
                                     value={newReview.reviewScore}
                                     onChange={(e) => setNewReview({
                                         ...newReview,
@@ -521,13 +698,13 @@ const GameDetail = () => {
                                 placeholder="이 게임에 대한 평가를 작성해주세요..."
                             />
                             <div className={styles.reviewFormButtons}>
-                                <button 
+                                <button
                                     className={styles.submitReviewButton}
                                     onClick={submitReview}
                                 >
                                     {canWriteReview ? "리뷰 등록" : "리뷰 수정"}
                                 </button>
-                                <button 
+                                <button
                                     className={styles.cancelButton}
                                     onClick={() => setIsWritingReview(false)}
                                 >
@@ -536,7 +713,7 @@ const GameDetail = () => {
                             </div>
                         </div>
                     )}
-    
+
                     {/* 전체 리뷰 목록 */}
                     <div className={styles.allReviews}>
                         {reviews.length === 0 ? (
@@ -555,21 +732,24 @@ const GameDetail = () => {
                                                 <div className={styles.reviewScore}>
                                                     <StarRating score={review.reviewScore} />
                                                 </div>
-                                                {login && review.memberId === memberId && (
-                                                    <button 
-                                                        className={styles.deleteButton}
-                                                        onClick={() => handleDeleteReview(review.reviewNo)}
-                                                    >
-                                                        삭제
-                                                    </button>
-                                                )}
+                                                {/* 본인이 작성한 리뷰이고 일반회원인 경우에만 삭제 버튼 표시 */}
+                                                {login &&
+                                                    memberLevel === '일반회원' &&
+                                                    review.memberId === memberId && (
+                                                        <button
+                                                            className={styles.deleteButton}
+                                                            onClick={() => handleDeleteReview(review.reviewNo)}
+                                                        >
+                                                            삭제
+                                                        </button>
+                                                    )}
                                             </div>
                                         </div>
                                         <div className={styles.reviewContent}>
                                             {review.reviewContent}
                                         </div>
                                         <div className={styles.reviewFooter}>
-                                            <button 
+                                            <button
                                                 className={styles.likeButton}
                                                 onClick={() => handleLikeReview(review.reviewNo)}
                                             >
@@ -581,7 +761,7 @@ const GameDetail = () => {
                                         </div>
                                     </div>
                                 ))}
-                                
+
                                 {/* 페이지네이션 */}
                                 {totalPages > 1 && (
                                     <div className={styles.pagination}>
@@ -589,9 +769,8 @@ const GameDetail = () => {
                                             <button
                                                 key={page}
                                                 onClick={() => loadReviews(page)}
-                                                className={`${styles.pageButton} ${
-                                                    currentPage === page ? styles.activePage : ''
-                                                }`}
+                                                className={`${styles.pageButton} ${currentPage === page ? styles.activePage : ''
+                                                    }`}
                                             >
                                                 {page}
                                             </button>
@@ -602,11 +781,11 @@ const GameDetail = () => {
                         )}
                     </div>
                 </div>
-    
+
                 {/* 관리자/개발자 전용 버튼 */}
                 {(memberLevel === '개발자' || memberLevel === '관리자') && (
                     <div className={styles.adminActions}>
-                        <button 
+                        <button
                             className={styles.editButton}
                             onClick={() => navigate(`/game/edit/${gameNo}`)}
                         >

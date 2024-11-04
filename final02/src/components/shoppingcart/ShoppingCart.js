@@ -24,22 +24,32 @@ const ShoppingCart = () => {
   const loadLibraryList = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
-      setLibList(resp.data.map((item) => item.gameNo)); // 구매한 게임 ID 리스트로 저장
+      // gameNo 기준 중복 제거
+      const uniqueLibList = resp.data.map((item) => item.gameNo)
+        .filter((gameNo, index, self) => self.indexOf(gameNo) === index);
+      setLibList(uniqueLibList);
     } catch (error) {
       console.error("Error loading library list:", error);
     }
   }, []);
+  
 
   const loadCartList = useCallback(async () => {
     try {
       const resp = await axios.get("/cart/");
-      setCartList(resp.data);
-      const total = resp.data.reduce((sum, cart) => sum + (cart.gamePrice || 0), 0);
+      // gameNo를 기준으로 중복 제거
+      const uniqueCartList = resp.data.filter((cart, index, self) =>
+        index === self.findIndex((c) => c.gameNo === cart.gameNo)
+      );
+      setCartList(uniqueCartList);
+  
+      const total = uniqueCartList.reduce((sum, cart) => sum + (cart.gamePrice || 0), 0);
       setTotalPrice(total);
     } catch (error) {
       console.error("Error loading cart list", error);
     }
   }, []);
+  
 
   //게임 리스트 로드
   const loadGameList = useCallback(async () => {
@@ -96,7 +106,10 @@ const ShoppingCart = () => {
       loadLibraryList();
       loadGameList();
     }
-  }, [login, memberId, loadCartList, loadLibraryList, loadGameList]);
+    // 특정 조건이나 디버깅 로그 추가로 확인할 수 있음
+    console.log('useEffect 호출됨: Cart, Library, Game 목록 로드');
+  }, [login, memberId]); // 의존성 배열을 최소화
+  
 
   useEffect(() => {
     if (cartList.length > 0) {
@@ -104,9 +117,11 @@ const ShoppingCart = () => {
     }
   }, [cartList, loadAllGameImages]);
 
-  const getCurrentUrl = useCallback(() => {
-    return window.location.origin + window.location.pathname + (window.location.hash || '');
-  }, []);
+ const getCurrentUrl = useCallback(() => {
+    const basePath = window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+    return `${window.location.origin}${basePath}`;
+}, []);
+
 
   const handleItemSelection = (cartId) => {
     setSelectedItems(prevItems => {

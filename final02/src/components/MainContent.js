@@ -57,6 +57,8 @@ import WebsocketClient from "./websocket/WebsocketClient";
 import Chatroom from "./chat/Chatroom";
 import PageNotFound from "./PageNotFound";
 import AdminPaymentPage from "./payment/AdminPaymentPage";
+import MemberLevelRequest from "./member/MemberLevelRequest";
+import AdminMemberEdit from "./member/AdminMemberEdit";
 
 const MainContent = () => {
     const { t } = useTranslation(); // 번역 훅 사용
@@ -119,6 +121,9 @@ const MainContent = () => {
                         <Route path="/terms-of-use" element={<TermsOfUse />} />
                         <Route path="/steam-agreement" element={<SteamAgreement />} />
                         <Route path="/refund-policy" element={<RefundPolicy />} />
+                        
+                        <Route path="/developer-request/:memberId" element={<MemberLevelRequest />} />
+                        <Route path="/member/admin/edit/:memberId" element={<AdminMemberEdit />} />
 
                         {/* 나머지 경로(*) 패턴을 지정해서 미 지정된 페이지를 모두 연결 */}
                         <Route path="*" element={<PageNotFound />} />
