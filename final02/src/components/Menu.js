@@ -228,6 +228,18 @@ const Menu = () => {
                                     </div>
                                 </li>
                             )}
+
+
+                               {/* 관리자 알림 메뉴를 여기로 이동하고 스타일 통일 */}
+                               {memberLevel === "관리자" && (
+                                  
+                            <li className="nav-item">
+                            <NavLink className="nav-link" to="/admin/payment">
+                              매출 전표
+                            </NavLink>
+                        </li>
+                            )}
+                            
                             
                             <li className="nav-item">
                                 <NavLink className="nav-link" to="#" onClick={logout}>

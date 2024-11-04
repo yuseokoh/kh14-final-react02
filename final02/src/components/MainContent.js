@@ -56,6 +56,7 @@ import Chat from "./chat/Chat";
 import WebsocketClient from "./websocket/WebsocketClient";
 import Chatroom from "./chat/Chatroom";
 import PageNotFound from "./PageNotFound";
+import AdminPaymentPage from "./payment/AdminPaymentPage";
 
 const MainContent = () => {
     const { t } = useTranslation(); // 번역 훅 사용
@@ -88,6 +89,7 @@ const MainContent = () => {
                         <Route path="/websocket" element={<PrivateRoute element={<WebsocketClient />} />} />
                         <Route path="/room" element={<PrivateRoute element={<Chatroom />} />} />
                         <Route path="/room-chat/:roomNo" element={<PrivateRoute element={<Chat />} />} />
+                        <Route path="/admin/payment" element={<PrivateRoute element={<AdminPaymentPage />} />} />
 
                         {/* 프라이빗 라우터가 필요 없는 공개 페이지들 */}
                         <Route path="/game/detail/:gameNo" element={<GameDetail />} />
