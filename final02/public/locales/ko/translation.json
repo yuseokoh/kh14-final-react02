@@ -291,5 +291,43 @@
             "ageRatings.15": "15세이용가",
             "ageRatings.19": "19세이용가",
                "multiplayer":"멀티 플레이어"
-          }
-          
+        
+          ,
+            "gameAdd": {
+                "title": "게임 등록",
+                "gameImages": "게임 이미지",
+                "previewAlt": "미리보기",
+                "addImage": "이미지 추가",
+                "imageHelp": "권장: 16:9 비율의 이미지, 최대 5장",
+                "gameTitle": "게임명",
+                "gameTitlePlaceholder": "예: Dark Souls 3",
+                "price": "금액",
+                "pricePlaceholder": "예: 33,000",
+                "developer": "개발자",
+                "developerPlaceholder": "예: FromSoftware",
+                "publicationDate": "출시일",
+                "discount": "할인율 (%)",
+                "discountPlaceholder": "예: 20",
+                "category": "카테고리",
+                "categoryPlaceholder": "예: RPG, Action",
+                "grade": "등급",
+                "gradePlaceholder": "예: 15세이용가",
+                "theme": "테마",
+                "themePlaceholder": "예: 판타지",
+                "description": "상세 설명",
+                "descriptionPlaceholder": "게임의 상세 설명을 입력하세요",
+                "shortDescription": "간단 설명",
+                "shortDescriptionPlaceholder": "게임의 간단한 설명을 입력하세요",
+                "userScore": "평점",
+                "userScorePlaceholder": "예: 8.3",
+                "reviewCount": "리뷰수",
+                "reviewCountPlaceholder": "예: 10012",
+                "platforms": "지원 플랫폼",
+                "platformsPlaceholder": "예: Windows, Mac",
+                "systemRequirements": "시스템 요구사항",
+                "systemRequirementsPlaceholder": "최소 사양과 권장 사양을 입력하세요",
+                "submit": "등록",
+                "cancel": "취소"
+            }
+        }
+        
