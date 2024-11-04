@@ -44,7 +44,7 @@ import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
 import RpgGame from "./game/gamecategory/RpgGame";
 import SimulationGame from "./game/gamecategory/SimulationGame";
 import StrategyGame from "./game/gamecategory/StrategyGame";
-import BaseBuilding from "./game/gamecategory/BaseBuilding";
+// import BaseBuilding from "./game/gamecategory/BaseBuilding";
 import Fantasy from "./game/gamecategory/Fantasy";
 import PixelGraphics from "./game/gamecategory/PixelGraphics";
 import Roguelike from "./game/gamecategory/Roguelike";
@@ -89,15 +89,13 @@ const MainContent = () => {
                     <Route path="/game/category/openworld" element={<OpenWorldGame />} />
                     <Route path="/game/category/rpg" element={<RpgGame />} />
                     <Route path="/game/category/simulation" element={<SimulationGame />} />
-                    <Route path="/game/category/basebuilding" element={<BaseBuilding />} />
+                    {/* <Route path="/game/category/basebuilding" element={<BaseBuilding />} /> */}
                     <Route path="/game/category/fantasy" element={<Fantasy />} />
                     <Route path="/game/category/pixelgraphics" element={<PixelGraphics />} />
                     <Route path="/game/category/roguelike" element={<Roguelike />} />
                     <Route path="/game/category/sandbox" element={<SandBox />} />
                     <Route path="/game/category/survival" element={<Survival />} />
                     <Route path="/game/category/strategy" element={<StrategyGame />} />
-
-
 
                     {/* 게임 테마 */}
 

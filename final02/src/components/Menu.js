@@ -18,37 +18,55 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 // NotificationMenu 컴포넌트를 Menu 컴포넌트 외부로 이동
-const NotificationMenu = () => {
+const NotificationMenu = ({ memberId }) => {
     // 관리자 알림 관련 상태 추가
+
+    const [memberInfo, setMemberInfo] = useState(null);
     const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [hasNewNotifications, setHasNewNotifications] = useState(false);
+    const [error, setError] = useState(null);
     const memberLevel = useRecoilValue(memberLevelState);
     const navigate = useNavigate();
+    
 
-    // 관리자인 경우 개발자 권한 요청 목록 조회
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/member/admin/developer-requests", {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+                const token = window.localStorage.getItem("jwtToken");
+                if (!token || memberLevel !== "관리자") {
+                    return;
+                }
+
+                const response = await axios.get(
+                    "http://localhost:8080/member/notifications",  // URL 수정
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
                     }
-                });
+                );
+
+                console.log("알림 응답:", response.data);
                 setNotifications(response.data);
-                setHasNewNotifications(response.data.some(notif => !notif.isRead));
+                setHasNewNotifications(response.data.length > 0);
+
             } catch (error) {
-                console.error("알림 조회 실패:", error);
+                console.error("데이터 조회 실패:", error);
+                if (error.response) {
+                    console.error("서버 응답:", error.response.data);
+                }
             }
         };
 
         if (memberLevel === "관리자") {
             fetchNotifications();
+            // 주기적으로 알림 업데이트
             const intervalId = setInterval(fetchNotifications, 60000);
             return () => clearInterval(intervalId);
         }
-    }, [memberLevel]);
-
+    }, [memberLevel]); // 의존성 배열에 memberId 추가
+    
     if (memberLevel !== "관리자") return null;
 
     return (
@@ -206,7 +224,7 @@ const Menu = () => {
                             {memberLevel === "관리자" && (
                                 <li className="nav-item">
                                     <div className={`nav-link ${styles.notificationWrapper}`}>
-                                        <NotificationMenu />
+                                        <NotificationMenu memberId={memberId} />
                                     </div>
                                 </li>
                             )}

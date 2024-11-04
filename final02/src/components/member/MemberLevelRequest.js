@@ -38,14 +38,13 @@ const MemberLevelRequest = () => {
         e.preventDefault();
         setLoading(true);
         setError('');
-
+    
         try {
             const token = sessionStorage.getItem('refreshToken');
             await axios.post(
                 `http://localhost:8080/member/developer-request`, 
                 {
-                    memberId: memberId,
-                    requestReason: requestData.requestReason
+                    memberId: memberId
                 },
                 {
                     headers: {
@@ -53,7 +52,7 @@ const MemberLevelRequest = () => {
                     }
                 }
             );
-
+    
             alert('개발자 권한 요청이 성공적으로 제출되었습니다.');
             navigate('/');
         } catch (error) {
@@ -66,43 +65,27 @@ const MemberLevelRequest = () => {
             setLoading(false);
         }
     };
-
+    
     return (
         <div className={styles.requestContainer}>
             <h2>개발자 권한 요청</h2>
             {error && <div className={styles.error}>{error}</div>}
             
-            <form onSubmit={handleSubmit} className={styles.requestForm}>
-                <div className={styles.formGroup}>
-                    <label htmlFor="requestReason">신청 사유</label>
-                    <textarea
-                        id="requestReason"
-                        name="requestReason"
-                        value={requestData.requestReason}
-                        onChange={handleChange}
-                        required
-                        placeholder="개발자 권한이 필요한 이유를 상세히 설명해주세요."
-                        className={styles.textarea}
-                    />
-                </div>
-
-                <div className={styles.buttonGroup}>
-                    <button 
-                        type="submit" 
-                        className={styles.submitButton}
-                        disabled={loading}
-                    >
-                        {loading ? '제출 중...' : '권한 요청'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => navigate('/')}
-                        className={styles.cancelButton}
-                    >
-                        취소
-                    </button>
-                </div>
-            </form>
+            <div className={styles.buttonGroup}>
+                <button 
+                    onClick={handleSubmit} 
+                    className={styles.submitButton}
+                    disabled={loading}
+                >
+                    {loading ? '요청 중...' : '개발자 권한 요청'}
+                </button>
+                <button
+                    onClick={() => navigate('/')}
+                    className={styles.cancelButton}
+                >
+                    취소
+                </button>
+            </div>
         </div>
     );
 };

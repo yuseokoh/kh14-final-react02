@@ -534,3 +534,127 @@
 .editButton:hover {
     background-color: #3d8be6;
 }
+.starRating {
+    position: relative; /* Relative position for the outer container */
+    display: inline-block; /* Allow the stars to be inline */
+    width: 100px; /* Set the width to accommodate both ratings */
+    height: 16px; /* Set height to match the star size */
+}
+
+.starRatingInner,
+.starRatingOuter {
+    position: absolute; /* Position both layers absolutely */
+    top: 0; /* Align both layers to the top */
+    left: 0; /* Align both layers to the left */
+}
+
+.starRatingInner:before {
+    content: "★★★★★"; /* Display full stars */
+    color: #ffd700; /* Yellow color for the inner stars */
+    font-size: 16px; /* Font size for stars */
+    letter-spacing: 0; /* Remove letter spacing */
+    width: 0;
+    overflow: hidden; /* Hide overflow */
+}
+
+.starRatingOuter:before {
+    content: "★★★★★"; /* Display full stars */
+    color: #444; /* Gray color for the outer stars */
+    font-size: 16px; /* Font size for stars */
+    width: 100%; /* Full width for the outer layer */
+}
+
+
+.starRatingInner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+}
+
+.numericRating {
+    font-weight: bold;
+    color: white;
+    font-size: 16px;
+    line-height: 16px;
+}
+
+/* 시스템 요구사항 스타일 */
+.systemRequirementsContainer {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+.sectionTitle {
+    color: #ffffff;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.requirementsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.requirementColumn {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.requirementColumn h3 {
+    color: #66c0f4;
+    font-size: 16px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #375571;
+}
+
+.requirementsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.requirementItem {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.requirementLabel {
+    color: #8f98a0;
+}
+
+@media (max-width: 768px) {
+    .requirementsGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 스팀 스타일의 배경과 간격 추가 */
+.description {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 4px;
+    margin: 20px 0;
+}
+
+/* 리뷰 섹션 스타일 업데이트 */
+.reviewSection {
+    margin-top: 40px;
+}
+
+.reviewSummary {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}

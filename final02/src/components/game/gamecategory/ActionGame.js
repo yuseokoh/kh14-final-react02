@@ -295,6 +295,10 @@ const GameCard = ({ game }) => {
     const gamesPerPage = 12; // 페이지당 게임 수
   
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
   
     // 게임 데이터 로딩
     useEffect(() => {
