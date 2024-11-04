@@ -534,35 +534,6 @@
 .editButton:hover {
     background-color: #3d8be6;
 }
-.starRating {
-    position: relative; /* Relative position for the outer container */
-    display: inline-block; /* Allow the stars to be inline */
-    width: 100px; /* Set the width to accommodate both ratings */
-    height: 16px; /* Set height to match the star size */
-}
-
-.starRatingInner,
-.starRatingOuter {
-    position: absolute; /* Position both layers absolutely */
-    top: 0; /* Align both layers to the top */
-    left: 0; /* Align both layers to the left */
-}
-
-.starRatingInner:before {
-    content: "★★★★★"; /* Display full stars */
-    color: #ffd700; /* Yellow color for the inner stars */
-    font-size: 16px; /* Font size for stars */
-    letter-spacing: 0; /* Remove letter spacing */
-    width: 0;
-    overflow: hidden; /* Hide overflow */
-}
-
-.starRatingOuter:before {
-    content: "★★★★★"; /* Display full stars */
-    color: #444; /* Gray color for the outer stars */
-    font-size: 16px; /* Font size for stars */
-    width: 100%; /* Full width for the outer layer */
-}
 
 
 .starRatingInner {
@@ -652,9 +623,196 @@
     margin-top: 40px;
 }
 
+/* 리뷰 요약 섹션 스타일 수정 */
 .reviewSummary {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+    background: #1b2838;
     border-radius: 4px;
     margin-bottom: 20px;
+}
+
+.ratingContainer {
+    display: flex;
+    align-items: center;
+    gap: 12px;  /* 별점과 리뷰 카운트 사이의 간격 */
+}
+
+.starRating {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scoreText {
+    color: #66c0f4;
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 8px; /* 점수와 리뷰 수 사이의 간격 */
+}
+
+.reviewCount {
+    color: #8f98a0;
+    font-size: 14px;
+    white-space: nowrap; /* 리뷰 수가 줄바꿈되지 않도록 */
+}
+
+.writeReviewButton {
+    margin-left: auto; /* 버튼을 오른쪽으로 밀어냄 */
+    padding: 10px 20px;
+    background: #66c0f4;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.ratingContainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;  /* 간격 줄임 */
+}
+
+.starRating {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.starRatingOuter {
+    position: relative;
+    display: inline-block;
+}
+
+.starsBackground {
+    color: #444; /* 배경 별 색상 */
+}
+
+.starRatingInner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #ffd700; /* 채워진 별 색상 */
+}
+
+.scoreText {
+    color: #66c0f4;
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 0;  /* 점수와 별점 사이 간격 제거 */
+}
+
+.reviewCount {
+    color: #8f98a0;
+    font-size: 14px;
+    margin-left: 8px; /* 리뷰 수와 점수 사이 간격 */
+    padding-top: 4px; /* 약간 아래로 조정 */
+}
+.systemRequirementsSection {
+    margin-top: 2rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.systemRequirementsSection h2 {
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.requirementsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.requirementSection {
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.requirementSection h3 {
+    margin-bottom: 1rem;
+    color: #444;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .requirementsContainer {
+        grid-template-columns: 1fr;
+    }
+    
+    .requirementSection {
+        margin-bottom: 1rem;
+    }
+}/* 기존 스타일에 추가할 새로운 스타일 */
+.systemRequirementsContainer {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px 0;
+    color: #acb2b8;
+}
+
+.systemRequirementsContainer h2 {
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.requirementsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.requirementColumn {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.requirementColumn h3 {
+    color: #61686d;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: normal;
+}
+
+.requirementsList {
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.requirementItem {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.requirementLabel {
+    color: #61686d;
+    min-width: 95px;
+    padding-right: 10px;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .requirementsGrid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
 }
