@@ -363,6 +363,18 @@
                 "editGameInfo": "Edit Game Info",
                 "alreadyInCart": "This game is already in your cart.",
                 "alreadyInWishlist": "This game is already in your wishlist."
+              },
+              "adminPayment": {
+                "salesInvoice": "Sales Invoice",
+                "totalSales": "Total Sales",
+                "noAuthToken": "No authentication token found.",
+                "unableToFetchSales": "Unable to fetch total sales.",
+                "unableToFetch": "Unable to fetch payment information.",
+                "totalAmount": "Total Amount",
+                "buyerId": "Buyer ID",
+                "paymentStatus": "Payment Status",
+                "noPaymentInfo": "No payment information available."
               }
+            
             }
             

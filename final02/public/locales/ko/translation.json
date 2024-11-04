@@ -365,6 +365,17 @@
                 
                 "alreadyInCart": "이미 장바구니에 있는 게임입니다.",
                 "alreadyInWishlist": "이미 찜에 있는 게임입니다."
+              },
+              "adminPayment": {
+                "salesInvoice": "매출 전표",
+                "totalSales": "총 매출",
+                "noAuthToken": "인증 토큰이 없습니다.",
+                "unableToFetchSales": "총 매출을 가져오는 데 실패했습니다.",
+                "unableToFetch": "결제 정보를 가져오는 데 실패했습니다.",
+                "totalAmount": "총 금액",
+                "buyerId": "구매자 ID",
+                "paymentStatus": "결제 상태",
+                "noPaymentInfo": "결제 정보가 없습니다."
               }
             }
             

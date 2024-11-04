@@ -1,0 +1,96 @@
+.adminPaymentPage {
+    padding: 20px;
+    background-color: #1b2838;
+    color: #c7d5e0;
+    font-family: Arial, sans-serif;
+  }
+
+  .headerSection h1 {
+    color: #66c0f4;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .filterSection {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .filterInput {
+    padding: 10px;
+    border: 2px solid #66c0f4;
+    background-color: #3c4043;
+    color: #c7d5e0;
+    border-radius: 5px;
+  }
+
+  .searchButton {
+    background-color: #66c0f4;
+    color: #1b2838;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .searchButton:hover {
+    background-color: #4a9cdb;
+  }
+
+  .totalSalesSection h3 {
+    color: #b8b6b4;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .paymentListSection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .paymentGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .paymentCard {
+    background-color: #2a475e;
+    padding: 15px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s;
+  }
+
+  .paymentCard:hover {
+    transform: translateY(-5px);
+  }
+
+  .paymentCardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #66c0f4;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+  }
+
+  .paymentCardHeader h4 {
+    color: #66c0f4;
+  }
+
+  .paymentDetails span {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .paymentDetails strong {
+    color: #c7d5e0;
+  }
