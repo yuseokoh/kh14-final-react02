@@ -293,5 +293,6 @@
             "ageRatings.all": "All Ages",
             "ageRatings.12": "Ages 12 and up",
             "ageRatings.15": "Ages 15 and up",
-            "ageRatings.19": "Ages 19 and up"
+            "ageRatings.19": "Ages 19 and up",
+            "multiplayer":"multiplayer"
           }
