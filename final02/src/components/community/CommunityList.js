@@ -6,6 +6,24 @@ import { useNavigate } from "react-router-dom";
 import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
 import { useRecoilValue } from "recoil";
 import throttle from "lodash/throttle";
+import moment from 'moment';
+import momentTimezone from 'moment-timezone';
+
+moment.locale("ko"); // 한국어 로케일 설정
+
+// 작성 및 수정 시간 형식화 함수
+const formatDate = (dateString, isEdited = false) => {
+    const date = moment(dateString).tz("Asia/Seoul"); // UTC 변환 없이 한국 시간대로 설정
+
+    const formatForCreated = "MM.DD. HH:mm"; // 작성 시간 형식 (년도 제외)
+    const formatForEdited = "YY.MM.DD. HH:mm"; // 수정 시간 형식
+
+    if (isEdited) {
+        return `${date.format(formatForEdited)} (수정됨)`;
+    }
+    return date.format(formatForCreated);
+};
+
 
 const CommunityList = () => {
     const navigate = useNavigate();
@@ -72,10 +90,17 @@ const CommunityList = () => {
                 const reactionResponse = await axios.get(`/community/reactions/count?communityNo=${community.communityNo}`);
                 const likeCount = reactionResponse.data.likeCount || 0;
                 const dislikeCount = reactionResponse.data.dislikeCount || 0;
+                 // 이미지 URL 가져오기
+                 const imageResponse = await axios.get(`/community/image/${community.communityNo}`);
+                 const imageUrl = imageResponse.data[0]
+                 ? `http://localhost:8080/community/download/${imageResponse.data[0].attachmentNo}`
+                 : null;
+ 
                 return {
                     ...community,
                     netLikes: likeCount - dislikeCount,
-                    communityReplies: community.communityReplies || 0
+                    communityReplies: community.communityReplies || 0,
+                    imageUrl // 이미지 URL 추가
                 };
             })
         );
@@ -97,10 +122,19 @@ const CommunityList = () => {
                 const reactionResponse = await axios.get(`/community/reactions/count?communityNo=${community.communityNo}`);
                 const likeCount = reactionResponse.data.likeCount || 0;
                 const dislikeCount = reactionResponse.data.dislikeCount || 0;
+
+
+                // 이미지 URL 가져오기
+                const imageResponse = await axios.get(`/community/image/${community.communityNo}`);
+                const imageUrl = imageResponse.data[0]
+                ? `http://localhost:8080/community/download/${imageResponse.data[0].attachmentNo}`
+                : null;
+
                 return {
                     ...community,
                     netLikes: likeCount - dislikeCount,
-                    communityReplies: community.communityReplies || 0
+                    communityReplies: community.communityReplies || 0,
+                    imageUrl // 이미지 URL 추가
                 };
             })
         );
@@ -160,9 +194,19 @@ const CommunityList = () => {
                 {result.communityList.map((community) => (
                     <div className="col-sm-4 col-md-4 col-lg-3 mt-3" key={community.communityNo} onClick={() => navigate("/community/detail/" + community.communityNo)}>
                         <div className="card">
+                        {/* {community.imageUrl && (
+                                <img src={community.imageUrl} className="card-img-top" alt="게시글 이미지" style={{ maxHeight: "150px", objectFit: "cover" }} />
+                            )} */}
                             <div className="card-body">
                                 <h5 className="card-title">{community.communityTitle}</h5>
-                                이미지
+                                <div className="text-end" style={{ fontSize: "0.9rem", color: "#555" }}>
+                                    {community.communityUtime ? formatDate(community.communityUtime, true) : formatDate(community.communityWtime)}
+                                </div>
+                                
+                                {/* 이미지 */}
+                        {community.imageUrl && (
+                                <img src={community.imageUrl} className="card-img-top" alt="게시글 이미지" style={{ maxHeight: "150px", objectFit: "cover" }} />
+                            )}
                                 <div className="card-text">
                                     <div className="row">
                                         <div className="col">
@@ -181,6 +225,7 @@ const CommunityList = () => {
                                         <div className="col-6 text-start">
                                             {community.communityWriter} 작성자
                                         </div>
+                                        
                                     </div>
                                 </div>
                             </div>

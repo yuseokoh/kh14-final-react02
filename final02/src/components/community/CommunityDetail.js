@@ -3,10 +3,23 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { throttle } from "lodash";
 import { Navigate, useNavigate, useParams } from "react-router";
 import Jumbotron from "../Jumbotron";
+import moment from 'moment';
+import 'moment/locale/ko';
+import momentTimezone from 'moment-timezone';
+
+//시간
+moment.locale("ko");
+
+const formatDate = (dateString, isEdited = false) => {
+    const date = moment(dateString).tz("Asia/Seoul");
+    const formatForCreated = "MM.DD. HH:mm"; // 작성 시간 형식
+    const formatForEdited = "YY.MM.DD. HH:mm"; // 수정 시간 형식
+    return isEdited ? `${date.format(formatForEdited)} (수정됨)` : date.format(formatForCreated);
+};
 
 const CommunityDetail = () => {
     const { communityNo } = useParams();
-    const user = "testuser123";
+    const user = "";
     const navigate = useNavigate();
 
     const [community, setCommunity] = useState(null);
@@ -32,6 +45,10 @@ const CommunityDetail = () => {
     const [page, setPage] = useState(1);
     const size = 10;
 
+    // 제목 영역을 참조하는 ref 생성
+    const titleRef = useRef(null);
+
+    
     // Load community, initial replies, reactions, and images on component mount
     useEffect(() => {
         loadCommunity();
@@ -39,6 +56,13 @@ const CommunityDetail = () => {
         loadReply(1);
         loadLikesDislikes();
     }, [communityNo]);
+
+    //상단으로 올리게하는 코드
+    useEffect(() => {
+        if (titleRef.current) {
+            titleRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, [load,community]);
 
     const loadCommunityImages = useCallback(async () => {
         try {
@@ -169,6 +193,8 @@ const CommunityDetail = () => {
         navigate("/community/list");
     }, [communityNo, navigate]);
 
+    
+
     useEffect(() => {
         const handleScroll = throttle(() => {
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -189,8 +215,21 @@ const CommunityDetail = () => {
     return (
         <div key={key}>
             <Jumbotron title={`${communityNo}번 글 상세정보`} />
+            <div className="row mt-4" ref={titleRef}>
+                <div className="col-sm-3">제목</div>
+                <div className="col-sm-7">{community.communityTitle}</div>
+                <div className="col-sm-2 text-end">
+                    <span>
+                        {community.communityUtime 
+                            ? formatDate(community.communityUtime, true) 
+                            : formatDate(community.communityWtime)}
+                    </span>
+                    </div>
+            </div>
 
-            <div className="row mt-4">
+            
+
+            <div className="row mt-4" ref={titleRef}>
                 <div className="col-sm-3">제목</div>
                 <div className="col-sm-9">{community.communityTitle}</div>
             </div>
@@ -266,7 +305,10 @@ const CommunityDetail = () => {
                         <div className="row">
                             <div className="col-3">작성시간</div>
                             <div className="col-9">
-                                {reply.replyWtime} {reply.replyUtime ? `(${reply.replyUtime} 수정됨)` : ""}
+                                {/* {reply.replyWtime} {reply.replyUtime ? `(${reply.replyUtime} 수정됨)` : ""} */}
+                                {reply.replyUtime 
+                                    ? formatDate(reply.replyUtime, true) 
+                                    : formatDate(reply.replyWtime)}
                             </div>
                         </div>
                         <div className="row">
