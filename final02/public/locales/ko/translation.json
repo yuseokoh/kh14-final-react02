@@ -329,5 +329,42 @@
                 "submit": "등록",
                 "cancel": "취소"
             }
-        }
-        
+            ,
+              "gameDetail": {
+                
+                  "writeReview": "리뷰 작성",
+                  "editReview": "리뷰 수정",
+                  "mostHelpfulReviews": "가장 도움이 된 리뷰",
+                  "allReviews": "모든 리뷰",
+                  "noReviews": "리뷰가 없습니다.",
+                  "delete": "삭제",
+                  "like": "좋아요",
+                  "reviewDate": "작성일",
+                  "placeholder": "이 게임에 대한 평가를 작성해주세요...",
+                  "submitReview": "리뷰 등록",
+                  "cancel": "취소",
+                  "confirmDeleteReview": "리뷰를 삭제하시겠습니까?",
+                  "loginRequired": "로그인이 필요합니다.",
+                  "reviewSubmitError": "리뷰 처리 중 오류가 발생했습니다.",
+                  "serverCommunicationError": "서버와의 통신 중 오류가 발생했습니다.",
+                  "deleteReviewError": "리뷰 삭제 중 오류가 발생했습니다."
+                ,
+                "reviewCount": "개의 리뷰",
+                
+                "developer": "개발자",
+                "publisher": "배급사",
+                "releaseDate": "출시일",
+                "ageRating": "이용 등급",
+                "popularTags": "인기 태그",
+                "systemRequirements": "시스템 요구사항",
+             
+                  "addToCart": "장바구니에 추가",
+                  "addToWishlist": "위시리스트에 추가"
+            ,
+                  "editGameInfo": "게임 정보 수정",
+                
+                "alreadyInCart": "이미 장바구니에 있는 게임입니다.",
+                "alreadyInWishlist": "이미 찜에 있는 게임입니다."
+              }
+            }
+            

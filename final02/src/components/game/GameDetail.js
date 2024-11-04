@@ -5,6 +5,7 @@ import styles from './GameDetail.module.css';
 import { Tag, ThumbsUp, ThumbsDown, Share2, Flag, Star } from 'lucide-react';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState, memberLevelState, memberLoadingState } from "../../utils/recoil";
+import { useTranslation } from "react-i18next"; // i18next 추가
 
 /**
  * 게임 상세 정보를 표시하는 컴포넌트
@@ -30,6 +31,9 @@ const StarRating = ({ score }) => {
 
 
 const GameDetail = () => {
+
+    const { t } = useTranslation(); // t 함수 추가
+
     // 라우터 관련 훅
     const navigate = useNavigate();
     const { gameNo } = useParams();
@@ -142,7 +146,7 @@ const GameDetail = () => {
             navigate("/cart/");
         } catch (error) {
             console.error("Error adding item to cart", error);
-            window.alert("이미 장바구니에 있는 게임입니다");
+            window.alert(t("gameDetail.alreadyInCart")); // alert 번역 추가
         }
     }, [navigate]);
 
@@ -162,7 +166,7 @@ const GameDetail = () => {
             navigate("/wishlist/");
         } catch (error) {
             console.error("Error adding item to wishlist", error);
-            window.alert("이미 찜에 있는 게임입니다");
+            window.alert(t("gameDetail.alreadyInWishlist")); // alert 번역 추가
         }
     }, [navigate]);
 
@@ -215,7 +219,7 @@ const GameDetail = () => {
     */
 const handleLikeReview = async (reviewNo) => {
     if (!login) {
-        alert("로그인이 필요합니다.");
+        alert(t("gameDetail.loginRequired"));
         return;
     }
 
@@ -234,11 +238,11 @@ const handleLikeReview = async (reviewNo) => {
 
 const handleDeleteReview = async (reviewNo) => {
     if(!login) {
-        alert("로그인이 필요합니다.");
+        alert(t("gameDetail.loginRequired"));
         return;
     }
 
-    if (window.confirm("리뷰를 삭제하시겠습니까?")) {
+    if (window.confirm(t("gameDetail.confirmDeleteReview"))) {
         try {
             const token = sessionStorage.getItem('refreshToken');
             await axios.delete(
@@ -259,7 +263,7 @@ const handleDeleteReview = async (reviewNo) => {
             
         } catch (error) {
             console.error("리뷰 삭제 실패:", error);
-            alert("리뷰 삭제 중 오류가 발생했습니다.");
+            alert(t("gameDetail.deleteReviewError"));
         }
     }
 };
@@ -269,7 +273,7 @@ const handleDeleteReview = async (reviewNo) => {
  */
 const submitReview = async () => {
     if (!login) {
-        alert("로그인이 필요합니다.");
+        alert(t("gameDetail.loginRequired"));
         return;
     }
 
@@ -311,14 +315,13 @@ const submitReview = async () => {
 
     } catch (error) {
         if (error.response) {
-            alert("리뷰 처리 중 오류가 발생했습니다.");
+            alert(t("gameDetail.reviewSubmitError"));
         } else {
-            alert("서버와의 통신 중 오류가 발생했습니다.");
+            alert(t("gameDetail.serverCommunicationError")); // alert 번역 추가
         }
         console.error("리뷰 처리 실패:", error);
     }
 };
-
 
 return (
     <div className={styles.pageContainer}>
@@ -327,8 +330,8 @@ return (
             <div className={styles.titleArea}>
                 <h1>{game.gameTitle}</h1>
                 <div className={styles.developerInfo}>
-                    <span>개발: {game.gameDeveloper}</span>
-                    <span>배급: {game.gamePublisher}</span>
+                    <span>{t("gameDetail.developer")}: {game.gameDeveloper}</span>
+                    <span>{t("gameDetail.publisher")}: {game.gamePublisher}</span>
                 </div>
             </div>
 
@@ -350,7 +353,7 @@ return (
                             <img 
                                 key={index}
                                 src={img}
-                                alt={`${game.gameTitle} 스크린샷 ${index + 1}`}
+                                alt={`${game.gameTitle} ${t("gameDetail.screenshot")} ${index + 1}`}
                                 className={`${styles.thumbnail} ${selectedImage === index ? styles.active : ''}`}
                                 onClick={() => handleThumbnailClick(index)}
                             />
@@ -376,13 +379,13 @@ return (
                         </div>
                         
                         <div className={styles.metaInfo}>
-                            <div>출시일: {new Date(game.gamePublicationDate).toLocaleDateString()}</div>
-                            <div>개발사: {game.gameDeveloper}</div>
-                            <div>이용등급: {game.gameGrade}</div>
+                            <div>{t("gameDetail.releaseDate")}: {new Date(game.gamePublicationDate).toLocaleDateString()}</div>
+                            <div>{t("gameDetail.developer")}: {game.gameDeveloper}</div>
+                            <div>{t("gameDetail.ageRating")}: {game.gameGrade}</div>
                         </div>
 
                         <div className={styles.tagSection}>
-                            <h3>인기 태그:</h3>
+                            <h3>{t("gameDetail.popularTags")}:</h3>
                             <div className={styles.tags}>
                                 {game.gameCategory.split(',').map((category, index) => (
                                     <span key={index} className={styles.tag}>
@@ -416,17 +419,17 @@ return (
                         {/* 구매 버튼 영역 */}
                         <div className={styles.purchaseButtons}>
                             <button className={styles.addToCartButton} onClick={() => addCart(game)}>
-                                장바구니에 추가
+                                {t("gameDetail.addToCart")}
                             </button>
                             <button className={styles.wishlistButton} onClick={() => addWishList(game)}>
-                                위시리스트에 추가
+                                {t("gameDetail.addToWishlist")}
                             </button>
                         </div>
                     </div>
 
                     {/* 시스템 요구사항 */}
                     <div className={styles.systemRequirements}>
-                        <h3>시스템 요구사항</h3>
+                        <h3>{t("gameDetail.systemRequirements")}</h3>
                         <div className={styles.requirements}>
                             {game.gameSystemRequirement}
                         </div>
@@ -445,14 +448,14 @@ return (
                         </span>
                     </div>
                     <div className={styles.reviewCount}>
-                        {game.gameReviewCount.toLocaleString()}개의 리뷰
+                        {game.gameReviewCount.toLocaleString()}{t("gameDetail.reviewCount")}
                     </div>
                     {login && canWriteReview && (
                         <button 
                             className={styles.writeReviewButton}
                             onClick={() => setIsWritingReview(true)}
                         >
-                            리뷰 작성
+                            {t("gameDetail.writeReview")}
                         </button>
                     )}
                     {login && !canWriteReview && (
@@ -469,153 +472,156 @@ return (
                                 }
                             }}
                         >
-                            내 리뷰 수정
+                            {t("gameDetail.editReview")}
                         </button>
                     )}
                 </div>
+
             
-            {/* 리뷰 작성 폼 */}
-            {isWritingReview && (
-                <div className={styles.reviewForm}>
-                    <div className={styles.reviewFormHeader}>
-                        <h3>{canWriteReview ? "리뷰 작성" : "리뷰 수정"}</h3>
-                        <select 
-                            value={newReview.reviewScore}
+          {/* 리뷰 작성 폼 */}
+          {isWritingReview && (
+                    <div className={styles.reviewForm}>
+                        <div className={styles.reviewFormHeader}>
+                            <h3>{canWriteReview ? t("gameDetail.writeReview") : t("gameDetail.editReview")}</h3>
+                            <select 
+                                value={newReview.reviewScore}
+                                onChange={(e) => setNewReview({
+                                    ...newReview,
+                                    reviewScore: parseInt(e.target.value)
+                                })}
+                                className={styles.scoreSelect}
+                            >
+                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => (
+                                    <option key={score} value={score}>{score}/10</option>
+                                ))}
+                            </select>
+                        </div>
+                        <textarea
+                            value={newReview.reviewContent}
                             onChange={(e) => setNewReview({
                                 ...newReview,
-                                reviewScore: parseInt(e.target.value)
+                                reviewContent: e.target.value
                             })}
-                            className={styles.scoreSelect}
-                        >
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(score => (
-                                <option key={score} value={score}>{score}/10</option>
-                            ))}
-                        </select>
+                            className={styles.reviewTextarea}
+                            placeholder={t("gameDetail.Placeholder")}
+                        />
+                        <div className={styles.reviewFormButtons}>
+                            <button 
+                                className={styles.submitReviewButton}
+                                onClick={submitReview}
+                            >
+                                {t("gameDetail.submitReview")}
+                            </button>
+                            <button 
+                                className={styles.cancelButton}
+                                onClick={() => setIsWritingReview(false)}
+                            >
+                                {t("gameDetail.cancel")}
+                            </button>
+                        </div>
                     </div>
-                    <textarea
-                        value={newReview.reviewContent}
-                        onChange={(e) => setNewReview({
-                            ...newReview,
-                            reviewContent: e.target.value
-                        })}
-                        className={styles.reviewTextarea}
-                        placeholder="이 게임에 대한 평가를 작성해주세요..."
-                    />
-                    <div className={styles.reviewFormButtons}>
-                        <button 
-                            className={styles.submitReviewButton}
-                            onClick={submitReview}
-                        >
-                            리뷰 등록
-                        </button>
-                        <button 
-                            className={styles.cancelButton}
-                            onClick={() => setIsWritingReview(false)}
-                        >
-                            취소
-                        </button>
-                    </div>
-                </div>
-            )}
+                )}
 
-            {/* 인기 리뷰 목록 */}
-            {popularReviews.length > 0 && (
-                <div className={styles.popularReviews}>
-                    <h3>가장 도움이 된 리뷰</h3>
-                    {popularReviews.map(review => (
-                        <div key={review.reviewNo} className={styles.reviewCard}>
-                            <div className={styles.reviewHeader}>
-                                <span className={styles.reviewerName}>{review.memberNickname}</span>
-                                <div className={styles.reviewActions}>
-                                    {/* 별점 표시 */}
-                                    <div className={styles.reviewScore}>
-                                        <StarRating score={review.reviewScore} />
+                {/* 인기 리뷰 목록 */}
+                {popularReviews.length > 0 && (
+                    <div className={styles.popularReviews}>
+                        <h3>{t("gameDetail.mostHelpfulReviews")}</h3>
+                        {popularReviews.map(review => (
+                            <div key={review.reviewNo} className={styles.reviewCard}>
+                                <div className={styles.reviewHeader}>
+                                    <span className={styles.reviewerName}>{review.memberNickname}</span>
+                                    <div className={styles.reviewActions}>
+                                        {/* 별점 표시 */}
+                                        <div className={styles.reviewScore}>
+                                            <StarRating score={review.reviewScore} />
+                                        </div>
+                                        {/* 작성자인 경우에만 삭제 버튼 표시 */}
+                                        {login && review.memberId === memberId && (
+                                            <button 
+                                                className={styles.deleteButton}
+                                                onClick={() => handleDeleteReview(review.reviewNo)}
+                                            >
+                                                {t("gameDetail.delete")}
+                                            </button>
+                                        )}
                                     </div>
-                                    {/* 작성자인 경우에만 삭제 버튼 표시 */}
-                                    {login && review.memberId === memberId && (
-                                        <button 
-                                            className={styles.deleteButton}
-                                            onClick={() => handleDeleteReview(review.reviewNo)}
-                                        >
-                                            삭제
-                                        </button>
-                                    )}
+                                </div>
+                                <div className={styles.reviewContent}>{review.reviewContent}</div>
+                                <div className={styles.reviewFooter}>
+                                    <button 
+                                        className={styles.likeButton}
+                                        onClick={() => handleLikeReview(review.reviewNo)}
+                                    >
+                                        <ThumbsUp size={16} /> {review.likes}
+                                    </button>
+                                    <span className={styles.reviewDate}>
+                                        {new Date(review.reviewDate).toLocaleDateString()}
+                                    </span>
                                 </div>
                             </div>
-                            <div className={styles.reviewContent}>{review.reviewContent}</div>
-                            <div className={styles.reviewFooter}>
-                                <button 
-                                    className={styles.likeButton}
-                                    onClick={() => handleLikeReview(review.reviewNo)}
-                                >
-                                    <ThumbsUp size={16} /> {review.likes}
-                                </button>
-                                <span className={styles.reviewDate}>
-                                    {new Date(review.reviewDate).toLocaleDateString()}
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+                        ))}
+                    </div>
+                )}
 
-            {/* 전체 리뷰 목록 */}
-            <div className={styles.allReviews}>
-                <h3>모든 리뷰</h3>
-                {reviews.length === 0 ? (
-                    <div className={styles.noReviewsMessage}>리뷰가 없습니다.</div>
-                ) : (
-                    reviews.map(review => (
-                        <div key={review.reviewNo} className={styles.reviewCard}>
-                            <div className={styles.reviewHeader}>
-                                <span className={styles.reviewerName}>{review.memberNickname}</span>
-                                <div className={styles.reviewActions}>
-                                    {/* 별점 표시 */}
-                                    <div className={styles.reviewScore}>
-                                        <StarRating score={review.reviewScore} />
+                {/* 전체 리뷰 목록 */}
+                <div className={styles.allReviews}>
+                    <h3>{t("gameDetail.allReviews")}</h3>
+                    {reviews.length === 0 ? (
+                        <div className={styles.noReviewsMessage}>{t("gameDetail.noReviews")}</div>
+                    ) : (
+                        reviews.map(review => (
+                            <div key={review.reviewNo} className={styles.reviewCard}>
+                                <div className={styles.reviewHeader}>
+                                    <span className={styles.reviewerName}>{review.memberNickname}</span>
+                                    <div className={styles.reviewActions}>
+                                        {/* 별점 표시 */}
+                                        <div className={styles.reviewScore}>
+                                            <StarRating score={review.reviewScore} />
+                                        </div>
+                                        {/* 작성자인 경우에만 삭제 버튼 표시 */}
+                                        {login && review.memberId === memberId && (
+                                            <button 
+                                                className={styles.deleteButton}
+                                                onClick={() => handleDeleteReview(review.reviewNo)}
+                                            >
+                                                {t("gameDetail.delete")}
+                                            </button>
+                                        )}
                                     </div>
-                                    {/* 작성자인 경우에만 삭제 버튼 표시 */}
-                                    {login && review.memberId === memberId && (
-                                        <button 
-                                            className={styles.deleteButton}
-                                            onClick={() => handleDeleteReview(review.reviewNo)}
-                                        >
-                                            삭제
-                                        </button>
-                                    )}
+                                </div>
+                                <div className={styles.reviewContent}>{review.reviewContent}</div>
+                                <div className={styles.reviewFooter}>
+                                    <button 
+                                        className={styles.likeButton}
+                                        onClick={() => handleLikeReview(review.reviewNo)}
+                                    >
+                                        <ThumbsUp size={16} /> {review.likes}
+                                    </button>
+                                    <span className={styles.reviewDate}>
+                                        {new Date(review.reviewDate).toLocaleDateString()}
+                                    </span>
                                 </div>
                             </div>
-                            <div className={styles.reviewContent}>{review.reviewContent}</div>
-                            <div className={styles.reviewFooter}>
-                                <button 
-                                    className={styles.likeButton}
-                                    onClick={() => handleLikeReview(review.reviewNo)}
-                                >
-                                    <ThumbsUp size={16} /> {review.likes}
-                                </button>
-                                <span className={styles.reviewDate}>
-                                    {new Date(review.reviewDate).toLocaleDateString()}
-                                </span>
-                            </div>
-                        </div>
-                    ))
+                        ))
+                    )}
+                </div>
+
+                {/* 관리자 액션 버튼 */}
+                {(memberLevel === '개발자' || memberLevel === '관리자') && (
+                    <div className={styles.adminActions}>
+                        <button 
+                            className={styles.editButton}
+                            onClick={() => navigate(`/game/edit/${gameNo}`)}
+                        >
+                            {t("gameDetail.editGameInfo")}
+                        </button>
+                    </div>
                 )}
             </div>
         </div>
-
-        {/* 관리자 액션 버튼 */}
-        {(memberLevel === '개발자' || memberLevel === '관리자') && (
-            <div className={styles.adminActions}>
-                <button 
-                    className={styles.editButton}
-                    onClick={() => navigate(`/game/edit/${gameNo}`)}
-                >
-                    게임 정보 수정
-                </button>
-            </div>
-        )}
-    </div>
-);
+    );
 };
+
+
 
 export default GameDetail;
