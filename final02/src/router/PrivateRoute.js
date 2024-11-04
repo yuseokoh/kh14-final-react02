@@ -37,6 +37,13 @@ const PrivateRoute = (props)=>{
             </div>
         );
     } 
+    return login === true ? props.element : <Navigate to="/member/login"/>;
+    
+   
+
+
+
+
     };
     
 
