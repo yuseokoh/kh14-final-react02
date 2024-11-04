@@ -295,4 +295,42 @@
             "ageRatings.15": "Ages 15 and up",
             "ageRatings.19": "Ages 19 and up",
             "multiplayer":"multiplayer"
-          }
+          
+          ,
+            "gameAdd": {
+                "title": "Add Game",
+                "gameImages": "Game Images",
+                "previewAlt": "Preview",
+                "addImage": "Add Image",
+                "imageHelp": "Recommended: 16:9 ratio images, up to 5 images",
+                "gameTitle": "Game Title",
+                "gameTitlePlaceholder": "e.g., Dark Souls 3",
+                "price": "Price",
+                "pricePlaceholder": "e.g., 33,000",
+                "developer": "Developer",
+                "developerPlaceholder": "e.g., FromSoftware",
+                "publicationDate": "Publication Date",
+                "discount": "Discount (%)",
+                "discountPlaceholder": "e.g., 20",
+                "category": "Category",
+                "categoryPlaceholder": "e.g., RPG, Action",
+                "grade": "Grade",
+                "gradePlaceholder": "e.g., Ages 15+",
+                "theme": "Theme",
+                "themePlaceholder": "e.g., Fantasy",
+                "description": "Detailed Description",
+                "descriptionPlaceholder": "Enter the detailed description of the game",
+                "shortDescription": "Short Description",
+                "shortDescriptionPlaceholder": "Enter a short description of the game",
+                "userScore": "User Score",
+                "userScorePlaceholder": "e.g., 8.3",
+                "reviewCount": "Review Count",
+                "reviewCountPlaceholder": "e.g., 10012",
+                "platforms": "Supported Platforms",
+                "platformsPlaceholder": "e.g., Windows, Mac",
+                "systemRequirements": "System Requirements",
+                "systemRequirementsPlaceholder": "Enter minimum and recommended specs",
+                "submit": "Submit",
+                "cancel": "Cancel"
+            }
+        }

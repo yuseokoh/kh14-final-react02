@@ -3,9 +3,11 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import styles from './GameAdd.module.css'; 
 import { X, Upload, Image } from 'lucide-react';
+import { useTranslation } from "react-i18next"; // i18next 추가
 
 const GameAdd = ()=>{
     const navigate = useNavigate();
+    const { t } = useTranslation(); // t 함수 가져오기
 
     //이미지 파일들을 관리하기 위한 state
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -98,241 +100,241 @@ const GameAdd = ()=>{
     }, [input, selectedFiles, navigate]);
 
 
-    return (<>
-    <div className={StyleSheet.container}>
-    <div className={styles.container}>
-            <h1 className={styles.title}>게임 등록</h1>
-            {/* 이미지 업로드 섹션 */}
-            <div className={styles.imageUploadSection}>
-                <h3>게임 이미지</h3>
-                <div className={styles.imagePreviewArea}>
-                    {previewUrls.map((url, index) => (
-                        <div key={index} className={styles.previewContainer}>
-                            <img 
-                                src={url} 
-                                alt={`미리보기 ${index + 1}`} 
-                                className={styles.previewImage}
-                            />
-                            <button 
-                                onClick={() => removeImage(index)}
-                                className={styles.removeButton}
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-                    ))}
-                    <label className={styles.uploadButton}>
-                        <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            onChange={handleFileSelect}
-                            style={{ display: 'none' }}
-                        />
-                        <div className={styles.uploadPlaceholder}>
-                            <Upload size={24} />
-                            <span>이미지 추가</span>
-                        </div>
-                    </label>
-                </div>
-                <p className={styles.imageHelp}>
-                    권장: 16:9 비율의 이미지, 최대 5장
-                </p>
-            </div>
-
-            <div className={styles.formSection}>
+    return (
+        <>
+            <div className={styles.container}>
+                <h1 className={styles.title}>{t("gameAdd.title")}</h1>
                 
-                <div className={styles.formGroup}>
-                    <label>게임명</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) Dark Souls 3"
-                        name="gameTitle"
-                        value={input.gameTitle}
-                        onChange={changeInput}
-                    />
+                {/* 이미지 업로드 섹션 */}
+                <div className={styles.imageUploadSection}>
+                    <h3>{t("gameAdd.gameImages")}</h3>
+                    <div className={styles.imagePreviewArea}>
+                        {previewUrls.map((url, index) => (
+                            <div key={index} className={styles.previewContainer}>
+                                <img 
+                                    src={url} 
+                                    alt={`${t("gameAdd.previewAlt")} ${index + 1}`} 
+                                    className={styles.previewImage}
+                                />
+                                <button 
+                                    onClick={() => removeImage(index)}
+                                    className={styles.removeButton}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        ))}
+                        <label className={styles.uploadButton}>
+                            <input
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                                style={{ display: 'none' }}
+                            />
+                            <div className={styles.uploadPlaceholder}>
+                                <Upload size={24} />
+                                <span>{t("gameAdd.addImage")}</span>
+                            </div>
+                        </label>
+                    </div>
+                    <p className={styles.imageHelp}>
+                        {t("gameAdd.imageHelp")}
+                    </p>
                 </div>
 
-                <div className={styles.formGroup}>
-                    <label>금액</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        placeholder="ex) 33,000"
-                        name="gamePrice"
-                        value={input.gamePrice}
-                        onChange={changeInput}
-                    />
-                </div>
+                <div className={styles.formSection}>
+                    
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.gameTitle")}</label>
+                        <input 
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.gameTitlePlaceholder")}
+                            name="gameTitle"
+                            value={input.gameTitle}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>개발자</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) FromSoftware"
-                        name="gameDeveloper"
-                        value={input.gameDeveloper}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.price")}</label>
+                        <input 
+                            type="number"
+                            className={styles.input}
+                            placeholder={t("gameAdd.pricePlaceholder")}
+                            name="gamePrice"
+                            value={input.gamePrice}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>출시일</label>
-                    <input 
-                        type="date"
-                        className={styles.input}
-                        name="gamePublicationDate"
-                        value={input.gamePublicationDate}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.developer")}</label>
+                        <input 
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.developerPlaceholder")}
+                            name="gameDeveloper"
+                            value={input.gameDeveloper}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>할인율 (%)</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        placeholder="ex) 20"
-                        name="gameDiscount"
-                        value={input.gameDiscount}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.publicationDate")}</label>
+                        <input 
+                            type="date"
+                            className={styles.input}
+                            name="gamePublicationDate"
+                            value={input.gamePublicationDate}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>카테고리</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) RPG, Action, Adventure (콤마로 구분)"
-                        name="gameCategory"
-                        value={input.gameCategory}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.discount")}</label>
+                        <input 
+                            type="number"
+                            className={styles.input}
+                            placeholder={t("gameAdd.discountPlaceholder")}
+                            name="gameDiscount"
+                            value={input.gameDiscount}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>등급</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) 15세이용가"
-                        name="gameGrade"
-                        value={input.gameGrade}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.category")}</label>
+                        <input 
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.categoryPlaceholder")}
+                            name="gameCategory"
+                            value={input.gameCategory}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>테마</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) Fantasy, Dark Fantasy"
-                        name="gameTheme"
-                        value={input.gameTheme}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.grade")}</label>
+                        <input 
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.gradePlaceholder")}
+                            name="gameGrade"
+                            value={input.gameGrade}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>상세 설명</label>
-                    <input 
-                        type="text"
-                        className={`${styles.input} ${styles.textarea}`}
-                        placeholder="게임의 상세한 설명을 입력하세요"
-                        name="gameDescription"
-                        value={input.gameDescription}
-                        onChange={changeInput}
-                        rows="6"
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.theme")}</label>
+                        <input 
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.themePlaceholder")}
+                            name="gameTheme"
+                            value={input.gameTheme}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>간단 설명</label>
-                    <input 
-                        type="text"
-                        className={`${styles.input} ${styles.textarea}`}
-                        placeholder="게임의 간단한 설명을 입력하세요"
-                        name="gameShortDescription"
-                        value={input.gameShortDescription}
-                        onChange={changeInput}
-                        rows="3"
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.description")}</label>
+                        <input 
+                            type="text"
+                            className={`${styles.input} ${styles.textarea}`}
+                            placeholder={t("gameAdd.descriptionPlaceholder")}
+                            name="gameDescription"
+                            value={input.gameDescription}
+                            onChange={changeInput}
+                            rows="6"
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>평점</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        placeholder="ex) 8.3"
-                        name="gameUserScore"
-                        value={input.gameUserScore}
-                        onChange={changeInput}
-                        min="0"
-                        max="10"
-                        step="0.1"
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.shortDescription")}</label>
+                        <input 
+                            type="text"
+                            className={`${styles.input} ${styles.textarea}`}
+                            placeholder={t("gameAdd.shortDescriptionPlaceholder")}
+                            name="gameShortDescription"
+                            value={input.gameShortDescription}
+                            onChange={changeInput}
+                            rows="3"
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>리뷰수</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        placeholder="ex) 10012"
-                        name="gameReviewCount"
-                        value={input.gameReviewCount}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.userScore")}</label>
+                        <input 
+                            type="number"
+                            className={styles.input}
+                            placeholder={t("gameAdd.userScorePlaceholder")}
+                            name="gameUserScore"
+                            value={input.gameUserScore}
+                            onChange={changeInput}
+                            min="0"
+                            max="10"
+                            step="0.1"
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>지원 플랫폼</label>
-                    <input
-                        type="text"
-                        className={styles.input}
-                        placeholder="ex) Windows, Mac, Linux (콤마로 구분)"
-                        name="gamePlatform"
-                        value={input.gamePlatforms}
-                        onChange={changeInput}
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.reviewCount")}</label>
+                        <input 
+                            type="number"
+                            className={styles.input}
+                            placeholder={t("gameAdd.reviewCountPlaceholder")}
+                            name="gameReviewCount"
+                            value={input.gameReviewCount}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.formGroup}>
-                    <label>시스템 요구사항</label>
-                    <textarea
-                        className={`${styles.input} ${styles.textarea}`}
-                        placeholder="최소 사양과 권장 사양을 입력하세요"
-                        name="gameSystemRequirement"
-                        value={input.gameSystemRequirement}
-                        onChange={changeInput}
-                        rows="6"
-                    />
-                </div>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.platforms")}</label>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            placeholder={t("gameAdd.platformsPlaceholder")}
+                            name="gamePlatforms"
+                            value={input.gamePlatforms}
+                            onChange={changeInput}
+                        />
+                    </div>
 
-                <div className={styles.buttonGroup}>
-                    <button 
-                        className={styles.submitButton}
-                        onClick={saveGame}
-                    >
-                        등록
-                    </button>
-                    <button 
-                        className={styles.cancelButton}
-                        onClick={() => navigate("/game/list")}
-                    >
-                        취소
-                    </button>
+                    <div className={styles.formGroup}>
+                        <label>{t("gameAdd.systemRequirements")}</label>
+                        <textarea
+                            className={`${styles.input} ${styles.textarea}`}
+                            placeholder={t("gameAdd.systemRequirementsPlaceholder")}
+                            name="gameSystemRequirement"
+                            value={input.gameSystemRequirement}
+                            onChange={changeInput}
+                            rows="6"
+                        />
+                    </div>
+
+                    <div className={styles.buttonGroup}>
+                        <button 
+                            className={styles.submitButton}
+                            onClick={saveGame}
+                        >
+                            {t("gameAdd.submit")}
+                        </button>
+                        <button 
+                            className={styles.cancelButton}
+                            onClick={() => navigate("/game/list")}
+                        >
+                            {t("gameAdd.cancel")}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-        
-    </>);
+        </>
+    );
 };
 
 export default GameAdd;
