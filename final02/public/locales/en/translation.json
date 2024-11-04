@@ -60,11 +60,11 @@
     "loading": "Processing payment...",
     "thankYouMessage": "Thank you for your purchase!",
     "successMessage": "The purchased game has been registered to your account. You can now enjoy it anytime from your Steam library.",
-    "purchaseReceipt": "Purchase Receipt",
-    "accountName": "Account Name",
+    
+    "buyer": "buyer",
     "itemName": "Item Name",
     "totalAmount": "Total Amount",
-    "goToStore": "Return to Store",
+    "goToMainPage": "Return to MainPage",
     "goToLibrary": "Go to Library",
     "failureMessage": "Payment approval failed...",
     "PaymentHistory": "PaymentHistory"
