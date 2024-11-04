@@ -1,19 +1,44 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { useRecoilValue } from 'recoil';
-import { loginState, memberIdState } from "../../utils/recoil";
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { loginState, memberIdState, memberLevelState } from "../../utils/recoil";
 import { useNavigate } from 'react-router-dom';
 import styles from './MyPage.module.css';
 import { useTranslation } from 'react-i18next';
+import styled from "styled-components";
+
+const ProgressBar = styled.div`
+    width: 100%;
+    height: 30px;
+    background-color: #dedede;
+    border-radius: 12px;
+    margin-top: 20px;
+    overflow: hidden;
+`;
+
+const Progress = styled.div`
+    width: ${(props) => props.width}%;
+    height: 100%;
+    text-align: right;
+    background-color: skyblue;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+`;
+
 
 const MyPage = () => {
     const { t } = useTranslation();
     const [member, setMember] = useState({});
     const [image, setImage] = useState(null);
-    const navigate = useNavigate(); 
-
+    const navigate = useNavigate();
+    const [memberId, setMemberId] = useRecoilState(memberIdState);
+    const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const login = useRecoilValue(loginState);
-    const memberId = useRecoilValue(memberIdState);
+
 
     const loadMember = useCallback(async (memberId) => {
         try {
@@ -40,6 +65,33 @@ const MyPage = () => {
             setImage('/default-profile.png');
         }
     }, []);
+
+    const logout = useCallback((e) => {
+        // recoil에 저장된 memberId와 memberLevel을 제거
+        setMemberId("");
+        setMemberLevel("");
+
+        // axios에 설정된 Authorization 헤더도 제거
+        delete axios.defaults.headers.common["Authorization"];
+
+        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
+        window.localStorage.removeItem("refreshToken");
+        window.sessionStorage.removeItem("refreshToken");
+
+        // 페이지 이동
+        navigate("/");
+    }, [setMemberId, setMemberLevel, , , , navigate]);
+
+    const delmember = useCallback(async () => {
+        try {
+            await axios.delete(`/member/delete/${member.memberId}`);
+            navigate("/"); // 삭제 후 메인 페이지로 이동
+            logout("/");
+            
+        } catch (error) {
+            console.error("Error deleting member:", error);
+        }
+    }, [member.memberId, navigate]);
 
     useEffect(() => {
         if (login && memberId) {
@@ -78,6 +130,7 @@ const MyPage = () => {
     const renderProfileImage = () => {
         const levelInfo = getLevelInfo(member?.memberPoint);
 
+
         return (
             <div className={styles.profileImageContainer}>
                 <img
@@ -90,6 +143,7 @@ const MyPage = () => {
     };
 
     const levelInfo = getLevelInfo(member?.memberPoint);
+    const progressPercentage = ((member?.memberPoint || 0) / levelInfo.nextLevelPoints) * 100;
 
     return (
         <div className={styles.container}>
@@ -101,7 +155,14 @@ const MyPage = () => {
                         {t(`levels.${levelInfo.level}`).toUpperCase()}
                     </div>
                     <div>
-                        <h1>{member.memberPoint} / {levelInfo.nextLevelPoints}</h1>
+                        
+                        {/* Progress bar */}
+                        <ProgressBar>
+                            <Progress width={progressPercentage}>
+                                {progressPercentage.toFixed(2)}%
+                                {/* <h3>{member.memberPoint} / {levelInfo.nextLevelPoints}</h3> */}
+                            </Progress>
+                        </ProgressBar>
                     </div>
                 </div>
             </div>
@@ -126,12 +187,20 @@ const MyPage = () => {
             </div>
 
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                <button 
+                <button
                     className={styles.editButton}
                     onClick={() => navigate(`/member/mypageedit/${memberId}`)}
                 >
                     {t("edit")}
                 </button>
+                <button
+                    className={styles.delButton}
+                    // onClick={() => navigate(`/member/delete/${memberId}`)}
+                    onClick={delmember}
+                >
+                    {t("delete")}
+                </button>
+
             </div>
         </div>
     );

@@ -151,7 +151,7 @@ const WishList = () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
       console.log("게임 목록 데이터:", response.data);
-  
+
       // 배열을 섞는 함수
       const shuffleArray = (array) => {
         return array.sort(() => Math.random() - 0.5);

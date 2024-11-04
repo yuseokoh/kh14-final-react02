@@ -20,11 +20,10 @@ const ShoppingCart = () => {
   const memberId = useRecoilValue(memberIdState);
   const navigate = useNavigate();
 
-  // 구매한 게임 목록 로드
   const loadLibraryList = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
-      setLibList(resp.data.map((item) => item.gameNo)); // 구매한 게임 ID 리스트로 저장
+      setLibList(resp.data.map((item) => item.gameNo));
     } catch (error) {
       console.error("Error loading library list:", error);
     }
@@ -40,6 +39,7 @@ const ShoppingCart = () => {
       console.error("Error loading cart list", error);
     }
   }, []);
+
 
   //게임 리스트 로드
   const loadGameList = useCallback(async () => {
@@ -58,6 +58,25 @@ const ShoppingCart = () => {
       console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
   }, []);
+
+
+  const loadAllGameImages = useCallback(async () => {
+    const imageRequests = cartList.map(async (cart) => {
+      try {
+        const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
+        const imageUrl = response.data?.length > 0 
+          ? `http://localhost:8080/game/download/${response.data[0].attachmentNo}`
+          : 'https://via.placeholder.com/200';
+        return { [cart.gameNo]: imageUrl };
+      } catch (error) {
+        console.error("Error loading game image:", error);
+        return { [cart.gameNo]: 'https://via.placeholder.com/200' };
+      }
+    });
+
+    const images = await Promise.all(imageRequests);
+    const newImageUrls = images.reduce((acc, image) => ({ ...acc, ...image }), {});
+    setImageUrls(newImageUrls);
 
   const delCart = useCallback(async (gameNo) => {
     try {
@@ -88,6 +107,7 @@ const ShoppingCart = () => {
     } catch (error) {
       console.error("이미지 로딩 에러:", error);
     }
+
   }, [cartList]);
 
   useEffect(() => {
@@ -136,29 +156,29 @@ const ShoppingCart = () => {
       const response = await axios.post(
         "http://localhost:8080/game/purchase",
         {
-          gameList: selectedGames.map(game => ({
-            gameNo: game.gameNo,
-            qty: 1,
-          })),
-          approvalUrl: getCurrentUrl() + "/success",
-          cancelUrl: getCurrentUrl() + "/cancel",
-          failUrl: getCurrentUrl() + "/fail",
+          gameList: selectedGames.map(game => ({ gameNo: game.gameNo, qty: 1 })),
+          approvalUrl: `${window.location.origin}${window.location.pathname}/success`,
+          cancelUrl: `${window.location.origin}${window.location.pathname}/cancel`,
+          failUrl: `${window.location.origin}${window.location.pathname}/fail`,
         }
       );
 
       window.sessionStorage.setItem("tid", response.data.tid);
       window.sessionStorage.setItem("checkedGameList", JSON.stringify(selectedGames));
-
       window.location.href = response.data.next_redirect_pc_url;
     } catch (error) {
       console.error(t('payment.errorDuringPurchase'), error);
       alert(t('payment.errorPurchaseFailed'));
     }
-  }, [cartList, selectedItems, getCurrentUrl, t]);
+  }, [cartList, selectedItems, t]);
 
-  const keepshop = useCallback(() => {
-    navigate("/");
-  }, [navigate]);
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+
 
   const nextSlide = () => {
     if (currentIndex < gameList.length - 3) {
@@ -172,6 +192,15 @@ const ShoppingCart = () => {
     }
   };
 
+  const delCart = useCallback(async (gameNo) => {
+    try {
+      const resp = await axios.delete(`/cart/${gameNo}`);
+      setCartList(prevList => prevList.filter(cart => cart.gameNo !== gameNo));
+      setSelectedItems(prevItems => prevItems.filter(id => id !== gameNo));
+    } catch (error) {
+      console.error("Error deleting cart item", error);
+    }
+  }, []);
   return (
     <div className={styles.cartPageContainer}>
       <h1 className={styles.cart_title}>
@@ -221,9 +250,10 @@ const ShoppingCart = () => {
           ))
         )}
       </div>
+
       <div className={styles.cartSummaryContainer}>
         <div className={styles.cartFooter}>
-          <button className={styles.continueShoppingButton} onClick={keepshop}>쇼핑 계속하기</button>
+          <button className={styles.continueShoppingButton} onClick={() => navigate("/")}>쇼핑 계속하기</button>
           <div className={styles.totalPriceSection}>
             <div className={styles.totalPriceLabel}>선택된 항목 합계:</div>
             <div className={styles.totalPriceValue}>
