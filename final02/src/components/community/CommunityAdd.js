@@ -90,7 +90,7 @@ const CommunityAdd = () => {
                         value={input.communityTitle} onChange={changeInput} />
                 </div>
             </div>
-            <div className="row mt-4">
+            {/* <div className="row mt-4">
                 <div className="col">
                     <label>상태</label>
                     <select name="communityState" className="form-control" value={input.communityState} onChange={changeInput}>
@@ -98,7 +98,7 @@ const CommunityAdd = () => {
                         <option value="private">비공개</option>
                     </select>
                 </div>
-            </div>
+            </div> */}
             <div className="row mt-4">
                 <div className="col">
                     <label>카테고리</label>
