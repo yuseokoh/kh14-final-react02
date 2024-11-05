@@ -137,7 +137,7 @@ const MainContent = () => {
                         <Route path="/steam-agreement" element={<SteamAgreement />} />
                         <Route path="/refund-policy" element={<RefundPolicy />} />
 
-                        <Route path="/community/search/title/:keyword" element={<CommunitySearch />} />
+                     
 
                         {/* 카카오로그인 테스트 */}
                         <Route path="/member/KakaoLoginPage2" element={<KakaoLoginPage2 />} />
