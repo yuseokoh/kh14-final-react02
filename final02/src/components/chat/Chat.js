@@ -10,6 +10,7 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import axios from "axios";
 import moment from "moment";
+import styles from './Chat.module.css';
 
 const Chat = () => {
   const { roomNo } = useParams();
@@ -288,13 +289,10 @@ const Chat = () => {
                           {login && memberId !== message.senderMemberId && (
                             <h6 className="mb-1 text-primary">
                               {message.senderMemberId}{" "}
-                              <small className="text-muted">
-                                ({message.senderMemberLevel})
-                              </small>
                             </h6>
                           )}
                           {/* 사용자가 보낸 본문 */}
-                          <p className="mb-2" style={{ fontSize: "1rem" }}>
+                          <p className="mb-2" style={{ fontSize: "1rem" , color: "black"}}>
                             {message.content}
                           </p>
                           {/* 시간 */}
@@ -309,7 +307,7 @@ const Chat = () => {
 
                 {/* 메세지 입력창 */}
                 <div className="row mt-4">
-                  <div className="col-9">
+                  <div className="col-md-9 col-12">
                     <div className="input-group">
                       <input
                         type="text"

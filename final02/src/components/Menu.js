@@ -294,9 +294,15 @@ const Menu = () => {
                             </>)}
                             {/* 모달을 열기 위한 버튼 */}
             <li className="nav-item">
-                                    <button className="btn btn-link nav-link" onClick={openModal}>
+                            {!isModalOpen?(
+                                <button className="btn btn-link nav-link" onClick={openModal}>
                                         친구
                                     </button>
+                                    ):(
+                                        <button className="btn btn-link nav-link" onClick={closeModal}>
+                                        친구
+                                    </button>
+                                    )}
                                 </li>
             {/* 모달 컴포넌트 */}
             <Modal

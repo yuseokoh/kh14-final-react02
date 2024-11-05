@@ -59,6 +59,7 @@ import PageNotFound from "./PageNotFound";
 import AdminPaymentPage from "./payment/AdminPaymentPage";
 import MemberLevelRequest from "./member/MemberLevelRequest";
 import AdminMemberEdit from "./member/AdminMemberEdit";
+import Profile from "./member/Profile";
 
 const MainContent = () => {
     const { t } = useTranslation(); // 번역 훅 사용
@@ -89,7 +90,7 @@ const MainContent = () => {
                         <Route path="/testgame2" element={<PrivateRoute element={<KHSurvival />} />} />
                         <Route path="/play" element={<PrivateRoute element={<Ranking />} />} />
                         <Route path="/websocket" element={<PrivateRoute element={<WebsocketClient />} />} />
-                        <Route path="/room" element={<PrivateRoute element={<Chatroom />} />} />
+                        {/* <Route path="/room" element={<PrivateRoute element={<Chatroom />} />} /> */}
                         <Route path="/room-chat/:roomNo" element={<PrivateRoute element={<Chat />} />} />
                         <Route path="/admin/payment" element={<PrivateRoute element={<AdminPaymentPage />} />} />
 
@@ -112,6 +113,7 @@ const MainContent = () => {
                         <Route path="/member/MemberLogin" element={<MemberLogin />} />
                         <Route path="/member/signupPage" element={<SignupPage />} />
                         <Route path="/member/signupForm" element={<SignupForm />} />
+                        <Route path="/member/profile/:targetId" element={<Profile />} />
                         <Route path="/community/list" element={<CommunityList />} />
                         <Route path="/community/detail/:communityNo" element={<CommunityDetail />} />
                         <Route path="/member/signup" element={<SingUp />} />
