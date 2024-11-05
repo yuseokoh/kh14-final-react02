@@ -201,16 +201,7 @@ const Menu = () => {
 
                     <div className="collapse navbar-collapse" id="top-menu">
                         <ul className="navbar-nav me-auto">
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle"
-                                    data-bs-toggle="dropdown" href="#" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.shop')}</a>
-                                <div className="dropdown-menu">
-                                    <NavLink className="dropdown-item" to="/game/add">{t('add')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/detail/:gameNo">{t('detail')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/edit/:gameNo">{t('edit')}</NavLink>
-                                </div>
-                            </li>
+                           
 
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle"
