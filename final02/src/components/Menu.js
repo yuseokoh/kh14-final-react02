@@ -16,6 +16,10 @@ import { useTranslation } from 'react-i18next';
 import LanguageSelector from './LanguageSelector';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import FriendList from "./friend/FriendList";
+import Modal from "react-modal";
+
+Modal.setAppElement('#root');
 
 // NotificationMenu 컴포넌트를 Menu 컴포넌트 외부로 이동
 const NotificationMenu = ({ memberId }) => {
@@ -28,7 +32,7 @@ const NotificationMenu = ({ memberId }) => {
     const [error, setError] = useState(null);
     const memberLevel = useRecoilValue(memberLevelState);
     const navigate = useNavigate();
-    
+   
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -68,6 +72,8 @@ const NotificationMenu = ({ memberId }) => {
     }, [memberLevel]); // 의존성 배열에 memberId 추가
     
     if (memberLevel !== "관리자") return null;
+
+    
 
     return (
         <div className={styles.notificationContainer}>
@@ -118,6 +124,10 @@ const Menu = () => {
     const [kakaoAccessToken, setKakaoAccessToken] = useRecoilState(kakaoAccessTokenState);
     const login = useRecoilValue(loginState);
 
+    //state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     // 로그아웃 기능 수정
     const logout = useCallback((e) => {
         // recoil에 저장된 memberId와 memberLevel을 제거
@@ -161,6 +171,16 @@ const Menu = () => {
         navigate("/");
     }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, kakaoAccessToken, navigate]);
 
+    const openModal = () => {
+        setIsModalOpen(true);
+        setIsMenuOpen(false);
+    };
+
+    
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <>
             <nav className={`navbar navbar-expand-lg fixed-top ${styles.navbar}`} data-bs-theme="dark">
@@ -174,7 +194,8 @@ const Menu = () => {
                         data-bs-target="#top-menu"
                         aria-controls="top-menu"
                         aria-expanded="false"
-                        aria-label="Toggle navigation">
+                        aria-label="Toggle navigation" 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
@@ -219,7 +240,9 @@ const Menu = () => {
                                     {memberId} ({memberLevel})
                                 </NavLink>
                             </li>
-                            
+                            <div>
+            
+        </div>
                             {/* 관리자 알림 메뉴를 여기로 이동하고 스타일 통일 */}
                             {memberLevel === "관리자" && (
                                 <li className="nav-item">
@@ -269,8 +292,40 @@ const Menu = () => {
                                     </NavLink>
                                 </li>
                             </>)}
+                            {/* 모달을 열기 위한 버튼 */}
+            <li className="nav-item">
+                                    <button className="btn btn-link nav-link" onClick={openModal}>
+                                        친구
+                                    </button>
+                                </li>
+            {/* 모달 컴포넌트 */}
+            <Modal
+                                    isOpen={isModalOpen}
+                                    onRequestClose={closeModal}
+                                    contentLabel="Friend List Modal"
+                                    style={{
+                                        content: {
+                                            top: '60%',
+                                            left: '87%',
+                                            right: 'auto',
+                                            bottom: 'auto',
+                                            marginRight: '-50%',
+                                            transform: 'translate(-50%, -50%)', 
+                                            border: 'none', 
+                                            backgroundColor: '#141d29', 
+                                            zIndex: '9999', 
+                                        },
+                                        overlay: {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+                                        },
+                                    }}
+                                >
+                                    <FriendList />
+                                    <button onClick={closeModal}>닫기</button>
+                                </Modal>
                         </ul>
                         <LanguageSelector />
+                        
                     </div>
                 </div>
             </nav>
