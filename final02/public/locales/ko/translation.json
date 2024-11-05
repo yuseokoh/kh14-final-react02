@@ -66,7 +66,7 @@
     "totalAmount": "총액",
     "goToMainPage": "메인페이지로 이동하기",
     "goToLibrary": "라이브러리로 이동하기",
-    "failureMessage": "결제 승인 실패...",
+    "failureMessage": "이미 구매된 상품입니다",
      "PaymentHistory": "결제 내역"
   },
   "languageButton": "언어",
