@@ -231,6 +231,7 @@
           "email": "Email",
           "birthDate": "Birth Date",
           "edit": "Edit",
+          "delete":"Delete",
           "levels": {
               "challenger": "Challenger",
               "master": "Master",
