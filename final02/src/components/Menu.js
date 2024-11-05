@@ -242,7 +242,7 @@ const Menu = () => {
                             
                             
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="#" onClick={logout}>
+                                <NavLink className="nav-link" to="/" onClick={logout}>
                                     {t('menu.logout')}
                                 </NavLink>
                             </li>
