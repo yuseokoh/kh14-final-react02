@@ -316,17 +316,6 @@ const GameEdit = () => {
                     />
                 </div>
 
-                <div className={styles.formGroup}>
-                    <label>시스템 요구사항</label>
-                    <textarea
-                        className={`${styles.input} ${styles.textarea}`}
-                        name="gameSystemRequirement"
-                        value={game.gameSystemRequirement}
-                        onChange={changeGame}
-                        rows="6"
-                    />
-                </div>
-
                 <div className={styles.buttonGroup}>
                     <button
                         className={styles.submitButton}
