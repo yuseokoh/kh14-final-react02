@@ -106,16 +106,7 @@ const PaymentSuccessPage = () => {
     
    
       
-    const handleGoToCancelPage = () => {
-        const paymentNo = sessionStorage.getItem("paymentNo");
-      
-        if (!paymentNo) {
-          alert('결제 번호가 유효하지 않습니다. 결제 정보를 확인해주세요.');
-          return;
-        }
-      
-        navigate(`/cancel-payment/detail/${paymentNo}`);
-      };
+  
       
 
     const handleGoToStore = () => navigate("/");
@@ -163,9 +154,7 @@ const PaymentSuccessPage = () => {
                     <button onClick={handleGoToLibrary} className="btn btn-secondary">
                         {t('paymentSuccess.goToLibrary')}
                     </button>
-                    <button onClick={handleGoToCancelPage} className="btn btn-info">
-                    {t('paymentSuccess.PaymentHistory')}
-      </button>
+      
                 </div>
             </div>
         );

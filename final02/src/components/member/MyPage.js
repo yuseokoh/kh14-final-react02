@@ -146,6 +146,17 @@ const MyPage = () => {
     const levelInfo = getLevelInfo(member?.memberPoint);
     const progressPercentage = ((member?.memberPoint || 0) / levelInfo.nextLevelPoints) * 100;
 
+    const handleGoToCancelPage = () => {
+        const paymentNo = sessionStorage.getItem("paymentNo");
+      
+        if (!paymentNo) {
+          alert('결제 번호가 유효하지 않습니다. 결제 정보를 확인해주세요.');
+          return;
+        }
+      
+        navigate(`/cancel-payment/detail/${paymentNo}`);
+      };
+
     return (
         <div className={styles.container}>
             <div className={styles.profileHeader}>
@@ -201,6 +212,10 @@ const MyPage = () => {
                 >
                     {t("delete")}
                 </button>
+
+                <button onClick={handleGoToCancelPage} className={styles.payButton}>
+                    {t('paymentSuccess.PaymentHistory')}
+      </button>
 
             </div>
         </div>

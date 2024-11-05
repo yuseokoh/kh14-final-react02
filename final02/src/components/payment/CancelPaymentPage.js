@@ -144,6 +144,7 @@ const CancelPaymentPage = () => {
   if (!paymentInfo) {
     return <h1>{t('cancelPayment.loadingError')}</h1>;
   }
+  const handleGoToStore = () => navigate("/");
 
   return (
     <div className="mainContent" style={{ backgroundColor: '#1b2838', color: '#fff' }}>
@@ -239,8 +240,13 @@ const CancelPaymentPage = () => {
               disabled
             />
           </div>
+          
         )}
+          <button onClick={handleGoToStore} className={styles.mainButton}>
+  {t('paymentSuccess.goToMainPage')}
+</button>
       </div>
+   
 
       {showCentralAlert && (
         <div className={styles.centralAlert}>
