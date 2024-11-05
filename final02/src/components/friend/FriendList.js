@@ -74,6 +74,11 @@ const FriendList = ()=>{
         setRoomList(resp.data);
       }, [roomList]);
 
+      const viewProfile = useCallback((friend)=>{
+        const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
+        navigate(`/member/mypage/${targetId}`);
+      }, []);
+
       const createChatRoom = useCallback(async (friend)=>{
         if (!memberId || memberLoading === false) return;
         try{
@@ -92,7 +97,7 @@ const FriendList = ()=>{
         setMemberJoin(resp.data);
       }, []);
 
-      const enterRoom = useCallback(async (friend)=>{
+      const enterRoom = useCallback((friend)=>{
         // await axios.post("/room/enter", { roomNo : friend.friendFk });
         //방으로 이동     
         navigate(`/room-chat/${friend.friendFk}`);   
@@ -108,15 +113,15 @@ const FriendList = ()=>{
     }, [keyword, friendList]);
 
     return (<>
-    <div className="row pb-4" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
+    <div className="row" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
     <div className="col">
-    <div className="row mt-4 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-4 justify-content-center">
+        <div className="col">
             <h3>친구 목록</h3>
         </div>
     </div>
-    <div className="row mt-2 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-2 justify-content-center">
+        <div className="col">
             {/* 입력값 useMemo로 memberList에서 조회후 출력*/}
             <input type="text" className="form-control" placeholder="아이디" 
             value={keyword} onChange={changeKeyword}/> 
@@ -133,7 +138,7 @@ const FriendList = ()=>{
                                     <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
                                 )
                             ))}
-                            <button className="btn btn-secondary ms-4">프로필 보기</button>
+                            <button className="btn btn-secondary ms-4" onClick={()=> viewProfile(friend)}>프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
                     ))}
@@ -141,8 +146,8 @@ const FriendList = ()=>{
             )}
         </div>
     </div>
-    <div className="row mt-2 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-2 justify-content-center">
+        <div className="col">
     {open === false && (
         <ul className="list-group">
                 {friendList.map(friend=>(
@@ -155,7 +160,7 @@ const FriendList = ()=>{
                                     <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
                                 )
                             ))}
-                        <button className="btn btn-secondary ms-4">프로필 보기</button>
+                        <button className="btn btn-secondary ms-4" onClick={()=> viewProfile(friend)}>프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>
                 ))}

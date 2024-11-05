@@ -23,6 +23,7 @@ const Chat = () => {
   const [connect, setConnect] = useState(false); //연결 상태
   const [more, setMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [scrollLock, setScrollLock] = useState(false);
   const messageListRef = useRef(null);
   const loadMoreTrigger = useRef(null);
   const prevScrollHeightRef = useRef(0);
@@ -49,18 +50,18 @@ const Chat = () => {
   }, [firstMessageNo]);
 
   useEffect(() => {
-    if (messageListRef.current && prevScrollHeightRef.current) {
-      messageListRef.current.scrollTop =
-        messageListRef.current.scrollHeight - prevScrollHeightRef.current;
+    if (messageListRef.current && !scrollLock) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, [messageList]);
 
+  // 초기 로딩 시에도 스크롤을 최하단으로 설정
   useEffect(() => {
     if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
   }, []);
-  
+
   //effect
   const location = useLocation();
   useEffect(() => {
@@ -155,11 +156,15 @@ const Chat = () => {
   const loadMoreMessageList = useCallback(async () => {
     if (!firstMessageNo) return;
     if (loading) return;
+  
     setLoading(true);
+    setScrollLock(true); // 스크롤 잠금 활성화
+  
+    let currentScrollHeight = 0;
     if (messageListRef.current) {
-      // 기존 스크롤 높이 저장
-      prevScrollHeightRef.current = messageListRef.current.scrollHeight;
+      currentScrollHeight = messageListRef.current.scrollHeight;
     }
+  
     try {
       const resp = await axios.get(`/room/more/${firstMessageNo}/${roomNo}`);
       setMessageList((prev) => [...resp.data.messageList, ...prev]);
@@ -168,8 +173,18 @@ const Chat = () => {
       console.log("더보기 요청 중 오류 발생 : ", error);
     } finally {
       setLoading(false);
+  
+      if (messageListRef.current) {
+        requestAnimationFrame(() => {
+          if (messageListRef.current) {
+            messageListRef.current.scrollTop =
+              messageListRef.current.scrollHeight - currentScrollHeight;
+          }
+          setScrollLock(false); // 스크롤 잠금 해제
+        });
+      }
     }
-  }, [firstMessageNo, more]);
+  }, [firstMessageNo, more, loading]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -200,139 +215,126 @@ const Chat = () => {
   return (
     <>
       <div
-  className="container-fluid pt-4 pb-4"
-  style={{ backgroundColor: "#141d29", minHeight: "100vh" }}
->
-  <div className="row d-flex justify-content-center">
-    <div className="col-lg-10 col-md-12">
-      <div className="row">
-        {/* 사용자 목록 */}
-        <div className="col-md-3 col-12 mb-4">
-          <div
-            className="user-list-container p-3"
-            style={{
-              backgroundColor: "#1e293b",
-              borderRadius: "10px",
-              maxHeight: "600px",
-              overflowY: "auto",
-              color: "#ffffff",
-            }}
-          >
-            <h5 className="text-center">참가자 목록</h5>
-            <ul className="list-group">
-              {userList.map((user, index) => (
-                <li
-                  className="list-group-item bg-dark text-white"
+        className="container-fluid pt-4 pb-4"
+        style={{ backgroundColor: "#141d29", minHeight: "100vh" }}
+      >
+        <div className="row d-flex justify-content-center">
+          <div className="col-lg-10 col-md-12">
+            <div className="row">
+              {/* 사용자 목록 */}
+              <div className="col-md-3 col-12 mb-4">
+                <div
+                  className="user-list-container p-3"
                   style={{
-                    borderRadius: "5px",
-                    marginBottom: "5px",
+                    backgroundColor: "#1e293b",
+                    borderRadius: "10px",
+                    maxHeight: "600px",
+                    overflowY: "auto",
+                    color: "#ffffff",
                   }}
-                  key={index}
                 >
-                  {user === memberId ? `${user} (나)` : user}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+                  <h5 className="text-center">참가자 목록</h5>
+                  <ul className="list-group">
+                    {userList.map((user, index) => (
+                      <li
+                        className="list-group-item bg-dark text-white"
+                        style={{
+                          borderRadius: "5px",
+                          marginBottom: "5px",
+                        }}
+                        key={index}
+                      >
+                        {user === memberId ? `${user} (나)` : user}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
 
-        {/* 메세지 목록 */}
-        <div className="col-md-9 col-12">
-          <div
-            className="message-list-container"
-            style={{
-              backgroundColor: "#ffffff",
-              height: "600px", // 원하는 높이를 지정하세요.
-              overflowY: "scroll", // 수직 스크롤 활성화
-              borderRadius: "10px",
-              padding: "20px",
-              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-            }}
-            ref={messageListRef}
-          >
-            <div ref={loadMoreTrigger} style={{ height: "1px" }}>
-            <ul className="list-group">
-              {messageList.map((message, index) => (
-                <li
-                  key={index}
-                  className={`list-group-item border-0 ${
-                    login && memberId === message.senderMemberId
-                      ? "text-end bg-lightblue"
-                      : "text-start bg-light"
-                  }`}
+              {/* 메세지 목록 */}
+              <div className="col-md-9 col-12">
+                <div
+                  className="message-list-container"
                   style={{
-                    marginBottom: "10px",
-                    borderRadius: "15px",
-                    padding: "15px",
-                    boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#ffffff",
+                    height: "600px", 
+                    width: "800px", 
+                    overflowY: "scroll",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
                   }}
+                  ref={messageListRef}
                 >
-                  <div className="message-content">
-                    {/* 발신자 정보 */}
-                    {login && memberId !== message.senderMemberId && (
-                      <h6 className="mb-1 text-primary">
-                        {message.senderMemberId}{" "}
-                        <small className="text-muted">
-                          ({message.senderMemberLevel})
-                        </small>
-                      </h6>
-                    )}
-                    {/* 사용자가 보낸 본문 */}
-                    <p className="mb-2" style={{ fontSize: "1rem" }}>
-                      {message.content}
-                    </p>
-                    {/* 시간 */}
-                    <p className="text-muted" style={{ fontSize: "0.85rem" }}>
-                      {moment(message.time).format("a h:mm")}
-                    </p>
+                  <div ref={loadMoreTrigger} style={{ height: "1px" }} />
+                  <ul className="list-group">
+                    {messageList.map((message, index) => (
+                      <li
+                        key={index}
+                        className={`list-group-item border-0 ${
+                          login && memberId === message.senderMemberId
+                            ? "text-end bg-lightblue"
+                            : "text-start bg-light"
+                        }`}
+                        style={{
+                          marginBottom: "10px",
+                          borderRadius: "15px",
+                          padding: "15px",
+                          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <div className="message-content">
+                          {/* 발신자 정보 */}
+                          {login && memberId !== message.senderMemberId && (
+                            <h6 className="mb-1 text-primary">
+                              {message.senderMemberId}{" "}
+                              <small className="text-muted">
+                                ({message.senderMemberLevel})
+                              </small>
+                            </h6>
+                          )}
+                          {/* 사용자가 보낸 본문 */}
+                          <p className="mb-2" style={{ fontSize: "1rem" }}>
+                            {message.content}
+                          </p>
+                          {/* 시간 */}
+                          <p className="text-muted" style={{ fontSize: "0.85rem" }}>
+                            {moment(message.time).format("a h:mm")}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* 메세지 입력창 */}
+                <div className="row mt-4">
+                  <div className="col-9">
+                    <div className="input-group">
+                      <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyUp={(e) => e.key === "Enter" && sendMessage()}
+                        className="form-control"
+                        placeholder="메시지를 입력하세요..."
+                      />
+                      <button
+                        className="btn btn-primary"
+                        style={{ minWidth: "100px" }}
+                        onClick={sendMessage}
+                      >
+                        보내기
+                      </button>
+                    </div>
                   </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* 더보기 버튼 */}
-          <div className="row mt-3">
-            <div className="col text-center">
-              {firstMessageNo !== null && more && (
-                <button
-                  className="btn btn-outline-success"
-                  onClick={loadMoreMessageList}
-                >
-                  더보기
-                </button>
-              )}
-            </div>
-          </div>
-          </div>
-
-          {/* 메세지 입력창 */}
-          <div className="row mt-4">
-            <div className="col">
-              <div className="input-group">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyUp={(e) => e.key === "Enter" && sendMessage()}
-                  className="form-control"
-                  placeholder="메시지를 입력하세요..."
-                />
-                <button
-                  className="btn btn-primary"
-                  style={{ minWidth: "100px" }}
-                  onClick={sendMessage}
-                >
-                  보내기
-                </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+
     </>
   );
 };
