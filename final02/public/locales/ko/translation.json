@@ -378,5 +378,23 @@
                 "paymentStatus": "결제 상태",
                 "noPaymentInfo": "결제 정보가 없습니다."
               }
-            }
-            
+              ,
+                "wishlist": {
+                  "title": "찜 목록",
+                  "titleWithMember": "{{memberId}}님의 찜 목록",
+                  "searchPlaceholder": "이름 또는 태그로 검색",
+                  "emptyMessage": "찜 목록이 비어있습니다.",
+                  "reviewSummary": "종합 평가",
+                  "releaseDate": "출시일",
+                  "singlePlayer": "싱글 플레이어",
+                  "multiplayer": "멀티 플레이어",
+                  "addToCart": "장바구니에 추가",
+                  "alreadyInCart": "이미 장바구니에 있는 게임입니다.",
+                  "alreadyInLibrary": "이미 라이브러리에 있는 게임입니다.",
+                  "play": "플레이하기",
+                  "remove": "제거",
+                  "noInfo": "정보 없음",
+                  "recommendedGames": "회원님에게 추천하는 게임"
+                }
+              }
+              

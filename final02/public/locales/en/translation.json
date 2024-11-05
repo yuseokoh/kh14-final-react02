@@ -377,5 +377,23 @@
                 "noPaymentInfo": "No payment information available."
               }
             
-            }
-            
+              ,
+                "wishlist": {
+                  "title": "Wish List",
+                  "titleWithMember": "{{memberId}}'s Wish List",
+                  "searchPlaceholder": "Search by name or tag",
+                  "emptyMessage": "Your wish list is empty.",
+                  "reviewSummary": "Review Summary",
+                  "releaseDate": "Release Date",
+                  "singlePlayer": "Single Player",
+                  "multiplayer": "Multiplayer",
+                  "addToCart": "Add to Cart",
+                  "alreadyInCart": "This game is already in your cart.",
+                  "alreadyInLibrary": "This game is already in your library.",
+                  "play": "Play",
+                  "remove": "Remove",
+                  "noInfo": "No information",
+                  "recommendedGames": "Recommended Games"
+                }
+              }
+              
