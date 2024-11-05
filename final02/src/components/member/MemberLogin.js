@@ -53,22 +53,16 @@ const MemberLogin = () => {
         // Authorization 헤더에 토큰 설정
         axios.defaults.headers.common["Authorization"] = `Bearer ${resp.data.accessToken}`;
 
-        // refreshToken 저장
-        if (stay) {
-            window.localStorage.setItem("refreshToken", resp.data.refreshToken);
-        } else {
-            window.sessionStorage.setItem("refreshToken", resp.data.refreshToken);
-        }
-
-        // 디버깅용 로그
-        console.log("저장된 토큰 확인:", {
-            jwtToken: window.localStorage.getItem("jwtToken"),
-            refreshToken: stay 
-                ? window.localStorage.getItem("refreshToken") 
-                : window.sessionStorage.getItem("refreshToken"),
-            memberLevel: resp.data.memberLevel
-        });
-
+      // refreshToken 저장
+      if (stay) {
+        window.localStorage.setItem("accessToken", resp.data.accessToken);
+        window.localStorage.setItem("refreshToken", resp.data.refreshToken);
+        console.log("로컬 스토리지에 저장된 Access Token:", window.localStorage.getItem("accessToken"));
+      } else {
+        window.sessionStorage.setItem("accessToken", resp.data.accessToken);
+        window.sessionStorage.setItem("refreshToken", resp.data.refreshToken);
+        console.log("세션 스토리지에 저장된 Access Token:", window.sessionStorage.getItem("accessToken"));
+      } 
         // 홈 화면으로 이동
         navigate("/");
     } catch (e) {
