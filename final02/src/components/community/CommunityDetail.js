@@ -6,26 +6,37 @@ import Jumbotron from "../Jumbotron";
 import moment from 'moment';
 import 'moment/locale/ko';
 import momentTimezone from 'moment-timezone';
+import { toast, ToastContainer } from "react-toastify";
+import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
+import { useRecoilValue } from "recoil";
+
 
 //시간
 moment.locale("ko");
-
+//등록시간나오는거
+// const formatDate = (dateString, isEdited = false) => {
+//     const date = moment(dateString).tz("Asia/Seoul");
+//     const formatForCreated = "MM.DD. HH:mm"; // 작성 시간 형식
+//     const formatForEdited = "YY.MM.DD. HH:mm"; // 수정 시간 형식
+//     return isEdited ? `${date.format(formatForEdited)} (수정됨)` : date.format(formatForCreated);
+// };
 const formatDate = (dateString, isEdited = false) => {
     const date = moment(dateString).tz("Asia/Seoul");
-    const formatForCreated = "MM.DD. HH:mm"; // 작성 시간 형식
-    const formatForEdited = "YY.MM.DD. HH:mm"; // 수정 시간 형식
-    return isEdited ? `${date.format(formatForEdited)} (수정됨)` : date.format(formatForCreated);
+    return isEdited ? `${date.format("YY.MM.DD. HH:mm")} (수정됨)` : date.format("MM.DD. HH:mm");
 };
 
 const CommunityDetail = () => {
     const { communityNo } = useParams();
-    const user = "";
     const navigate = useNavigate();
 
-    const [community, setCommunity] = useState(null);
+    const memberId = useRecoilValue(memberIdState); // 로그인한 회원의 ID
+    const isLoggedIn = useRecoilValue(loginState); // 로그인 여부
+
+    const [community, setCommunity] = useState(null);//------이거
+    
     const [communityImageList, setCommunityImageList] = useState([]); // 이미지 리스트 상태 추가
     const [load, setLoad] = useState(false);
-    const [key, setKey] = useState(0); // 새로고침 없이 리렌더링용 key
+    const [key, setKey] = useState(0); // 새로고침 없이 리렌더링용 key-----------
 
     const [replyInput, setReplyInput] = useState("");
     const [replyEditId, setReplyEditId] = useState(null);
@@ -44,12 +55,11 @@ const CommunityDetail = () => {
     const loading = useRef(false);
     const [page, setPage] = useState(1);
     const size = 10;
-
     // 제목 영역을 참조하는 ref 생성
     const titleRef = useRef(null);
 
     
-    // Load community, initial replies, reactions, and images on component mount
+    // 초기데이터
     useEffect(() => {
         loadCommunity();
         loadCommunityImages(); // 이미지 불러오기 호출
@@ -189,9 +199,23 @@ const CommunityDetail = () => {
     }, [communityNo]);
 
     const deleteCommunity = useCallback(async () => {
+    //     await axios.delete(`/community/${communityNo}`);
+    //     navigate("/community/list");
+    // }, [communityNo, navigate]);
+    try {
         await axios.delete(`/community/${communityNo}`);
+        toast.success("게시글이 삭제되었습니다.", { position: "top-center", autoClose: 3000 });
         navigate("/community/list");
-    }, [communityNo, navigate]);
+    } catch (error) {
+        console.error("Failed to delete community:", error);
+    }
+}, [communityNo, navigate]);
+
+// const updateCommunity = useCallback(() => {
+//     toast.success("게시글이 수정되었습니다.", { position: "top-center", autoClose: 3000 });
+//     navigate(`/community/edit/${communityNo}`);
+// }, [communityNo, navigate]);
+
 
     
 
@@ -229,18 +253,18 @@ const CommunityDetail = () => {
 
             
 
-            <div className="row mt-4" ref={titleRef}>
+            {/* <div className="row mt-4" ref={titleRef}>
                 <div className="col-sm-3">제목</div>
                 <div className="col-sm-9">{community.communityTitle}</div>
-            </div>
+            </div> */}
             <div className="row mt-4">
                 <div className="col-sm-3">작성자</div>
                 <div className="col-sm-9">{community.communityWriter}</div>
             </div>
-            <div className="row mt-4">
+            {/* <div className="row mt-4">
                 <div className="col-sm-3">상태</div>
                 <div className="col-sm-9">{community.communityState}</div>
-            </div>
+            </div> */}
             <div className="row mt-4">
                 <div className="col-sm-3">카테고리</div>
                 <div className="col-sm-9">{community.communityCategory}</div>
@@ -270,10 +294,18 @@ const CommunityDetail = () => {
             <div className="row mt-4">
                 <div className="col text-end">
                     <button className="btn btn-secondary ms-2" onClick={() => navigate("/community/list")}>목록</button>
-                    <button className="btn btn-warning ms-2" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
-                    <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button>
+                    
+                    {/* <button className="btn btn-warning ms-2" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
+                    <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button> */}
+                    { community&&community.communityWriter === memberId && (
+                        <>
+                            <button className="btn btn-warning ms-2" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
+                            <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button>
+                        </>
+                    )}
                 </div>
             </div>
+            
 
             <div className="row mt-4">
                 <div className="col">
@@ -326,7 +358,7 @@ const CommunityDetail = () => {
                                 )}
                             </div>
                         </div>
-                        {reply.replyWriter === user && (
+                        {reply.replyWriter ===memberId && (
                             <>
                                 <button
                                     onClick={() => deleteReply(reply.replyNo)}

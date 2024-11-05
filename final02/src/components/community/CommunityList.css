@@ -1,0 +1,16 @@
+/* App.css 또는 별도의 CSS 파일에 추가 */
+.toast-steam {
+    background-color: #171a21 !important; /* Steam의 진한 파란색 */
+    color: #66c0f4 !important; /* Steam의 밝은 하늘색 */
+    font-family: Arial, sans-serif !important; /* Steam에 잘 어울리는 기본 글꼴 */
+    font-weight: bold;
+    border-radius: 8px;
+}
+
+.toast-steam .Toastify__toast-icon svg {
+    fill: #66c0f4; /* 아이콘 색상도 Steam 스타일에 맞춤 */
+}
+
+.toast-steam .Toastify__close-button {
+    color: #66c0f4; /* 닫기 버튼 색상 */
+}
