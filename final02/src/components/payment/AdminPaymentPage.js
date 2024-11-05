@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react'; 
 import axios from 'axios';
 import styles from './AdminPaymentPage.module.css';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +48,11 @@ const AdminPaymentPage = () => {
           memberId,
         },
       });
+
+      // 결제 상태가 '승인'인 경우만 필터링하여 설정
+      const approvedPayments = response.data.filter(payment => payment.paymentStatus === '승인');
+      
+      setPayments(approvedPayments);
       setPayments(response.data);
     } catch (e) {
       setError(t('adminPayment.unableToFetch'));
@@ -98,7 +103,6 @@ const AdminPaymentPage = () => {
                 <div className={styles.paymentDetails}>
                   <span><strong>{t('adminPayment.totalAmount')}:</strong> {payment.paymentTotal.toLocaleString('ko-KR')}원</span>
                   <span><strong>{t('adminPayment.buyerId')}:</strong> {payment.paymentMemberId}</span>
-                  
                 </div>
               </div>
             ))}

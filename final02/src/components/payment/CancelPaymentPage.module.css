@@ -77,6 +77,19 @@ footer {
     font-weight: bold;
     transition: background-color 0.3s ease, transform 0.1s ease;
 }
+/* 취소 버튼 스타일 */
+.mainButton {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    background-color: #007bff; /* 스팀 스타일의 강렬한 빨강 */
+    color: #fff;
+    border: none;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
 
 .cancelButton:hover {
     background-color: #e74c3c; /* 호버 시 더 밝은 빨강 */
