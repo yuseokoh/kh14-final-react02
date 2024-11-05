@@ -7,12 +7,12 @@ import {
   memberLevelState,
   kakaoIdState,
   kakaoAccessTokenState,
-  loginState,
 } from '../../utils/recoil';
 
 function KakaoEmail() {
   const [email, setEmail] = useState('');
   const [kakaoId, setKakaoId] = useState('');
+  const [isEmailRequired, setIsEmailRequired] = useState(false);
   const navigate = useNavigate();
 
   // Recoil 상태 설정 함수
@@ -20,86 +20,95 @@ function KakaoEmail() {
   const setMemberLevel = useSetRecoilState(memberLevelState);
   const setKakaoIdState = useSetRecoilState(kakaoIdState);
   const setKakaoAccessToken = useSetRecoilState(kakaoAccessTokenState);
-  const setLogin = useSetRecoilState(loginState);
 
   useEffect(() => {
-    const storedKakaoId = localStorage.getItem('kakaoId');
+    const storedKakaoId = window.localStorage.getItem('kakaoId');
+    const storedJwtToken = window.sessionStorage.getItem('jwtToken');
+    const storedRefreshToken = window.sessionStorage.getItem('refreshToken');
+
     if (storedKakaoId) {
       setKakaoId(storedKakaoId);
-      console.log('저장된 카카오 ID: ', storedKakaoId);
+
+      if (storedJwtToken && storedRefreshToken) {
+        // 토큰이 있으면 로그인 상태를 유지
+        setMemberId(storedKakaoId);
+        setMemberLevel('카카오 회원');
+        setKakaoIdState(storedKakaoId);
+        setKakaoAccessToken(storedJwtToken);
+        navigate('/');
+      } else {
+        // 서버에 요청하여 임시 이메일 여부 확인
+        axios
+          .get(`http://localhost:8080/kakao/find/${storedKakaoId}`)
+          .then((response) => {
+            if (
+              response.data &&
+              response.data.memberEmail &&
+              !response.data.memberEmail.startsWith('no-email@')
+            ) {
+              setMemberId(storedKakaoId);
+              setMemberLevel('카카오 회원');
+              setKakaoIdState(storedKakaoId);
+              navigate('/');
+            } else {
+              setIsEmailRequired(true);
+            }
+          })
+          .catch((error) => console.error('임시 이메일 확인 중 오류 발생: ', error));
+      }
     } else {
       alert('카카오 로그인 정보가 없습니다.');
       navigate('/');
     }
-  }, [navigate]);
+  }, [navigate, setKakaoAccessToken, setKakaoIdState, setMemberId, setMemberLevel]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // 이메일 형식 검증
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       alert('유효한 이메일 주소를 입력해주세요.');
       return;
     }
 
-    axios
-    .post('http://localhost:8080/kakao/saveEmail', { kakaoId, memberEmail: email })
-    .then((response) => {
-      if (response.status === 200 && response.data.success) { // 성공 조건 수정
-        alert('이메일 저장 및 계정 연동에 성공했습니다.');
+    try {
+      const response = await axios.post('http://localhost:8080/kakao/saveEmail', {
+        kakaoId,
+        memberEmail: email,
+      });
 
-        // Recoil 상태 업데이트
+      if (response.status === 200 && response.data.success) {
+        alert('이메일 저장 및 계정 연동에 성공했습니다.');
+        const { jwtToken, refreshToken } = response.data;
+
+        if (jwtToken) {
+          window.sessionStorage.setItem('jwtToken', jwtToken);
+          setKakaoAccessToken(jwtToken);
+        }
+        if (refreshToken) {
+          window.sessionStorage.setItem('refreshToken', refreshToken);
+        }
+
         setMemberId(kakaoId);
         setMemberLevel('카카오 회원');
         setKakaoIdState(kakaoId);
-        setKakaoAccessToken(localStorage.getItem('accessToken'));
-        setLogin(true);
 
         navigate('/');
       } else {
         alert('이메일 저장 및 계정 연동에 실패했습니다.');
       }
-    })
-    .catch((error) => {
-      console.error('이메일 저장 및 계정 연동 실패: ', error.response ? error.response.data : error.message);
+    } catch (error) {
+      console.error(
+        '이메일 저장 및 계정 연동 실패: ',
+        error.response ? error.response.data : error.message
+      );
       alert('이메일 저장 및 계정 연동에 실패했습니다.');
-    });
-};
+    }
+  };
 
-    // 이메일 저장 및 계정 연동 API 호출
-  //   axios
-  //     .post('http://localhost:8080/kakao/saveEmail', { kakaoId, memberEmail: email })
-  //     .then((response) => {
-  //       if (response.status === 200 && response.data === "성공 메시지") { // 적절한 성공 메시지를 확인
-  //         alert('이메일 저장 및 계정 연동에 성공했습니다.');
-
-  //         // 로그인 상태 및 사용자 정보 업데이트
-  //         setMemberId(kakaoId); // 카카오 ID를 memberId로 설정
-  //         setMemberLevel('카카오 회원'); // 회원 레벨 설정
-  //         setKakaoIdState(kakaoId);
-
-  //         // 액세스 토큰이 존재하는지 확인
-  //         const accessToken = localStorage.getItem('accessToken');
-  //         if (accessToken) {
-  //           setKakaoAccessToken(accessToken); // 카카오 액세스 토큰 설정
-  //         } else {
-  //           console.warn('액세스 토큰이 없습니다.');
-  //         }
-
-  //         setLogin(true); // 로그인 상태로 설정
-
-  //         navigate('/'); // 메인 페이지로 리다이렉트
-  //       }else {
-  //         alert('이메일 저장 및 계정 연동에 실패했습니다.');
-  //       }
-        
-  //     })
-  //     .catch((error) => {
-  //       console.error('이메일 저장 및 계정 연동 실패: ', error.response ? error.response.data : error.message);
-  //       alert('이메일 저장 및 계정 연동에 실패했습니다.');
-  //     });
-  // };
+  if (!isEmailRequired) {
+    return null;
+  }
 
   return (
     <div>

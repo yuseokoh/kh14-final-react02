@@ -46,6 +46,14 @@ import PixelGraphics from "./game/gamecategory/PixelGraphics";
 import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
+
+// import AllUsers from "./game/gamegrade/AllUsers";
+// import TwelveAges from "./game/gamegrade/TwelveAges";
+// import FifteenAges from "./game/gamegrade/FifteenAges";
+// import SevenAges from "./game/gamegrade/SevenAges";
+// import NineteenAges from "./game/gamegrade/NineteenAges";
+
+
 import Library from "../components/library/Library";
 import TestGame from "../gameComponents/TestGame";
 import KHSurvival from "../gameComponents/KHSurvival";
@@ -54,11 +62,16 @@ import MyPageEdit from "./member/MyPageEdit";
 import Ranking from "./play/Ranking";
 import Chat from "./chat/Chat";
 import WebsocketClient from "./websocket/WebsocketClient";
+
+import KakaoLoginPage2 from "./member/KakaoLoginPage2";
+import KakaoLoginPage2Proceed from "./member/KakaoLoginPage2Proceed";
+
 import Chatroom from "./chat/Chatroom";
 import PageNotFound from "./PageNotFound";
 import AdminPaymentPage from "./payment/AdminPaymentPage";
 import MemberLevelRequest from "./member/MemberLevelRequest";
 import AdminMemberEdit from "./member/AdminMemberEdit";
+
 
 const MainContent = () => {
     const { t } = useTranslation(); // 번역 훅 사용
@@ -94,6 +107,7 @@ const MainContent = () => {
                         <Route path="/admin/payment" element={<PrivateRoute element={<AdminPaymentPage />} />} />
 
                         {/* 프라이빗 라우터가 필요 없는 공개 페이지들 */}
+                        {/* 테마별 카테고리 */}
                         <Route path="/game/detail/:gameNo" element={<GameDetail />} />
                         <Route path="/game/category/action" element={<ActionGame />} />
                         <Route path="/game/category/adventure" element={<AdventureGame />} />
@@ -109,6 +123,7 @@ const MainContent = () => {
                         <Route path="/game/category/survival" element={<Survival />} />
                         <Route path="/game/category/strategy" element={<StrategyGame />} />
 
+
                         <Route path="/member/MemberLogin" element={<MemberLogin />} />
                         <Route path="/member/signupPage" element={<SignupPage />} />
                         <Route path="/member/signupForm" element={<SignupForm />} />
@@ -121,6 +136,13 @@ const MainContent = () => {
                         <Route path="/terms-of-use" element={<TermsOfUse />} />
                         <Route path="/steam-agreement" element={<SteamAgreement />} />
                         <Route path="/refund-policy" element={<RefundPolicy />} />
+
+                        <Route path="/community/search/title/:keyword" element={<CommunitySearch />} />
+
+                        {/* 카카오로그인 테스트 */}
+                        <Route path="/member/KakaoLoginPage2" element={<KakaoLoginPage2 />} />
+                        <Route path="/member/KakaoLoginPage2Proceed" element={<KakaoLoginPage2Proceed/>} />
+
                         
                         <Route path="/developer-request/:memberId" element={<MemberLevelRequest />} />
                         <Route path="/member/admin/edit/:memberId" element={<AdminMemberEdit />} />
@@ -129,6 +151,7 @@ const MainContent = () => {
                         <Route path="*" element={<PageNotFound />} />
                     </Routes>
                 </div>
+
             </div>
         </>
     );

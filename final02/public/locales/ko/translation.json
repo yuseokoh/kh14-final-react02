@@ -378,5 +378,46 @@
                 "paymentStatus": "결제 상태",
                 "noPaymentInfo": "결제 정보가 없습니다."
               }
-            }
-            
+              ,
+                "wishlist": {
+                  "title": "찜 목록",
+                  "titleWithMember": "{{memberId}}님의 찜 목록",
+                  "searchPlaceholder": "이름 또는 태그로 검색",
+                  "emptyMessage": "찜 목록이 비어있습니다.",
+                  "reviewSummary": "종합 평가",
+                  "releaseDate": "출시일",
+                  "singlePlayer": "싱글 플레이어",
+                  "multiplayer": "멀티 플레이어",
+                  "addToCart": "장바구니에 추가",
+                  "alreadyInCart": "이미 장바구니에 있는 게임입니다.",
+                  "alreadyInLibrary": "이미 라이브러리에 있는 게임입니다.",
+                  "play": "플레이하기",
+                  "remove": "제거",
+                  "noInfo": "정보 없음",
+                  "recommendedGames": "회원님에게 추천하는 게임"
+                }
+                ,
+                  "shoppingCart": {
+                    "title": "장바구니",
+                    "titleWithMember": "{{memberId}}님의 장바구니",
+                    "emptyCartMessage": "장바구니가 비어있습니다.",
+                    
+                    
+                    
+                    "alreadyInCart": "이미 장바구니에 있는 게임입니다.",
+                    "alreadyInLibrary": "이미 라이브러리에 있는 게임입니다.",
+                    "play": "플레이하기",
+                    "giftOption": "선물용",
+                    "remove": "제거",
+                    "totalSelectedItems": "선택된 항목 합계:",
+                    "taxNotice": "해당되는 지역의 경우 계산 시 판매세가 부과됩니다.",
+                    "checkoutButton": "선택 항목 결제하기",
+                    "continueShopping": "쇼핑 계속하기",
+                    "recommendedGames": "회원님에게 추천하는 게임",
+                    "noItemsSelected": "선택된 항목이 없습니다.",
+                    "errorDuringPurchase": "구매 요청 중 오류가 발생했습니다.",
+                    "errorPurchaseFailed": "결제 처리 중 문제가 발생했습니다.",
+                    "errorNoToken": "인증 토큰이 없습니다."
+                  }
+                }
+                

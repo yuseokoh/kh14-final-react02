@@ -32,7 +32,7 @@ const ShoppingCart = () => {
       console.error("Error loading library list:", error);
     }
   }, []);
-  
+
 
   const loadCartList = useCallback(async () => {
     try {
@@ -42,26 +42,26 @@ const ShoppingCart = () => {
         index === self.findIndex((c) => c.gameNo === cart.gameNo)
       );
       setCartList(uniqueCartList);
-  
+
       const total = uniqueCartList.reduce((sum, cart) => sum + (cart.gamePrice || 0), 0);
       setTotalPrice(total);
     } catch (error) {
       console.error("Error loading cart list", error);
     }
   }, []);
-  
+
 
   //게임 리스트 로드
   const loadGameList = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
       console.log("게임 목록 데이터:", response.data);
-  
+
       // 배열을 섞는 함수
       const shuffleArray = (array) => {
         return array.sort(() => Math.random() - 0.5);
       };
-  
+
       const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
       setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
     } catch (error) {
@@ -108,8 +108,8 @@ const ShoppingCart = () => {
     }
     // 특정 조건이나 디버깅 로그 추가로 확인할 수 있음
     console.log('useEffect 호출됨: Cart, Library, Game 목록 로드');
-  }, [login, memberId]); 
-  
+  }, [login, memberId]);
+
 
   useEffect(() => {
     if (cartList.length > 0) {
@@ -120,7 +120,7 @@ const ShoppingCart = () => {
   const getCurrentUrl = useCallback(() => {
     const basePath = window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     return `${window.location.origin}${basePath}`;
-}, []);
+  }, []);
 
 
   const handleItemSelection = (cartId) => {
@@ -135,7 +135,8 @@ const ShoppingCart = () => {
 
   const sendPurchaseRequest = useCallback(async () => {
     if (selectedItems.length === 0) {
-      alert(t('payment.noItemsSelected'));
+      alert(t("shoppingCart.noItemsSelected"));
+
       return;
     }
 
@@ -190,12 +191,13 @@ const ShoppingCart = () => {
   return (
     <div className={styles.cartPageContainer}>
       <h1 className={styles.cart_title}>
-        {memberId ? `${memberId}님의 장바구니` : '장바구니'}
+      {memberId ? t("shoppingCart.titleWithMember", { memberId }) : t("shoppingCart.title")}
       </h1>
 
       <div className={styles.cartItemsContainer}>
         {cartList.length === 0 ? (
-          <p className={styles.emptyCartMessage}>장바구니가 비어있습니다.</p>
+        <p className={styles.emptyCartMessage}>{t("shoppingCart.emptyCartMessage")}</p>
+
         ) : (
           cartList.map(cart => (
             <div key={cart.cartId} className={styles.cartItem}>
@@ -217,50 +219,33 @@ const ShoppingCart = () => {
                 >{cart.gameTitle}</h4>
                 <p className={styles.gamePrice}>{(cart.gamePrice || 0).toLocaleString()}₩</p>
               </div>
-              <div className={styles.actionButtons}>
-                {libList.includes(cart.gameNo) ? (
-                  <>
-                  <button
-                    className={styles.giftButton}
-                    onClick={() => navigate(`/play/${cart.gameNo}`)}
-                  >
-                    플레이하기
-                  </button>
-                  <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
-                  </>
-                ) : (
-                  <>
-                    <button className={styles.giftButton}>선물용</button>
                     <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
-                  </>
-                )}
-              </div>
             </div>
           ))
         )}
       </div>
       <div className={styles.cartSummaryContainer}>
         <div className={styles.cartFooter}>
-          <button className={styles.continueShoppingButton} onClick={keepshop}>쇼핑 계속하기</button>
+          <button className={styles.continueShoppingButton} onClick={keepshop}>  {t("shoppingCart.continueShopping")}</button>
           <div className={styles.totalPriceSection}>
-            <div className={styles.totalPriceLabel}>선택된 항목 합계:</div>
+            <div className={styles.totalPriceLabel}>{t("shoppingCart.totalSelectedItems")}</div>
             <div className={styles.totalPriceValue}>
               {cartList
                 .filter(cart => selectedItems.includes(cart.cartId))
                 .reduce((sum, cart) => sum + (cart.gamePrice || 0), 0)
                 .toLocaleString()}₩
             </div>
-            <p className={styles.taxNotice}>해당되는 지역의 경우 계산 시 판매세가 부과됩니다.</p>
+            <p className={styles.taxNotice}>{t("shoppingCart.taxNotice")}</p>
           </div>
           <button type='button' onClick={sendPurchaseRequest} className={styles.checkoutButton}>
-            선택 항목 결제하기
+          {t("shoppingCart.checkoutButton")}
           </button>
         </div>
       </div>
 
       {/* 일반 게임 목록 슬라이드 섹션 */}
       <section className={styles.recommendedSection}>
-        <h2 className={styles.recommendedTitle}>회원님에게 추천하는 게임</h2>
+        <h2 className={styles.recommendedTitle}>{t("shoppingCart.recommendedGames")}</h2>
         <div className={styles.sliderContainer}>
           <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
           <div className={styles.topRatedGamesWrapper}>

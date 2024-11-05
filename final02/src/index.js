@@ -17,7 +17,7 @@ import { BrowserRouter } from 'react-router-dom';
 //- process.env.항목이름
 import axios from 'axios';
 axios.defaults.baseURL=process.env.REACT_APP_BASE_URL;//기본요청 URL
-axios.defaults.timeout=2000;//타임아웃(ms)
+axios.defaults.timeout=5000;//타임아웃(ms)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<>

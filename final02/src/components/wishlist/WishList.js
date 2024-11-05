@@ -6,8 +6,10 @@ import styles from './WishList.module.css';
 import { useNavigate } from "react-router";
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
+import { useTranslation } from "react-i18next";
 
 const WishList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dragItem = useRef();
   const dragOverItem = useRef();
@@ -70,11 +72,11 @@ const WishList = () => {
 
   const addCart = useCallback(async (game) => {
     if (cartGames.includes(game.gameNo)) {
-      alert("이미 장바구니에 있는 게임입니다.");
+      alert(t("wishlist.alreadyInCart"));
       return;
     }
     if (libraryGames.includes(game.gameNo)) {
-      alert("이미 라이브러리에 있는 게임입니다.");
+      alert(t("wishlist.alreadyInLibrary"));
       return;
     }
   
@@ -178,12 +180,12 @@ const WishList = () => {
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
       <h1 className={styles.wishlist_title}>
-        {memberId ? `${memberId}님의 찜 목록` : '찜 목록'}
+         {memberId ? t("wishlist.titleWithMember", { memberId }) : t("wishlist.title")}
       </h1>
       <div className={styles.wishlist_search_container}>
         <input
           type="text"
-          placeholder="이름 또는 태그로 검색"
+          placeholder={t("wishlist.searchPlaceholder")}
           className={styles.wishlist_search}
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
@@ -191,7 +193,7 @@ const WishList = () => {
       </div>
 
       {filteredWishlist.length === 0 ? (
-        <p className={styles.emptyWishlistMessage}>찜 목록이 비어있습니다.</p>
+        <p className={styles.emptyWishlistMessage}>{t("wishlist.emptyMessage")}</p>
       ) : (
         <TransitionGroup className={styles.wishlist_game_list}>
           {filteredWishlist.map((game, index) => (
@@ -225,22 +227,22 @@ const WishList = () => {
                   style={{ cursor: 'pointer', textDecoration: 'underline' }}
                 >{game.gameTitle}</h2>
                   <div className={styles.game_meta_info}>
-                    <span className={styles.game_review}>종합 평가: {game.reviewSummary || '정보 없음'}</span>
-                    <span className={styles.game_release}>출시일: {game.releaseDate}</span>
+                    <span className={styles.game_review}>{t("wishlist.reviewSummary")}: {game.reviewSummary || t("wishlist.noInfo")}</span>
+                    <span className={styles.game_release}>{t("wishlist.releaseDate")}: {game.releaseDate}</span>
                   </div>
                   <div className={styles.tag_container}>
-                    <span className={styles.tag}>싱글 플레이어</span>
-                    <span className={styles.tag}>멀티 플레이어</span>
+                    <span className={styles.tag}>{t("wishlist.singlePlayer")}</span>
+                    <span className={styles.tag}>{t("wishlist.multiplayer")}</span>
                   </div>
                 </div>
                 <div className={styles.wishlist_action_container}>
                   <div className={styles.game_price}>${game.gamePrice}</div>
                   {libraryGames.includes(game.gameNo) ? (
-                    <button className={styles.wishlist_cart_button} onClick={() => navigate(`/play/${game.gameNo}`)}>플레이하기</button>
+                    <button className={styles.wishlist_cart_button} onClick={() => navigate(`/play/${game.gameNo}`)}>{t("wishlist.play")}</button>
                   ) : (
-                    <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>장바구니에 추가</button>
+                    <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>{t("wishlist.addToCart")}</button>
                   )}
-                  <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>제거</button>
+                  <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>{t("wishlist.remove")}</button>
                 </div>
               </div>
             </CSSTransition>
@@ -249,7 +251,7 @@ const WishList = () => {
       )}
         {/* 추천 게임 목록 슬라이더 */}
       <section className={styles.recommendedSection}>
-        <h2 className={styles.recommendedTitle}>회원님에게 추천하는 게임</h2>
+        <h2 className={styles.recommendedTitle}>{t("wishlist.recommendedGames")}</h2>
         <div className={styles.sliderContainer}>
           <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
           <div className={styles.topRatedGamesWrapper}>

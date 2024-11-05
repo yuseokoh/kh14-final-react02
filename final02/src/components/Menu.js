@@ -128,6 +128,48 @@ const Menu = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+
+// 로그아웃 기능 
+// const logout = useCallback(() => {
+//     // Recoil에 저장된 상태를 초기화
+//     setMemberId(""); // memberIdState 초기화
+//     setMemberLevel(""); // memberLevelState 초기화
+//     setKakaoId(""); // kakaoIdState 초기화
+//     setKakaoAccessToken(""); // kakaoAccessTokenState 초기화
+
+//     // axios에 설정된 Authorization 헤더 제거
+//     delete axios.defaults.headers.common["Authorization"];
+
+//     // LocalStorage, SessionStorage의 데이터 삭제
+//     window.localStorage.removeItem("refreshToken");
+//     window.sessionStorage.removeItem("refreshToken");
+//     window.localStorage.removeItem("jwtToken");
+//     window.localStorage.removeItem("kakaoAccessToken");
+//     window.localStorage.removeItem("kakaoId");
+
+//     // 카카오 로그아웃 요청
+//     const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
+//     if (kakaoAccessToken) {
+//         axios.get("https://kapi.kakao.com/v1/user/logout", {
+//             headers: {
+//                 Authorization: `Bearer ${kakaoAccessToken}`
+//             }
+//         })
+//         .then(response => {
+//             console.log("카카오 로그아웃 성공", response);
+//         })
+//         .catch(error => {
+//             console.error("카카오 로그아웃 실패", error);
+//         });
+//     }
+
+//     // 페이지 이동
+//     navigate("/");
+// }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, navigate]);
+
+   
+
+
     // 로그아웃 기능 수정
     const logout = useCallback((e) => {
         // recoil에 저장된 memberId와 memberLevel을 제거
@@ -178,8 +220,9 @@ const Menu = () => {
 
     
     const closeModal = () => {
-        setIsModalOpen(false);
+        setIsModalOpen(false);  
     };
+
 
     return (
         <>
@@ -201,16 +244,7 @@ const Menu = () => {
 
                     <div className="collapse navbar-collapse" id="top-menu">
                         <ul className="navbar-nav me-auto">
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle"
-                                    data-bs-toggle="dropdown" href="#" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.shop')}</a>
-                                <div className="dropdown-menu">
-                                    <NavLink className="dropdown-item" to="/game/add">{t('add')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/detail/:gameNo">{t('detail')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/edit/:gameNo">{t('edit')}</NavLink>
-                                </div>
-                            </li>
+                           
 
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle"
