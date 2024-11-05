@@ -4,83 +4,139 @@ import styles from './ShoppingCart.module.css';
 import { useRecoilValue } from 'recoil';
 import { loginState, memberIdState } from "../../utils/recoil";
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 const ShoppingCart = () => {
   const [cartList, setCartList] = useState([]);
-  const [imageUrls, setImageUrls] = useState({}); // 여러 이미지 URL을 관리하기 위한 상태
+  const [imageUrls, setImageUrls] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [gameList, setGameList] = useState([]); // 게임 목록을 저장하는 상태 추가
+  const [libList, setLibList] = useState([]); // 구매한 게임 리스트 상태 추가
   const { t } = useTranslation();
-  
-  // Recoil 상태 사용
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-  
-  // 장바구니 리스트 불러오는 함수
+  const navigate = useNavigate();
+
+  // 구매한 게임 목록 로드
+  const loadLibraryList = useCallback(async () => {
+    try {
+      const resp = await axios.get("/library/");
+      // gameNo 기준 중복 제거
+      const uniqueLibList = resp.data.map((item) => item.gameNo)
+        .filter((gameNo, index, self) => self.indexOf(gameNo) === index);
+      setLibList(uniqueLibList);
+    } catch (error) {
+      console.error("Error loading library list:", error);
+    }
+  }, []);
+
+
   const loadCartList = useCallback(async () => {
     try {
       const resp = await axios.get("/cart/");
-      setCartList(resp.data);
-      const total = resp.data.reduce((sum, cart) => sum + cart.gamePrice, 0);
+      // gameNo를 기준으로 중복 제거
+      const uniqueCartList = resp.data.filter((cart, index, self) =>
+        index === self.findIndex((c) => c.gameNo === cart.gameNo)
+      );
+      setCartList(uniqueCartList);
+
+      const total = uniqueCartList.reduce((sum, cart) => sum + (cart.gamePrice || 0), 0);
       setTotalPrice(total);
     } catch (error) {
       console.error("Error loading cart list", error);
     }
   }, []);
 
-  // 장바구니에서 게임 삭제
-  const delCart = useCallback(async (cartId) => {
+
+  //게임 리스트 로드
+  const loadGameList = useCallback(async () => {
     try {
-      await axios.delete(`/cart/${cartId}`);
-      setCartList(prevList => prevList.filter(cart => cart.cartId !== cartId)); // 삭제된 아이템 필터링
+      const response = await axios.get("http://localhost:8080/game/");
+      console.log("게임 목록 데이터:", response.data);
+
+      // 배열을 섞는 함수
+      const shuffleArray = (array) => {
+        return array.sort(() => Math.random() - 0.5);
+      };
+
+      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
+      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
+    } catch (error) {
+      console.error("게임 목록을 불러오는 데 실패했습니다:", error);
+    }
+  }, []);
+
+  const delCart = useCallback(async (gameNo) => {
+    try {
+      console.log("Deleting cart item with gameNo:", gameNo);
+      const resp = await axios.delete(`/cart/${gameNo}`);
+      setCartList(prevList => prevList.filter(cart => cart.gameNo !== gameNo));
+      setSelectedItems(prevItems => prevItems.filter(id => id !== gameNo));
     } catch (error) {
       console.error("Error deleting cart item", error);
     }
   }, []);
 
-  // 이미지 로딩 함수
-  const loadGameImages = useCallback(async (cartListData) => {
+  const loadAllGameImages = useCallback(async () => {
     const imageMap = {};
+
     try {
-      // 각 cart 항목에 대해 이미지 정보를 불러옴
-      for (const cart of cartListData) {
+      for (const cart of cartList) {
         const response = await axios.get(`http://localhost:8080/game/image/${cart.gameNo}`);
         if (response.data && response.data.length > 0) {
-          // 첫번째 이미지의 attachmentNo로 이미지 URL 생성
-          const imageUrl = `http://localhost:8080/game/image/${response.data[0].attachmentNo}`;
-          imageMap[cart.cartId] = imageUrl; // 이미지 URL을 cartId로 구분하여 저장
+          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+          imageMap[cart.gameNo] = imageUrl;
         } else {
-          imageMap[cart.cartId] = 'https://via.placeholder.com/200'; // 이미지가 없을 경우 placeholder 사용
+          imageMap[cart.gameNo] = 'https://via.placeholder.com/200';
         }
       }
+
+      setImageUrls(imageMap);
     } catch (error) {
       console.error("이미지 로딩 에러:", error);
     }
-    setImageUrls(imageMap); // 모든 이미지 URL을 상태에 저장
-  }, []);
+  }, [cartList]);
 
- 
-  // 장바구니 및 이미지 로딩을 위한 useEffect 추가
   useEffect(() => {
     if (login && memberId) {
       loadCartList();
+      loadLibraryList();
+      loadGameList();
     }
-  }, [login, memberId, loadCartList]);
+    // 특정 조건이나 디버깅 로그 추가로 확인할 수 있음
+    console.log('useEffect 호출됨: Cart, Library, Game 목록 로드');
+  }, [login, memberId]);
 
-  // 장바구니가 로드된 후 이미지 로드
+
   useEffect(() => {
     if (cartList.length > 0) {
-      // loadGameImages(cartList);
+      loadAllGameImages();
     }
-  }, [cartList]);
+  }, [cartList, loadAllGameImages]);
 
   const getCurrentUrl = useCallback(() => {
-    return window.location.origin + window.location.pathname + (window.location.hash || '');
+    const basePath = window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+    return `${window.location.origin}${basePath}`;
   }, []);
 
-  // 결제 요청 함수
+
+  const handleItemSelection = (cartId) => {
+    setSelectedItems(prevItems => {
+      if (prevItems.includes(cartId)) {
+        return prevItems.filter(id => id !== cartId);
+      } else {
+        return [...prevItems, cartId];
+      }
+    });
+  };
+
   const sendPurchaseRequest = useCallback(async () => {
-    if (cartList.length === 0) {
-      alert(t('payment.noItemsInCart'));
+    if (selectedItems.length === 0) {
+      alert(t("shoppingCart.noItemsSelected"));
+
       return;
     }
 
@@ -90,12 +146,15 @@ const ShoppingCart = () => {
         throw new Error(t('payment.errorNoToken'));
       }
 
+      const selectedGames = cartList.filter(cart => selectedItems.includes(cart.cartId));
+      const totalSelectedPrice = selectedGames.reduce((sum, game) => sum + (game.gamePrice || 0), 0);
+
       const response = await axios.post(
         "http://localhost:8080/game/purchase",
         {
-          gameList: cartList.map(game => ({
+          gameList: selectedGames.map(game => ({
             gameNo: game.gameNo,
-            qty: 1, // 장바구니에서 각 게임의 수량을 1로 고정
+            qty: 1,
           })),
           approvalUrl: getCurrentUrl() + "/success",
           cancelUrl: getCurrentUrl() + "/cancel",
@@ -104,62 +163,121 @@ const ShoppingCart = () => {
       );
 
       window.sessionStorage.setItem("tid", response.data.tid);
-      window.sessionStorage.setItem("checkedGameList", JSON.stringify(cartList));
+      window.sessionStorage.setItem("checkedGameList", JSON.stringify(selectedGames));
 
-      const savedTid = sessionStorage.getItem("tid");
-      if (!savedTid) {
-        throw new Error("tid 저장에 실패했습니다.");
-      }
-
-      // 카카오페이 결제 페이지로 리다이렉트
       window.location.href = response.data.next_redirect_pc_url;
     } catch (error) {
       console.error(t('payment.errorDuringPurchase'), error);
       alert(t('payment.errorPurchaseFailed'));
     }
-  }, [cartList, getCurrentUrl, t]);
+  }, [cartList, selectedItems, getCurrentUrl, t]);
 
- 
+  const keepshop = useCallback(() => {
+    navigate("/");
+  }, [navigate]);
+
+  const nextSlide = () => {
+    if (currentIndex < gameList.length - 3) {
+      setCurrentIndex(currentIndex + 3);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 3);
+    }
+  };
 
   return (
     <div className={styles.cartPageContainer}>
-      <div className={styles.cartItemsContainer}>
-        {cartList.map(cart => (
-          <div key={cart.cartId} className={styles.cartItem}>
-            {/* 게임 썸네일 */}
-            <img
-              src={imageUrls[cartList.cartId]} // 이미지가 없으면 placeholder 사용
-              alt={cart.gameTitle}
-              className={styles.gameThumbnail}
-            />
+      <h1 className={styles.cart_title}>
+      {memberId ? t("shoppingCart.titleWithMember", { memberId }) : t("shoppingCart.title")}
+      </h1>
 
-            {/* 게임 정보 및 가격 */}
-            <div className={styles.gameInfo}>
-              <h4 className={styles.gameTitle}>{cart.gameTitle}</h4>
-              <p className={styles.gamePrice}>{cart.gamePrice.toLocaleString()}₩</p>
+      <div className={styles.cartItemsContainer}>
+        {cartList.length === 0 ? (
+        <p className={styles.emptyCartMessage}>{t("shoppingCart.emptyCartMessage")}</p>
+
+        ) : (
+          cartList.map(cart => (
+            <div key={cart.cartId} className={styles.cartItem}>
+              <input
+                type="checkbox"
+                checked={selectedItems.includes(cart.cartId)}
+                onChange={() => handleItemSelection(cart.cartId)}
+              />
+              <img
+                src={imageUrls[cart.gameNo] || 'https://via.placeholder.com/200'}
+                alt={cart.gameTitle}
+                className={styles.gameThumbnail}
+              />
+              <div className={styles.gameInfo}>
+                <h4
+                  className={styles.gameTitle}
+                  onClick={() => navigate(`/game/detail/${cart.gameNo}`)}
+                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                >{cart.gameTitle}</h4>
+                <p className={styles.gamePrice}>{(cart.gamePrice || 0).toLocaleString()}₩</p>
+              </div>
+                    <button className={styles.giftButton}>선물용</button>
+                    <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
             </div>
-          
-            {/* 추가 기능 (선물용 버튼 등) */}
-            <div className={styles.actionButtons}>
-              <button className={styles.giftButton}>선물용</button>
-              <button className={styles.removeButton} onClick={() => delCart(cart.cartId)}>제거</button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
       <div className={styles.cartSummaryContainer}>
         <div className={styles.cartFooter}>
-          <button className={styles.continueShoppingButton}>쇼핑 계속하기</button>
+          <button className={styles.continueShoppingButton} onClick={keepshop}>  {t("shoppingCart.continueShopping")}</button>
           <div className={styles.totalPriceSection}>
-            <div className={styles.totalPriceLabel}>예상 합계:</div>
-            <div className={styles.totalPriceValue}>{totalPrice.toLocaleString()}₩</div>
-            <p className={styles.taxNotice}>해당되는 지역의 경우 계산 시 판매세가 부과됩니다.</p>
+            <div className={styles.totalPriceLabel}>{t("shoppingCart.totalSelectedItems")}</div>
+            <div className={styles.totalPriceValue}>
+              {cartList
+                .filter(cart => selectedItems.includes(cart.cartId))
+                .reduce((sum, cart) => sum + (cart.gamePrice || 0), 0)
+                .toLocaleString()}₩
+            </div>
+            <p className={styles.taxNotice}>{t("shoppingCart.taxNotice")}</p>
           </div>
           <button type='button' onClick={sendPurchaseRequest} className={styles.checkoutButton}>
-            결제하기
+          {t("shoppingCart.checkoutButton")}
           </button>
         </div>
       </div>
+
+      {/* 일반 게임 목록 슬라이드 섹션 */}
+      <section className={styles.recommendedSection}>
+        <h2 className={styles.recommendedTitle}>{t("shoppingCart.recommendedGames")}</h2>
+        <div className={styles.sliderContainer}>
+          <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
+          <div className={styles.topRatedGamesWrapper}>
+            <div
+              className={styles.topRatedGamesContainer}
+              style={{ transform: `translateX(-${currentIndex * (100 / 3)}%)` }}
+            >
+              {gameList.map((game) => (
+                <div key={game.gameNo} className={styles.topRatedGameItem}>
+                  <img
+                    src={game.imageUrl || 'https://via.placeholder.com/150'}
+                    alt={game.gameTitle}
+                    className={styles.topRatedGameThumbnail}
+                  />
+                  <div className={styles.topRatedGameInfo}>
+                    <h4
+                      className={styles.topRatedGameTitle}
+                      onClick={() => navigate(`/game/detail/${game.gameNo}`)}
+                      style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                    >
+                      {game.gameTitle}
+                    </h4>
+                    <p className={styles.topRatedGamePrice}>{(game.gamePrice || 0).toLocaleString()}₩</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <button onClick={nextSlide} className={styles.sliderButton}>&gt;</button>
+        </div>
+      </section>
     </div>
   );
 };

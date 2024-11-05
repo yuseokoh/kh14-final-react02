@@ -1,21 +1,45 @@
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { useRecoilValue } from 'recoil';
-import { loginState, memberIdState } from "../../utils/recoil";
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { loginState, memberIdState, memberLevelState } from "../../utils/recoil";
 import { useNavigate } from 'react-router-dom';
 import styles from './MyPage.module.css';
+import { useTranslation } from 'react-i18next';
+import styled from "styled-components";
+
+const ProgressBar = styled.div`
+    width: 100%;
+    height: 30px;
+    background-color: #dedede;
+    border-radius: 12px;
+    margin-top: 20px;
+    overflow: hidden;
+`;
+
+const Progress = styled.div`
+    width: ${(props) => props.width}%;
+    height: 100%;
+    text-align: right;
+    background-color: skyblue;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+`;
+
 
 const MyPage = () => {
-    // state
+    const { t } = useTranslation();
     const [member, setMember] = useState({});
     const [image, setImage] = useState(null);
-    const navigate = useNavigate(); 
-
-    // Recoil 상태 사용
+    const navigate = useNavigate();
+    const [memberId, setMemberId] = useRecoilState(memberIdState);
+    const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const login = useRecoilValue(loginState);
-    const memberId = useRecoilValue(memberIdState);
 
-    // member 정보 로드
+
     const loadMember = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`http://localhost:8080/member/${memberId}`);
@@ -25,7 +49,6 @@ const MyPage = () => {
         }
     }, []);
 
-    // 이미지 로드
     const loadImage = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`/member/image/${memberId}`);
@@ -43,15 +66,40 @@ const MyPage = () => {
         }
     }, []);
 
-    // effect
+    const logout = useCallback((e) => {
+        // recoil에 저장된 memberId와 memberLevel을 제거
+        setMemberId("");
+        setMemberLevel("");
+
+        // axios에 설정된 Authorization 헤더도 제거
+        delete axios.defaults.headers.common["Authorization"];
+
+        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
+        window.localStorage.removeItem("refreshToken");
+        window.sessionStorage.removeItem("refreshToken");
+
+        // 페이지 이동
+        navigate("/");
+    }, [setMemberId, setMemberLevel, , , , navigate]);
+
+    const delmember = useCallback(async () => {
+        try {
+            await axios.delete(`/member/delete/${member.memberId}`);
+            navigate("/"); // 삭제 후 메인 페이지로 이동
+            logout("/");
+            
+        } catch (error) {
+            console.error("Error deleting member:", error);
+        }
+    }, [member.memberId, navigate]);
+
     useEffect(() => {
         if (login && memberId) {
             loadMember(memberId);
             loadImage(memberId);
         }
-    }, [login, memberId]); // Removed loadMember and loadImage from dependencies
+    }, [login, memberId]);
 
-    // 이미지 URL을 선택할 때, 선택된 이미지가 없다면 기본 이미지 사용
     const imageUrl = image || '/default-profile.png';
 
     const levels = [
@@ -82,11 +130,12 @@ const MyPage = () => {
     const renderProfileImage = () => {
         const levelInfo = getLevelInfo(member?.memberPoint);
 
+
         return (
             <div className={styles.profileImageContainer}>
                 <img
                     src={levelInfo.frame}
-                    alt={`${levelInfo.level} frame`}
+                    alt={t(`levels.${levelInfo.level}`)}
                     className={styles.levelFrame}
                 />
             </div>
@@ -94,48 +143,64 @@ const MyPage = () => {
     };
 
     const levelInfo = getLevelInfo(member?.memberPoint);
+    const progressPercentage = ((member?.memberPoint || 0) / levelInfo.nextLevelPoints) * 100;
 
     return (
         <div className={styles.container}>
             <div className={styles.profileHeader}>
                 {renderProfileImage()}
                 <div className={styles.profileInfo}>
-                    <h1 className={styles.username}>{`${member?.memberId || ''} 님의 정보`}</h1>
+                    <h1 className={styles.username}>{t("myInfo", { memberId: member?.memberId || '' })}</h1>
                     <div className={`${styles.levelBadge} ${styles[levelInfo.level]}`}>
-                        {levelInfo.level.toUpperCase()}
+                        {t(`levels.${levelInfo.level}`).toUpperCase()}
                     </div>
                     <div>
-                        <h1>{member.memberPoint} / {levelInfo.nextLevelPoints}</h1>
+                        
+                        {/* Progress bar */}
+                        <ProgressBar>
+                            <Progress width={progressPercentage}>
+                                {progressPercentage.toFixed(2)}%
+                                {/* <h3>{member.memberPoint} / {levelInfo.nextLevelPoints}</h3> */}
+                            </Progress>
+                        </ProgressBar>
                     </div>
                 </div>
             </div>
-    
+
             <div className={styles.infoGrid}>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>닉네임</div>
+                    <div className={styles.label}>{t("nickname")}</div>
                     <div className={styles.value}>{member?.memberNickname}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>전화번호</div>
+                    <div className={styles.label}>{t("phoneNumber")}</div>
                     <div className={styles.value}>{member?.memberContact}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>이메일</div>
+                    <div className={styles.label}>{t("email")}</div>
                     <div className={styles.value}>{member?.memberEmail}</div>
                 </div>
                 <div className={styles.infoRow}>
-                    <div className={styles.label}>생년월일</div>
+                    <div className={styles.label}>{t("birthDate")}</div>
                     <div className={styles.value}>{member?.memberBirth}</div>
                 </div>
             </div>
-    
+
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                <button 
+                <button
                     className={styles.editButton}
                     onClick={() => navigate(`/member/mypageedit/${memberId}`)}
                 >
-                    수정하기
+                    {t("edit")}
                 </button>
+                <button
+                    className={styles.delButton}
+                    // onClick={() => navigate(`/member/delete/${memberId}`)}
+                    onClick={delmember}
+                >
+                    {t("delete")}
+                </button>
+
             </div>
         </div>
     );

@@ -34,49 +34,64 @@ const PaymentSuccessPage = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // 결제 승인 요청
-   // 결제 승인 요청
-   const sendApproveRequest = useCallback(async () => {
-    try {
-        // 세션 스토리지에서 데이터 가져오기
-        const tid = window.sessionStorage.getItem("tid");
-        let checkedGameList = JSON.parse(window.sessionStorage.getItem("checkedGameList"));
-        const token = sessionStorage.getItem('refreshToken');
-  
-        if (!tid || !checkedGameList || !token) {
-            throw new Error(t('payment.errorNoTokenOrData'));
-        }
-  
-        // 각 게임에 대해 `qty` 값이 없으면 기본값 설정
+    const sendApproveRequest = useCallback(async () => {
+        try {
+            const tid = window.sessionStorage.getItem("tid");
+            const token = sessionStorage.getItem("refreshToken");
+            let checkedGameList = JSON.parse(window.sessionStorage.getItem("checkedGameList"));
+            
+            if (!tid || !checkedGameList || !token) {
+                throw new Error(t('payment.errorNoTokenOrData'));
+            }
+
+             // 각 게임에 대해 `qty` 값이 없으면 기본값 설정
         checkedGameList = checkedGameList.map(game => ({
             ...game,
             qty: game.qty || 1,
         }));
-  
-        // 승인 요청
-        const resp = await axios.post(
-            "http://localhost:8080/game/approve",
-            {
+
+    
+            const resp = await axios.post("http://localhost:8080/game/approve", {
                 partnerOrderId: partnerOrderId,
                 pgToken: new URLSearchParams(window.location.search).get("pg_token"),
                 tid: tid,
                 gameList: checkedGameList
-            },
-           
-        );
-
-        // 결제 승인에 성공했을 때 paymentNo 저장
-        if (resp.status === 200) {
-            window.sessionStorage.setItem('paymentNo', partnerOrderId); // 결제 번호 저장
+            });
+    
+            if (resp.status === 200) {
+                window.sessionStorage.setItem("paymentNo", partnerOrderId);
+                const updatedGameList = resp.data.paymentDetailList; // 각 게임에 paymentDetailNo 포함된 리스트
+                setGameList(updatedGameList);
+                setGameList(checkedGameList);
+                setResult(true);
+    
+                for (const game of updatedGameList) {
+                    const libraryDto = {
+                        gameNo: game.paymentDetailItem, // 게임 번호 (gameNo)
+                        paymentDetailNo: game.paymentDetailNo, // 고유한 paymentDetailNo 설정
+                        memberId: memberId
+                    };
+    
+                    console.log("Sending libraryDto:", libraryDto);
+    
+                    // 라이브러리에 추가
+                    await axios.post("/library/add", libraryDto, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+    
+                    // 장바구니에서 삭제
+                    await axios.delete(`/cart/${game.paymentDetailItem}`, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                }
+                console.log("Games added to library and removed from cart successfully.");
+            }
+        } catch (e) {
+            console.error(e);
+            setResult(false);
         }
-
-        setGameList(checkedGameList);
-        setResult(true);
-    } catch (e) {
-        console.error(e);
-        setResult(false); // 실패
-    }
-}, [partnerOrderId, t]);
+    }, [partnerOrderId, t, memberId]);
+    
 
   
 
@@ -103,7 +118,7 @@ const PaymentSuccessPage = () => {
       };
       
 
-    const handleGoToStore = () => navigate("/store");
+    const handleGoToStore = () => navigate("/");
     const handleGoToLibrary = () => navigate("/library");
 
     if (isLoading) {
@@ -136,14 +151,14 @@ const PaymentSuccessPage = () => {
                 <p>{t('paymentSuccess.successMessage')}</p>
 
                 <div className={styles.purchaseReceipt}>
-                    <h2>{t('paymentSuccess.purchaseReceipt')}</h2>
-                    <p>{t('paymentSuccess.accountName')}: {memberId}</p>
+                    
+                    <p>{t('paymentSuccess.buyer')}: {memberId}</p>
                     <p>{t('paymentSuccess.totalAmount')}: {totalAmount}$</p>
                 </div>
 
                 <div className={styles.navigationButtons}>
                     <button onClick={handleGoToStore} className="btn btn-primary">
-                        {t('paymentSuccess.goToStore')}
+                        {t('paymentSuccess.goToMainPage')}
                     </button>
                     <button onClick={handleGoToLibrary} className="btn btn-secondary">
                         {t('paymentSuccess.goToLibrary')}

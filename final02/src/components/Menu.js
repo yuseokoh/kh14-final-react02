@@ -8,16 +8,113 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { loginState, memberIdState, memberLevelState, kakaoIdState, kakaoAccessTokenState } from "../utils/recoil";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import axios from "axios";
 import steamLogo from './steamlogo.svg';
 import styles from './Menu.module.css';
-import { useTranslation } from 'react-i18next'; // useTranslation import 추가
-import LanguageSelector from './LanguageSelector'; // LanguageSelector import 추가
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './LanguageSelector';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import FriendList from "./friend/FriendList";
+import Modal from "react-modal";
+
+Modal.setAppElement('#root');
+
+// NotificationMenu 컴포넌트를 Menu 컴포넌트 외부로 이동
+const NotificationMenu = ({ memberId }) => {
+    // 관리자 알림 관련 상태 추가
+
+    const [memberInfo, setMemberInfo] = useState(null);
+    const [showNotifications, setShowNotifications] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [hasNewNotifications, setHasNewNotifications] = useState(false);
+    const [error, setError] = useState(null);
+    const memberLevel = useRecoilValue(memberLevelState);
+    const navigate = useNavigate();
+   
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                const token = window.localStorage.getItem("jwtToken");
+                if (!token || memberLevel !== "관리자") {
+                    return;
+                }
+
+                const response = await axios.get(
+                    "http://localhost:8080/member/notifications",  // URL 수정
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    }
+                );
+
+                console.log("알림 응답:", response.data);
+                setNotifications(response.data);
+                setHasNewNotifications(response.data.length > 0);
+
+            } catch (error) {
+                console.error("데이터 조회 실패:", error);
+                if (error.response) {
+                    console.error("서버 응답:", error.response.data);
+                }
+            }
+        };
+
+        if (memberLevel === "관리자") {
+            fetchNotifications();
+            // 주기적으로 알림 업데이트
+            const intervalId = setInterval(fetchNotifications, 60000);
+            return () => clearInterval(intervalId);
+        }
+    }, [memberLevel]); // 의존성 배열에 memberId 추가
+    
+    if (memberLevel !== "관리자") return null;
+
+    
+
+    return (
+        <div className={styles.notificationContainer}>
+            <button
+                className={styles.notificationButton}
+                onClick={() => setShowNotifications(!showNotifications)}
+                title="개발자 권한 요청 알림"
+            >
+                <FontAwesomeIcon 
+                    icon={faEnvelope} 
+                    className={hasNewNotifications ? styles.hasNewNotifications : ''}
+                />
+                {hasNewNotifications && (
+                    <span className={styles.notificationBadge}></span>
+                )}
+            </button>
+
+            {showNotifications && (
+                <div className={styles.notificationDropdown}>
+                    {notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                            <div
+                                key={notification.memberId}
+                                className={`${styles.notificationItem} ${!notification.isRead ? styles.unread : ''}`}
+                                onClick={() => navigate(`/member/admin/edit/${notification.memberId}`)}
+                            >
+                                <p>{notification.memberId}님의 개발자 권한 요청</p>
+                                <small>{new Date(notification.requestDate).toLocaleDateString()}</small>
+                            </div>
+                        ))
+                    ) : (
+                        <p className={styles.noNotifications}>새로운 알림이 없습니다</p>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
 
 const Menu = () => {
-    const { t } = useTranslation(); // useTranslation 훅 사용
-    //navigate
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     //recoil state
@@ -25,68 +122,108 @@ const Menu = () => {
     const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const [kakaoId, setKakaoId] = useRecoilState(kakaoIdState);
     const [kakaoAccessToken, setKakaoAccessToken] = useRecoilState(kakaoAccessTokenState);
-    const login = useRecoilValue(loginState);//읽기전용 항목은 이렇게 읽음
+    const login = useRecoilValue(loginState);
 
-    // //callback
-    // const logout = useCallback((e) => {
-    //     //e.preventDefault();
+    //state
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    //     //recoil에 저장된 memberId와 memberLevel을 제거
-    //     setMemberId("");
-    //     setMemberLevel("");
-
-
-
-    //     //axios에 설정된 Authorization 헤더도 제거
-    //     delete axios.defaults.headers.common["Authorization"];
-
-    //     //localStorage, sessionStorage의 refreshToken을 제거
-    //     window.localStorage.removeItem("refreshToken");
-    //     window.sessionStorage.removeItem("refreshToken");
-
-    //     navigate("/");
-    // }, [memberId, memberLevel]);
 
 // 로그아웃 기능 
-const logout = useCallback(() => {
-    // Recoil에 저장된 상태를 초기화
-    setMemberId(""); // memberIdState 초기화
-    setMemberLevel(""); // memberLevelState 초기화
-    setKakaoId(""); // kakaoIdState 초기화
-    setKakaoAccessToken(""); // kakaoAccessTokenState 초기화
+// const logout = useCallback(() => {
+//     // Recoil에 저장된 상태를 초기화
+//     setMemberId(""); // memberIdState 초기화
+//     setMemberLevel(""); // memberLevelState 초기화
+//     setKakaoId(""); // kakaoIdState 초기화
+//     setKakaoAccessToken(""); // kakaoAccessTokenState 초기화
 
-    // axios에 설정된 Authorization 헤더 제거
-    delete axios.defaults.headers.common["Authorization"];
+//     // axios에 설정된 Authorization 헤더 제거
+//     delete axios.defaults.headers.common["Authorization"];
 
-    // LocalStorage, SessionStorage의 데이터 삭제
-    window.localStorage.removeItem("refreshToken");
-    window.sessionStorage.removeItem("refreshToken");
-    window.localStorage.removeItem("jwtToken");
-    window.localStorage.removeItem("kakaoAccessToken");
-    window.localStorage.removeItem("kakaoId");
+//     // LocalStorage, SessionStorage의 데이터 삭제
+//     window.localStorage.removeItem("refreshToken");
+//     window.sessionStorage.removeItem("refreshToken");
+//     window.localStorage.removeItem("jwtToken");
+//     window.localStorage.removeItem("kakaoAccessToken");
+//     window.localStorage.removeItem("kakaoId");
 
-    // 카카오 로그아웃 요청
-    const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
-    if (kakaoAccessToken) {
-        axios.get("https://kapi.kakao.com/v1/user/logout", {
-            headers: {
-                Authorization: `Bearer ${kakaoAccessToken}`
-            }
-        })
-        .then(response => {
-            console.log("카카오 로그아웃 성공", response);
-        })
-        .catch(error => {
-            console.error("카카오 로그아웃 실패", error);
-        });
-    }
+//     // 카카오 로그아웃 요청
+//     const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
+//     if (kakaoAccessToken) {
+//         axios.get("https://kapi.kakao.com/v1/user/logout", {
+//             headers: {
+//                 Authorization: `Bearer ${kakaoAccessToken}`
+//             }
+//         })
+//         .then(response => {
+//             console.log("카카오 로그아웃 성공", response);
+//         })
+//         .catch(error => {
+//             console.error("카카오 로그아웃 실패", error);
+//         });
+//     }
 
-    // 페이지 이동
-    navigate("/");
-}, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, navigate]);
+//     // 페이지 이동
+//     navigate("/");
+// }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, navigate]);
 
    
-    //view
+
+
+    // 로그아웃 기능 수정
+    const logout = useCallback((e) => {
+        // recoil에 저장된 memberId와 memberLevel을 제거
+        setMemberId("");
+        setMemberLevel("");
+        setKakaoId("");
+        setKakaoAccessToken("");
+
+        // axios에 설정된 Authorization 헤더도 제거
+        delete axios.defaults.headers.common["Authorization"];
+
+        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
+        window.localStorage.removeItem("refreshToken");
+        window.sessionStorage.removeItem("refreshToken");
+        window.localStorage.removeItem("jwtToken");
+        window.localStorage.removeItem("kakaoAccessToken");
+        window.localStorage.removeItem("kakaoId");
+
+        // 카카오 로그인 관련 토큰 제거
+        const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
+        if (kakaoAccessToken) {
+            // 카카오 로그아웃 요청 부분 수정
+            axios.get("https://kapi.kakao.com/v1/user/logout", {
+                headers: {
+                    Authorization: `Bearer ${kakaoAccessToken}`
+                }
+            })
+                .then(response => {
+                    console.log("카카오 로그아웃 성공", response);
+                    window.localStorage.removeItem("kakaoAccessToken");
+                    window.localStorage.removeItem("kakaoId");
+                })
+                .catch(error => {
+                    console.error("카카오 로그아웃 실패", error);
+                });
+        } else {
+            console.warn("카카오 액세스 토큰이 없습니다.");
+        }
+
+        // 페이지 이동
+        navigate("/");
+    }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, kakaoAccessToken, navigate]);
+
+    const openModal = () => {
+        setIsModalOpen(true);
+        setIsMenuOpen(false);
+    };
+
+    
+    const closeModal = () => {
+        setIsModalOpen(false);  
+    };
+
+
     return (
         <>
             <nav className={`navbar navbar-expand-lg fixed-top ${styles.navbar}`} data-bs-theme="dark">
@@ -100,23 +237,14 @@ const logout = useCallback(() => {
                         data-bs-target="#top-menu"
                         aria-controls="top-menu"
                         aria-expanded="false"
-                        aria-label="Toggle navigation">
+                        aria-label="Toggle navigation" 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <span className="navbar-toggler-icon"></span>
                     </button>
 
                     <div className="collapse navbar-collapse" id="top-menu">
                         <ul className="navbar-nav me-auto">
-                            <li className="nav-item dropdown">
-                                <a className="nav-link dropdown-toggle"
-                                    data-bs-toggle="dropdown" href="#" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.shop')}</a>
-                                <div className="dropdown-menu">
-                                    <NavLink className="dropdown-item" to="/game/add">{t('add')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/detail/:gameNo">{t('detail')}</NavLink>
-                                    <NavLink className="dropdown-item" to="/game/edit/:gameNo">{t('edit')}</NavLink>
-                                </div>
-                            </li>
-
+                           
 
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle"
@@ -141,37 +269,56 @@ const logout = useCallback(() => {
                             </li>
 
                             {login ? (<>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/member/mypage/:memberId">
+                                    {memberId} ({memberLevel})
+                                </NavLink>
+                            </li>
+                            <div>
+            
+        </div>
+                            {/* 관리자 알림 메뉴를 여기로 이동하고 스타일 통일 */}
+                            {memberLevel === "관리자" && (
+                                <li className="nav-item">
+                                    <div className={`nav-link ${styles.notificationWrapper}`}>
+                                        <NotificationMenu memberId={memberId} />
+                                    </div>
+                                </li>
+                            )}
 
 
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/member/mypage/:memberId">
-                                        {/* {memberId} ({memberLevel}) */}
-                                        {memberId ? `${memberId} (${memberLevel})` : `Kakao User (${kakaoId})`}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="#"
-                                        onClick={logout}>
-                                        {t('menu.logout')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/wishlist">
-                                        {t('menu.wishlist')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/cart">
-                                        {t('menu.cart')}
-                                    </NavLink>
-                                </li>
-                                <li className="nav-item">
-                                    <NavLink className="nav-link" to="/library">
-                                        {t('menu.library')}
-                                    </NavLink>
-                                </li>
-                            </>) : (<>
-
+                               {/* 관리자 알림 메뉴를 여기로 이동하고 스타일 통일 */}
+                               {memberLevel === "관리자" && (
+                                  
+                            <li className="nav-item">
+                            <NavLink className="nav-link" to="/admin/payment">
+                              매출 전표
+                            </NavLink>
+                        </li>
+                            )}
+                            
+                            
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/" onClick={logout}>
+                                    {t('menu.logout')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/wishlist">
+                                    {t('menu.wishlist')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/cart">
+                                    {t('menu.cart')}
+                                </NavLink>
+                            </li>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/library">
+                                    {t('menu.library')}
+                                </NavLink>
+                            </li>
+                        </>) : (<>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/member/MemberLogin">
                                         <i className="fa-solid fa-right-to-bracket"></i>
@@ -179,13 +326,45 @@ const logout = useCallback(() => {
                                     </NavLink>
                                 </li>
                             </>)}
+                            {/* 모달을 열기 위한 버튼 */}
+            <li className="nav-item">
+                                    <button className="btn btn-link nav-link" onClick={openModal}>
+                                        친구
+                                    </button>
+                                </li>
+            {/* 모달 컴포넌트 */}
+            <Modal
+                                    isOpen={isModalOpen}
+                                    onRequestClose={closeModal}
+                                    contentLabel="Friend List Modal"
+                                    style={{
+                                        content: {
+                                            top: '60%',
+                                            left: '87%',
+                                            right: 'auto',
+                                            bottom: 'auto',
+                                            marginRight: '-50%',
+                                            transform: 'translate(-50%, -50%)', 
+                                            border: 'none', 
+                                            backgroundColor: '#141d29', 
+                                            zIndex: '9999', 
+                                        },
+                                        overlay: {
+                                            backgroundColor: 'rgba(0, 0, 0, 0.75)', 
+                                        },
+                                    }}
+                                >
+                                    <FriendList />
+                                    <button onClick={closeModal}>닫기</button>
+                                </Modal>
                         </ul>
-                        {/* Language Selector 추가 */}
                         <LanguageSelector />
+                        
                     </div>
                 </div>
             </nav>
         </>
     );
 };
+
 export default Menu;

@@ -1,122 +1,228 @@
-import { useNavigate, useParams } from "react-router";
-import { useState } from 'react';
-import { useCallback } from 'react';
-import { useEffect } from 'react';
 import axios from "axios";
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router";
 import Jumbotron from "../Jumbotron";
 
-const CommunityEdit = ()=>{
-    //파라미터 추출
-    const {communityNo} = useParams();
-
-    //네비게이터
+const CommunityEdit = () => {
+    const { communityNo } = useParams();
     const navigate = useNavigate();
-    //dsdsds
 
-    //state
     const [community, setCommunity] = useState(null);
-    const [message, setMessage] = useState();
+    const [message, setMessage] = useState("");
+    const [selectedFiles, setSelectedFiles] = useState([]); // 새로 추가할 파일
+    const [previewUrls, setPreviewUrls] = useState([]); // 새로 추가할 파일의 미리보기 URL
+    const [existingImages, setExistingImages] = useState([]); // 기존 이미지 목록
+    const [deletedImageNos, setDeletedImageNos] = useState([]); // 삭제할 이미지 번호들
 
-    //effect
-    //- effect에는 async를 쓸 수 없다
-    useEffect(()=>{
+    useEffect(() => {
         loadCommunity();
+        loadCommunityImages();
     }, []);
 
-    //callback
-    const loadCommunity = useCallback(async ()=>{
+    // 게시글 정보 로드
+    const loadCommunity = useCallback(async () => {
         try {
-            //플랜 A
-            const resp = await axios.get("/community/"+communityNo);
+            const resp = await axios.get(`/community/${communityNo}`);
             setCommunity(resp.data);
-        }
-        catch(e) {
-            //플랜 B(A에서 조회가 안될 때 - 404가 반환될 때)
+        } catch (e) {
             setCommunity(null);
         }
-    }, [community, communityNo]);
+    }, [communityNo]);
 
-    const changeCommunity = useCallback(e=>{
+    // 기존 이미지 로드
+    const loadCommunityImages = useCallback(async () => {
+        try {
+            const resp = await axios.get(`/community/image/${communityNo}`);
+            setExistingImages(resp.data || []);
+        } catch (e) {
+            console.error("Failed to load images:", e);
+        }
+    }, [communityNo]);
+
+    // 게시글 정보 변경 핸들러
+    const changeCommunity = useCallback(e => {
         setCommunity({
             ...community,
-            [e.target.name] : e.target.value
+            [e.target.name]: e.target.value
         });
     }, [community]);
 
+    // 새 파일 선택 핸들러
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        setSelectedFiles(prevFiles => [...prevFiles, ...files]);
+
+        const urls = files.map(file => URL.createObjectURL(file));
+        setPreviewUrls(prevUrls => [...prevUrls, ...urls]);
+    };
+
+    // 새로 선택한 이미지 삭제 핸들러
+    const removeImage = (index) => {
+        const newFiles = selectedFiles.filter((_, i) => i !== index);
+        const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
+        
+        URL.revokeObjectURL(previewUrls[index]);
+        setSelectedFiles(newFiles);
+        setPreviewUrls(newPreviewUrls);
+    };
+
+    // 기존 이미지 삭제 핸들러
+    // 기존 이미지 삭제 핸들러
+    const handleExistingImageDelete = async (attachmentNo) => {
+        try {
+            await axios.delete(`/community/image/${attachmentNo}`);
+            
+            setExistingImages(prev => prev.filter(img => img.attachmentNo !== attachmentNo));
+        } catch (error) {
+            console.error("이미지 삭제 실패:", error);
+            alert("이미지 삭제에 실패했습니다.");
+        }
+    };
+    
+
+    // 게시글 업데이트 요청
     const updateCommunity = useCallback(async () => {
-        if(community.communityTitle.length === 0 || community.communityContent.length === 0) {
+        if (!community.communityTitle || !community.communityContent) {
             setMessage("제목과 내용은 필수입니다.");
             return;
         }
-        // communityNo가 community 객체에 없다면 추가
-        const updatedCommunity = { ...community, communityNo };
-    
-        await axios.put(`/community/${communityNo}`, updatedCommunity);
-        navigate(`/community/detail/${communityNo}`); // 상세 페이지로 이동
-    }, [community, communityNo]);
-    
-    //view
-    return (community !== null ? (<>
-        <Jumbotron title={community.communityNo+"번 글 수정"}/>
 
-        <div className="row mt-4">
-            <div className="col">
-                <label>제목</label>
-                <input type="text" name="communityTitle" className="form-control"
-                    value={community.communityTitle} onChange={changeCommunity} />
-            </div>
-        </div>
-        <div className="row mt-4">
-            <div className="col">
-                <label>상태</label>
-                <select name="communityState" className="form-control"
-                    value={community.communityState} onChange={changeCommunity} >
-                    <option value="public">공개</option>
-                    <option value="private">비공개</option>
-                </select>
-            </div>
-        </div>
-        <div className="row mt-4">
-            <div className="col">
-                <label>카테고리</label>
-                <select name="communityCategory" className="form-control"
-                    value={community.communityCategory} onChange={changeCommunity} >
-                    <option value="자유">자유</option>
-                    <option value="질문">질문</option>
-                    <option value="공략">공략</option>
-                    <option value="스포">스포</option>
-                </select>
-            </div>
-        </div>
-        <div className="row mt-4">
-            <div className="col">
-                <label>내용</label>
-                <input type="text" name="communityContent" className="form-control"
-                    value={community.communityContent} onChange={changeCommunity} />
-            </div>
-        </div>
-        <div className="row mt-4">
-            <div className="col">
-                <label>파일첨부(미정)</label>
-            </div>
-        </div>
-
+        const formData = new FormData();
+        formData.append("community", new Blob([JSON.stringify({ ...community, communityNo })], { type: 'application/json' }));
         
-        <div className="row">
-            <div className="col text-danger text-center">
-                {message}
-            </div>
-        </div>
+        // 새로 추가할 파일
+    selectedFiles.forEach(file => {
+        formData.append("files", file);
+    });
 
-        <div className="row mt-4">
-            <div className="col text-center">
-                <button type="button" className="btn btn-lg btn-success"
-                        onClick={updateCommunity}>수정</button>
-                <button type="button" className="btn btn-lg btn-secondary ms-2"
-                        onClick={e=>navigate("/community/list")}>목록</button> 
+
+        // 삭제할 이미지 번호들을 추가
+        deletedImageNos.forEach(no => {
+            formData.append("deletedImageNos", no);
+        });
+
+        try {
+            await axios.put(`/community/${communityNo}`, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+
+            previewUrls.forEach(url => URL.revokeObjectURL(url));
+            alert("수정이 완료되었습니다.");
+            navigate(`/community/detail/${communityNo}`);
+        } catch (error) {
+            console.error("Update failed:", error);
+            setMessage("수정 중 오류가 발생했습니다.");
+        }
+    }, [community, communityNo, selectedFiles, deletedImageNos, previewUrls, navigate]);
+
+    return (community !== null ? (
+        <>
+            <Jumbotron title={`${community.communityNo}번 글 수정`} />
+
+            <div className="row mt-4">
+                <div className="col">
+                    <label>제목</label>
+                    <input type="text" name="communityTitle" className="form-control"
+                        value={community.communityTitle} onChange={changeCommunity} />
+                </div>
             </div>
-        </div>
-    </>) : (<></>));
+            <div className="row mt-4">
+                <div className="col">
+                    <label>상태</label>
+                    <select name="communityState" className="form-control"
+                        value={community.communityState} onChange={changeCommunity} >
+                        <option value="public">공개</option>
+                        <option value="private">비공개</option>
+                    </select>
+                </div>
+            </div>
+            <div className="row mt-4">
+                <div className="col">
+                    <label>카테고리</label>
+                    <select name="communityCategory" className="form-control"
+                        value={community.communityCategory} onChange={changeCommunity} >
+                        <option value="자유">자유</option>
+                        <option value="질문">질문</option>
+                        <option value="공략">공략</option>
+                        <option value="스포">스포</option>
+                    </select>
+                </div>
+            </div>
+            <div className="row mt-4">
+                <div className="col">
+                    <label>내용</label>
+                    <textarea name="communityContent" className="form-control"
+                        value={community.communityContent} onChange={changeCommunity} />
+                </div>
+            </div>
+
+            {/* Existing Images */}
+            {existingImages.length > 0 && (
+                <div className="row mt-4">
+                    <div className="col">
+                        <label>기존 첨부 이미지</label>
+                        <div>
+                            {existingImages.map(image => (
+                                <div key={image.attachmentNo} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
+                                    <img
+                                        src={`http://localhost:8080/community/download/${image.attachmentNo}`}
+                                        alt={`Attachment ${image.attachmentNo}`}
+                                        style={{ maxWidth: "100px", maxHeight: "100px" }}
+                                    />
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-sm btn-danger" 
+                                        onClick={() => handleExistingImageDelete(image.attachmentNo)}
+                                        style={{ position: 'absolute', top: '0', right: '0' }}
+                                    >
+                                        삭제
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* New File Upload */}
+            <div className="row mt-4">
+                <div className="col">
+                    <label>새 파일 첨부</label>
+                    <input type="file" className="form-control" onChange={handleFileChange} multiple />
+                    <div className="mt-2">
+                        {previewUrls.map((url, index) => (
+                            <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
+                                <img src={url} alt="미리보기" style={{ maxWidth: "100px", maxHeight: "100px" }} />
+                                <button
+                                    type="button"
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => removeImage(index)}
+                                    style={{ position: 'absolute', top: '0', right: '0' }}
+                                >
+                                    삭제
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col text-danger text-center">
+                    {message}
+                </div>
+            </div>
+
+            <div className="row mt-4">
+                <div className="col text-center">
+                    <button type="button" className="btn btn-lg btn-success" onClick={updateCommunity}>수정</button>
+                    <button type="button" className="btn btn-lg btn-secondary ms-2" onClick={() => navigate("/community/list")}>목록</button>
+                </div>
+            </div>
+        </>
+    ) : (<></>));
 };
 
 export default CommunityEdit;

@@ -10,7 +10,7 @@ const GameEdit = () => {
 
     // Game data state
     const [game, setGame] = useState(null);
-    
+
     // Image handling states
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewUrls, setPreviewUrls] = useState([]);
@@ -24,7 +24,7 @@ const GameEdit = () => {
                 // 게임 정보 로드
                 const gameResp = await axios.get(`http://localhost:8080/game/${gameNo}`);
                 setGame(gameResp.data);
-                
+
                 // 기존 이미지 로드
                 const imageResp = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
                 setExistingImages(imageResp.data || []);
@@ -39,10 +39,10 @@ const GameEdit = () => {
     // File handling functions
     const handleFileSelect = (event) => {
         const files = Array.from(event.target.files);
-            
+
         if (files.length > 0) {
             setSelectedFiles(prevFiles => [...prevFiles, ...files]);
-            
+
             const urls = files.map(file => URL.createObjectURL(file));
             setPreviewUrls(prevUrls => [...prevUrls, ...urls]);
         }
@@ -51,7 +51,7 @@ const GameEdit = () => {
     const removeImage = (index) => {
         const newFiles = selectedFiles.filter((_, i) => i !== index);
         const newPreviewUrls = previewUrls.filter((_, i) => i !== index);
-        
+
         URL.revokeObjectURL(previewUrls[index]);
 
         setSelectedFiles(newFiles);
@@ -65,9 +65,9 @@ const GameEdit = () => {
             await axios.delete(`http://localhost:8080/game/image/${attachmentNo}`, {
                 params: { gameNo },
             });
-            
+
             // 삭제에 성공하면 화면에서 제거
-            setExistingImages(prev => 
+            setExistingImages(prev =>
                 prev.filter(img => img.attachmentNo !== attachmentNo)
             );
             setDeletedImageNos(prev => [...prev, attachmentNo]);
@@ -76,7 +76,7 @@ const GameEdit = () => {
             alert("이미지 삭제에 실패했습니다");
         }
     };
-    
+
     const changeGame = useCallback(e => {
         setGame({
             ...game,
@@ -86,37 +86,49 @@ const GameEdit = () => {
 
     const updateGame = useCallback(async () => {
         try {
+            const token = sessionStorage.getItem('refreshToken');
             const formData = new FormData();
-    
+
             formData.append('game', new Blob([JSON.stringify(game)], {
                 type: 'application/json'
             }));
-    
+
             selectedFiles.forEach(file => {
                 formData.append('files', file);
             });
-    
+
             // 삭제할 이미지 번호들을 문자열 배열로 직접 추가
             deletedImageNos.forEach(no => {
                 formData.append('deletedImageNos', no);
             });
-    
-            await axios.put("http://localhost:8080/game/", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-    
+
+            await axios.put(
+                `http://localhost:8080/game/${gameNo}`,  // URL 수정
+                formData,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,  // 토큰 추가
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
+
+
             // Cleanup preview URLs
             previewUrls.forEach(url => URL.revokeObjectURL(url));
-    
+
+            alert("수정이 완료되었습니다.");
             navigate("/game/detail/" + gameNo);
         } catch (error) {
             console.error("수정 실패:", error);
-            alert("수정에 실패했습니다");
+            if (error.response?.data) {
+                alert(error.response.data);
+            } else {
+                alert("게임 정보 수정 중 오류가 발생했습니다.");
+            }
         }
     }, [game, selectedFiles, deletedImageNos, gameNo, navigate, previewUrls]);
-    
+
     return (game !== null ? (
         <div className={styles.container}>
             <h1 className={styles.title}>{game.gameTitle} 정보 수정</h1>
@@ -128,12 +140,12 @@ const GameEdit = () => {
                     {/* 기존 이미지들 */}
                     {existingImages.map((img) => (
                         <div key={img.attachmentNo} className={styles.previewContainer}>
-                            <img 
+                            <img
                                 src={`http://localhost:8080/game/download/${img.attachmentNo}`}
                                 alt="기존 게임 이미지"
                                 className={styles.previewImage}
                             />
-                            <button 
+                            <button
                                 onClick={() => handleExistingImageDelete(img.attachmentNo)}
                                 className={styles.removeButton}
                             >
@@ -142,16 +154,16 @@ const GameEdit = () => {
                             <div className={styles.imageLabel}>기존 이미지</div>
                         </div>
                     ))}
-                    
+
                     {/* 새로 추가된 이미지들 */}
                     {previewUrls.map((url, index) => (
                         <div key={`new-${index}`} className={styles.previewContainer}>
-                            <img 
-                                src={url} 
-                                alt={`미리보기 ${index + 1}`} 
+                            <img
+                                src={url}
+                                alt={`미리보기 ${index + 1}`}
                                 className={styles.previewImage}
                             />
-                            <button 
+                            <button
                                 onClick={() => removeImage(index)}
                                 className={styles.removeButton}
                             >
@@ -160,7 +172,7 @@ const GameEdit = () => {
                             <div className={styles.imageLabel}>새 이미지</div>
                         </div>
                     ))}
-                    
+
                     <label className={styles.uploadButton}>
                         <input
                             type="file"
@@ -184,7 +196,7 @@ const GameEdit = () => {
             <div className={styles.formSection}>
                 <div className={styles.formGroup}>
                     <label>게임명</label>
-                    <input 
+                    <input
                         type="text"
                         className={styles.input}
                         name="gameTitle"
@@ -195,7 +207,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>금액</label>
-                    <input 
+                    <input
                         type="number"
                         className={styles.input}
                         name="gamePrice"
@@ -206,7 +218,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>개발자</label>
-                    <input 
+                    <input
                         type="text"
                         className={styles.input}
                         name="gameDeveloper"
@@ -217,7 +229,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>출시일</label>
-                    <input 
+                    <input
                         type="date"
                         className={styles.input}
                         name="gamePublicationDate"
@@ -228,7 +240,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>할인율 (%)</label>
-                    <input 
+                    <input
                         type="number"
                         className={styles.input}
                         name="gameDiscount"
@@ -239,7 +251,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>카테고리</label>
-                    <input 
+                    <input
                         type="text"
                         className={styles.input}
                         name="gameCategory"
@@ -250,18 +262,19 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>등급</label>
-                    <input 
-                        type="text"
-                        className={styles.input}
-                        name="gameGrade"
-                        value={game.gameGrade}
-                        onChange={changeGame}
-                    />
+                    <select name="gameGrade" className={styles.input}
+                        value={styles.input.gameGrade} onChange={changeGame}>
+                        <option value="">선택하세요</option>
+                        <option>전체이용가</option>
+                        <option>12세이용가</option>
+                        <option>15세이용가</option>
+                        <option>19세이용가</option>
+                    </select>
                 </div>
 
                 <div className={styles.formGroup}>
                     <label>테마</label>
-                    <input 
+                    <input
                         type="text"
                         className={styles.input}
                         name="gameTheme"
@@ -272,7 +285,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>상세 설명</label>
-                    <textarea 
+                    <textarea
                         className={`${styles.input} ${styles.textarea}`}
                         name="gameDescription"
                         value={game.gameDescription}
@@ -283,7 +296,7 @@ const GameEdit = () => {
 
                 <div className={styles.formGroup}>
                     <label>간단 설명</label>
-                    <textarea 
+                    <textarea
                         className={`${styles.input} ${styles.textarea}`}
                         name="gameShortDescription"
                         value={game.gameShortDescription}
@@ -291,35 +304,10 @@ const GameEdit = () => {
                         rows="3"
                     />
                 </div>
-
-                <div className={styles.formGroup}>
-                    <label>평점</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        name="gameUserScore"
-                        value={game.gameUserScore}
-                        onChange={changeGame}
-                        min="0"
-                        max="10"
-                        step="0.1"
-                    />
-                </div>
-
-                <div className={styles.formGroup}>
-                    <label>리뷰수</label>
-                    <input 
-                        type="number"
-                        className={styles.input}
-                        name="gameReviewCount"
-                        value={game.gameReviewCount}
-                        onChange={changeGame}
-                    />
-                </div>
-
+                
                 <div className={styles.formGroup}>
                     <label>지원 플랫폼</label>
-                    <input 
+                    <input
                         type="text"
                         className={styles.input}
                         name="gamePlatforms"
@@ -340,13 +328,13 @@ const GameEdit = () => {
                 </div>
 
                 <div className={styles.buttonGroup}>
-                    <button 
+                    <button
                         className={styles.submitButton}
                         onClick={updateGame}
                     >
                         수정
                     </button>
-                    <button 
+                    <button
                         className={styles.cancelButton}
                         onClick={() => navigate(`/game/detail/${gameNo}`)}
                     >

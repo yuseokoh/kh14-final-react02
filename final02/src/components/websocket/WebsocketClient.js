@@ -128,14 +128,17 @@ const WebsocketClient = ()=>{
     }, [messageList, firstMessageNo, more]);
     
     return (<>
-    <div className="row mt-4">
-        <div className="col">
-            <h3>{receiverId}</h3>
-            <h3>{memberId}</h3>
+    <div className="row pb-4" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
+    <div className="col">
+
+    <div className="row mt-4 d-flex justify-content-center">
+        <div className="col-6">
+            <h3>friendId : {receiverId}</h3>
+            <h3>memberId : {memberId}</h3>
         </div>
     </div>
-    <div className="row mt-4">
-        <div className="col">
+    <div className="row mt-4 d-flex justify-content-center">
+        <div className="col-3">
             <div className="input-group">
                 <input type="text" className="form-control" value={input} onChange={e=>setInput(e.target.value)} 
                 disabled={login === false}/>
@@ -148,21 +151,21 @@ const WebsocketClient = ()=>{
             {/* 더보기 버튼 */}
             {more === true && (
                 <button className="btn btn-outline-success w-100" 
-                        onClick={loadMoreMessageList}>
+                onClick={loadMoreMessageList}>
                     더보기
                 </button>
             )}
           <ul className="list-group">
             {messageList.map((message, index) => (
-              <li className="list-group-item" key={index}>
+                <li className="list-group-item" key={index}>
                 {/* 일반 채팅일 경우(type === chat) */}
                   <div className="row">
                     <div
                       className={`col-5${
-                        login &&
+                          login &&
                         memberId === message.senderMemberId &&
                         " offset-7"
-                      }`}
+                    }`}
                     >
                       {/* 발신자 정보 */}
                       {login && memberId !== message.senderMemberId && (
@@ -187,6 +190,8 @@ const WebsocketClient = ()=>{
           </ul>
         </div>
 
+            </div>
+            </div>
     </>);
 };
 

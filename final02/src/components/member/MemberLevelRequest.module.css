@@ -1,0 +1,43 @@
+/* MemberLevelRequest.module.css */
+.requestContainer {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+  
+  .requestForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .textarea {
+    min-height: 120px;
+    padding: 0.5rem;
+  }
+  
+  .input {
+    padding: 0.5rem;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .submitButton, .cancelButton {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 1rem;
+  }

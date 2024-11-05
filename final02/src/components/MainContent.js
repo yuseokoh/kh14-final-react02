@@ -4,7 +4,6 @@ import { useRecoilValue } from "recoil";
 import { loginState } from "../utils/recoil";
 import MemberLogin from "./member/MemberLogin";
 
-
 import PaymentSuccessPage from "./payment/PaymentSuccessPage";
 import CancelPaymentPage from "./payment/CancelPaymentPage";
 import PrivateRoute from "../router/PrivateRoute";
@@ -25,8 +24,6 @@ import CommunityList from "./community/CommunityList";
 import CommunityAdd from "./community/CommunityAdd";
 import CommunityEdit from "./community/CommunityEdit";
 import CommunityDetail from "./community/CommunityDetail";
-import CommunitySearch from "./community/CommunitySearch";
-
 
 import PrivacyPolicy from "../components/footer/PrivacyPolicy";
 import TermsOfUse from "../components/footer/TermsOfUse";
@@ -44,12 +41,19 @@ import OpenWorldGame from "./game/gamecategory/OpenWorldGame";
 import RpgGame from "./game/gamecategory/RpgGame";
 import SimulationGame from "./game/gamecategory/SimulationGame";
 import StrategyGame from "./game/gamecategory/StrategyGame";
-import BaseBuilding from "./game/gamecategory/BaseBuilding";
 import Fantasy from "./game/gamecategory/Fantasy";
 import PixelGraphics from "./game/gamecategory/PixelGraphics";
 import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
+
+// import AllUsers from "./game/gamegrade/AllUsers";
+// import TwelveAges from "./game/gamegrade/TwelveAges";
+// import FifteenAges from "./game/gamegrade/FifteenAges";
+// import SevenAges from "./game/gamegrade/SevenAges";
+// import NineteenAges from "./game/gamegrade/NineteenAges";
+
+
 import Library from "../components/library/Library";
 import TestGame from "../gameComponents/TestGame";
 import KHSurvival from "../gameComponents/KHSurvival";
@@ -58,123 +62,99 @@ import MyPageEdit from "./member/MyPageEdit";
 import Ranking from "./play/Ranking";
 import Chat from "./chat/Chat";
 import WebsocketClient from "./websocket/WebsocketClient";
+
 import KakaoLoginPage2 from "./member/KakaoLoginPage2";
 import KakaoLoginPage2Proceed from "./member/KakaoLoginPage2Proceed";
 
-
-
+import Chatroom from "./chat/Chatroom";
+import PageNotFound from "./PageNotFound";
+import AdminPaymentPage from "./payment/AdminPaymentPage";
+import MemberLevelRequest from "./member/MemberLevelRequest";
+import AdminMemberEdit from "./member/AdminMemberEdit";
 
 
 const MainContent = () => {
     const { t } = useTranslation(); // 번역 훅 사용
     const login = useRecoilValue(loginState); //recoil에서 login 상태를 불러온다
 
-    return (<>
-        <div className="container-fluid">
-            <div className="row my-5 pt-4">
-                <Routes>
-                    <Route exact path="/" element={<Home />} />
+    return (
+        <>
+            <div className="container-fluid">
+                <div className="row my-5 pt-4">
+                    <Routes>
+                        <Route exact path="/" element={<Home />} />
 
-                     {/* 로그인이 필요한 페이지라면 element에 PrivateRoute를 적어서 대상을 명시하면 된다 */}
-                    {/* 게임 처리 */}
-                    <Route path="/game/add" element={<GameAdd />} />
-                    <Route path="/game/detail/:gameNo" element={<GameDetail />} />
-                    <Route path="/game/edit/:gameNo" element={<GameEdit />} />
+                        {/* 프라이빗 라우터 적용 */}
+                        <Route path="/game/add" element={<PrivateRoute element={<GameAdd />} />} />
+                        <Route path="/game/edit/:gameNo" element={<PrivateRoute element={<GameEdit />} />} />
+                        <Route path="/member/mypage/:memberId" element={<PrivateRoute element={<MyPage />} />} />
+                        <Route path="/member/mypageedit/:memberId" element={<PrivateRoute element={<MyPageEdit />} />} />
+                        <Route path="/cancel-payment/detail/:paymentNo" element={<PrivateRoute element={<CancelPaymentPage />} />} />
+                        <Route path="/cart/success/:partnerOrderId" element={<PrivateRoute element={<PaymentSuccessPage />} />} />
+                        <Route path="/friend/list" element={<PrivateRoute element={<FriendList />} />} />
+                        <Route path="/friend/request" element={<PrivateRoute element={<FriendRequest />} />} />
+                        <Route path="/community/add" element={<PrivateRoute element={<CommunityAdd />} />} />
+                        <Route path="/community/edit/:communityNo" element={<PrivateRoute element={<CommunityEdit />} />} />
+                        <Route path="/wishlist" element={<PrivateRoute element={<WishList />} />} />
+                        <Route path="/cart" element={<PrivateRoute element={<ShoppingCart />} />} />
+                        <Route path="/library" element={<PrivateRoute element={<Library />} />} />
+                        <Route path="/testgame" element={<PrivateRoute element={<TestGame />} />} />
+                        <Route path="/testgame2" element={<PrivateRoute element={<KHSurvival />} />} />
+                        <Route path="/play" element={<PrivateRoute element={<Ranking />} />} />
+                        <Route path="/websocket" element={<PrivateRoute element={<WebsocketClient />} />} />
+                        <Route path="/room" element={<PrivateRoute element={<Chatroom />} />} />
+                        <Route path="/room-chat/:roomNo" element={<PrivateRoute element={<Chat />} />} />
+                        <Route path="/admin/payment" element={<PrivateRoute element={<AdminPaymentPage />} />} />
 
-
-                     {/* 게임카테고리 */}
-                    <Route path="/game/category/action" element={<ActionGame />} />
-                    <Route path="/game/category/adventure" element={<AdventureGame />} />
-                    <Route path="/game/category/indie" element={<IndieGame />} />
-                    <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
-                    <Route path="/game/category/openworld" element={<OpenWorldGame />} />
-                    <Route path="/game/category/rpg" element={<RpgGame />} />
-                    <Route path="/game/category/simulation" element={<SimulationGame />} />
-                    <Route path="/game/category/basebuilding" element={<BaseBuilding />} />
-                    <Route path="/game/category/fantasy" element={<Fantasy />} />
-                    <Route path="/game/category/pixelgraphics" element={<PixelGraphics />} />
-                    <Route path="/game/category/roguelike" element={<Roguelike />} />
-                    <Route path="/game/category/sandbox" element={<SandBox />} />
-                    <Route path="/game/category/survival" element={<Survival />} />
-                    <Route path="/game/category/strategy" element={<StrategyGame />} />
-
-
-
-                    {/* 게임 테마 */}
-
-
-                    {/* 경로변수를 사용할 경우 콜론과 이름을 합쳐 변수명으로 지정 */}
-
-                    {/* 기존 : 일반 라우팅 */}
-                    {/* <Route path="/search/autocomplete" element={<AutoComplete/>}/> */}
-                    {/* <Route path="/search/autocomplete2" element={<AutoComplete2/>}/> */}
-                    {/* <Route path="/search/member" element={<MemberComplexSearch/>}/> */}
-
-                    {/* 변경 : 중첩 라우팅 */}
-
-                    {/* 회원 로그인 */}
-                    <Route path="/member/MemberLogin" element={<MemberLogin />} />
-                    {/* 회원가입 이메일 입력 */}
-                    <Route path="/member/signupPage" element={<SignupPage />} />
-                    {/* 회원가입 아이디 비밀번호입력 */}
-                    <Route path="/member/signupForm" element={<SignupForm />} />
-                    {/* 마이페이지 */}
-                    <Route path="/member/mypage/:memberId" element={<MyPage />} />
-                    <Route path="/member/mypageedit/:memberId" element={<MyPageEdit />} />
-
-                    {/* 결제 */}
-
-                    <Route path="/cancel-payment/detail/:paymentNo" element={<CancelPaymentPage />} />
-                    <Route path="/cart/success/:partnerOrderId" element={<PaymentSuccessPage />} />
+                        {/* 프라이빗 라우터가 필요 없는 공개 페이지들 */}
+                        {/* 테마별 카테고리 */}
+                        <Route path="/game/detail/:gameNo" element={<GameDetail />} />
+                        <Route path="/game/category/action" element={<ActionGame />} />
+                        <Route path="/game/category/adventure" element={<AdventureGame />} />
+                        <Route path="/game/category/indie" element={<IndieGame />} />
+                        <Route path="/game/category/multiplayer" element={<MultiPlayerGame />} />
+                        <Route path="/game/category/openworld" element={<OpenWorldGame />} />
+                        <Route path="/game/category/rpg" element={<RpgGame />} />
+                        <Route path="/game/category/simulation" element={<SimulationGame />} />
+                        <Route path="/game/category/fantasy" element={<Fantasy />} />
+                        <Route path="/game/category/pixelgraphics" element={<PixelGraphics />} />
+                        <Route path="/game/category/roguelike" element={<Roguelike />} />
+                        <Route path="/game/category/sandbox" element={<SandBox />} />
+                        <Route path="/game/category/survival" element={<Survival />} />
+                        <Route path="/game/category/strategy" element={<StrategyGame />} />
 
 
-                    {/* 친구목록 */}
-                    <Route path="/friend/list" element={<FriendList />} />
-                    <Route path="/friend/request" element={<FriendRequest />} />
+                        <Route path="/member/MemberLogin" element={<MemberLogin />} />
+                        <Route path="/member/signupPage" element={<SignupPage />} />
+                        <Route path="/member/signupForm" element={<SignupForm />} />
+                        <Route path="/community/list" element={<CommunityList />} />
+                        <Route path="/community/detail/:communityNo" element={<CommunityDetail />} />
+                        <Route path="/member/signup" element={<SingUp />} />
+                        <Route path="/member/KakaoLoginPage" element={<KakaoLoginPage />} />
+                        <Route path="/member/KakaoEmail" element={<KakaoEmail />} />
+                        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                        <Route path="/terms-of-use" element={<TermsOfUse />} />
+                        <Route path="/steam-agreement" element={<SteamAgreement />} />
+                        <Route path="/refund-policy" element={<RefundPolicy />} />
 
+                        <Route path="/community/search/title/:keyword" element={<CommunitySearch />} />
 
-                    {/* 커뮤니티(게시판) */}
-                    <Route path="/community/list" element={<CommunityList />} />
-                    <Route path="/community/add" element={<CommunityAdd />} />
-                    <Route path="/community/edit/:communityNo" element={<CommunityEdit />} />
-                    <Route path="/community/detail/:communityNo" element={<CommunityDetail />} />
-                    <Route path="/community/search/title/:keyword" element={<CommunitySearch />} />
+                        {/* 카카오로그인 테스트 */}
+                        <Route path="/member/KakaoLoginPage2" element={<KakaoLoginPage2 />} />
+                        <Route path="/member/KakaoLoginPage2Proceed" element={<KakaoLoginPage2Proceed/>} />
 
-                    {/* 회원가입 */}
-                    <Route path="/member/signup" element={<SingUp />} />
-                    {/* 카카오로그인 테스트 */}
-                    <Route path="/member/KakaoLoginPage" element={<KakaoLoginPage />} />
-                    <Route path="/member/KakaoLoginPage2" element={<KakaoLoginPage2 />} />
-                    <Route path="/member/KakaoLoginPage2Proceed" element={<KakaoLoginPage2Proceed/>} />
-                    <Route path="/member/KakaoEmail" element={<KakaoEmail/>}/>
-                    {/* 찜 */}
-                    <Route path="/wishlist" element={<WishList />} />
+                        
+                        <Route path="/developer-request/:memberId" element={<MemberLevelRequest />} />
+                        <Route path="/member/admin/edit/:memberId" element={<AdminMemberEdit />} />
 
-                    {/* 장바구니 */}
-                    <Route path="/cart" element={<ShoppingCart />} />  {/* ShoppingCart로 통일 */}
+                        {/* 나머지 경로(*) 패턴을 지정해서 미 지정된 페이지를 모두 연결 */}
+                        <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                </div>
 
-                    {/* 라이브러리 */}
-                    <Route path="/library" element={<Library />} />  {/* ShoppingCart로 통일 */}
-
-                    {/* 테스트 게임 */}
-                    <Route path="/testgame" element={<TestGame />} />  
-                    <Route path="/testgame2" element={<KHSurvival />} />  
-                    <Route path="/play" element={<Ranking />} />  
-
-                    {/* 웹소켓 */}
-                    <Route path="/websocket" element={<WebsocketClient />} />  
-
-                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                    <Route path="/terms-of-use" element={<TermsOfUse />} />
-                    <Route path="/steam-agreement" element={<SteamAgreement />} />
-                    <Route path="/refund-policy" element={<RefundPolicy />} />
-
-
-                    {/* 나머지 경로(*) 패턴을 지정해서 미 지정된 페이지를 모두 연결 */}
-                </Routes>
             </div>
-        </div>
-    </>);
+        </>
+    );
 };
 
 export default MainContent;
