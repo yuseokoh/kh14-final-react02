@@ -216,7 +216,7 @@
           "paymentEndDate": "Payment End Date",
           "canceledAt": "Canceled At",
           "enterCancelReason": "Enter the reason for cancellation",
-          "cancelAll": "Cancel All",
+          "cancelAll": "Cancel",
           "canceledProduct": "Product has been canceled.",
           "cancelSuccess": "Payment Cancelled Successfully!",
           "cancelSuccessMessage": "The payment has been successfully canceled.",
@@ -419,4 +419,3 @@
                     "errorNoToken": "No authentication token found."
                   }
                 }
-                

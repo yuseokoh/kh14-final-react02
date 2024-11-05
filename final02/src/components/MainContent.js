@@ -71,6 +71,7 @@ import PageNotFound from "./PageNotFound";
 import AdminPaymentPage from "./payment/AdminPaymentPage";
 import MemberLevelRequest from "./member/MemberLevelRequest";
 import AdminMemberEdit from "./member/AdminMemberEdit";
+import PaymentListPage from "./payment/PaymentListPage";
 
 
 const MainContent = () => {
@@ -89,8 +90,9 @@ const MainContent = () => {
                         <Route path="/game/edit/:gameNo" element={<PrivateRoute element={<GameEdit />} />} />
                         <Route path="/member/mypage" element={<PrivateRoute element={<MyPage />} />} />
                         <Route path="/member/mypageedit" element={<PrivateRoute element={<MyPageEdit />} />} />
-                        <Route path="/cancel-payment/detail/:paymentNo" element={<PrivateRoute element={<CancelPaymentPage />} />} />
+                        <Route path="/cancel-payment/:paymentNo" element={<PrivateRoute element={<CancelPaymentPage />} />} />
                         <Route path="/cart/success/:partnerOrderId" element={<PrivateRoute element={<PaymentSuccessPage />} />} />
+                        <Route path="/paymentList" element={<PrivateRoute element={<PaymentListPage />} />} />
                         <Route path="/friend/list" element={<PrivateRoute element={<FriendList />} />} />
                         <Route path="/friend/request" element={<PrivateRoute element={<FriendRequest />} />} />
                         <Route path="/community/add" element={<PrivateRoute element={<CommunityAdd />} />} />
