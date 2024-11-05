@@ -231,6 +231,7 @@
           "email": "Email",
           "birthDate": "Birth Date",
           "edit": "Edit",
+          "delete":"Delete",
           "levels": {
               "challenger": "Challenger",
               "master": "Master",
@@ -376,5 +377,46 @@
                 "noPaymentInfo": "No payment information available."
               }
             
-            }
-            
+              ,
+                "wishlist": {
+                  "title": "Wish List",
+                  "titleWithMember": "{{memberId}}'s Wish List",
+                  "searchPlaceholder": "Search by name or tag",
+                  "emptyMessage": "Your wish list is empty.",
+                  "reviewSummary": "Review Summary",
+                  "releaseDate": "Release Date",
+                  "singlePlayer": "Single Player",
+                  "multiplayer": "Multiplayer",
+                  "addToCart": "Add to Cart",
+                  "alreadyInCart": "This game is already in your cart.",
+                  "alreadyInLibrary": "This game is already in your library.",
+                  "play": "Play",
+                  "remove": "Remove",
+                  "noInfo": "No information",
+                  "recommendedGames": "Recommended Games"
+                }
+
+                ,
+                  "shoppingCart": {
+                    "titleWithMember": "{{memberId}}'s Shopping Cart",
+                    "title": "Shopping Cart",
+                    "emptyCartMessage": "Your shopping cart is empty.",
+                  
+                
+                    "alreadyInCart": "This game is already in your cart.",
+                    "alreadyInLibrary": "This game is already in your library.",
+                    "play": "Play",
+                    "giftOption": "Gift",
+                    "remove": "Remove",
+                    "totalSelectedItems": "Total for Selected Items:",
+                    "taxNotice": "Sales tax will be applied at checkout if applicable.",
+                    "checkoutButton": "Proceed to Checkout",
+                    "continueShopping": "Continue Shopping",
+                    "recommendedGames": "Recommended Games for You",
+                    "noItemsSelected": "No items selected for checkout.",
+                    "errorDuringPurchase": "An error occurred during the purchase process.",
+                    "errorPurchaseFailed": "Failed to complete purchase.",
+                    "errorNoToken": "No authentication token found."
+                  }
+                }
+                

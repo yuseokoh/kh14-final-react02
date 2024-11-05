@@ -135,7 +135,8 @@ const ShoppingCart = () => {
 
   const sendPurchaseRequest = useCallback(async () => {
     if (selectedItems.length === 0) {
-      alert(t('payment.noItemsSelected'));
+      alert(t("shoppingCart.noItemsSelected"));
+
       return;
     }
 
@@ -190,12 +191,13 @@ const ShoppingCart = () => {
   return (
     <div className={styles.cartPageContainer}>
       <h1 className={styles.cart_title}>
-        {memberId ? `${memberId}님의 장바구니` : '장바구니'}
+      {memberId ? t("shoppingCart.titleWithMember", { memberId }) : t("shoppingCart.title")}
       </h1>
 
       <div className={styles.cartItemsContainer}>
         {cartList.length === 0 ? (
-          <p className={styles.emptyCartMessage}>장바구니가 비어있습니다.</p>
+        <p className={styles.emptyCartMessage}>{t("shoppingCart.emptyCartMessage")}</p>
+
         ) : (
           cartList.map(cart => (
             <div key={cart.cartId} className={styles.cartItem}>
@@ -217,34 +219,34 @@ const ShoppingCart = () => {
                 >{cart.gameTitle}</h4>
                 <p className={styles.gamePrice}>{(cart.gamePrice || 0).toLocaleString()}₩</p>
               </div>
-                <button className={styles.giftButton}>선물용</button>
-                <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
+                    <button className={styles.giftButton}>선물용</button>
+                    <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
             </div>
           ))
         )}
       </div>
       <div className={styles.cartSummaryContainer}>
         <div className={styles.cartFooter}>
-          <button className={styles.continueShoppingButton} onClick={keepshop}>쇼핑 계속하기</button>
+          <button className={styles.continueShoppingButton} onClick={keepshop}>  {t("shoppingCart.continueShopping")}</button>
           <div className={styles.totalPriceSection}>
-            <div className={styles.totalPriceLabel}>선택된 항목 합계:</div>
+            <div className={styles.totalPriceLabel}>{t("shoppingCart.totalSelectedItems")}</div>
             <div className={styles.totalPriceValue}>
               {cartList
                 .filter(cart => selectedItems.includes(cart.cartId))
                 .reduce((sum, cart) => sum + (cart.gamePrice || 0), 0)
                 .toLocaleString()}₩
             </div>
-            <p className={styles.taxNotice}>해당되는 지역의 경우 계산 시 판매세가 부과됩니다.</p>
+            <p className={styles.taxNotice}>{t("shoppingCart.taxNotice")}</p>
           </div>
           <button type='button' onClick={sendPurchaseRequest} className={styles.checkoutButton}>
-            선택 항목 결제하기
+          {t("shoppingCart.checkoutButton")}
           </button>
         </div>
       </div>
 
       {/* 일반 게임 목록 슬라이드 섹션 */}
       <section className={styles.recommendedSection}>
-        <h2 className={styles.recommendedTitle}>회원님에게 추천하는 게임</h2>
+        <h2 className={styles.recommendedTitle}>{t("shoppingCart.recommendedGames")}</h2>
         <div className={styles.sliderContainer}>
           <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
           <div className={styles.topRatedGamesWrapper}>

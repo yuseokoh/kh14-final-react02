@@ -15,7 +15,7 @@ const FriendList = ()=>{
     const [keyword, setKeyword] = useState("");
     const [open, setOpen] = useState(false);
     const [roomList, setRoomList] = useState([]);
-    
+    const [memberJoin, setMemberJoin] = useState([]);
     
     
     //recoil
@@ -34,11 +34,13 @@ const FriendList = ()=>{
         if(!memberId || memberLoading === false) return;
         loadFriendList();
         loadRoomList();
+        checkMemberJoin();
     }, [memberLoading]);
     
     //callback
     
     const chatClick = useCallback((friend)=>{
+        if(memberId === null) return;
         console.log("friend : ",friend);
         const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
         setReceiverId(targetId);
@@ -72,21 +74,30 @@ const FriendList = ()=>{
         setRoomList(resp.data);
       }, [roomList]);
 
+      const viewProfile = useCallback((friend)=>{
+        const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
+        navigate(`/member/mypage/${targetId}`);
+      }, []);
+
       const createChatRoom = useCallback(async (friend)=>{
         if (!memberId || memberLoading === false) return;
         try{
             const roomName = friend.friendFrom+", "+friend.friendTo;
             console.log("friendFK"+friend.friendFk)
             const resp = await axios.post("/room/", { roomNo : friend.friendFk, roomName : roomName});
-            loadRoomList();
         } catch {
             const resp = await axios.post("/room/enter", {roomNo : friend.friendFk });
-            loadRoomList();
         }
 
       }, [memberLoading, memberId]);
 
-      const enterRoom = useCallback(async (friend)=>{
+      const checkMemberJoin = useCallback(async ()=>{
+
+        const resp = await axios.get("/room/member");
+        setMemberJoin(resp.data);
+      }, []);
+
+      const enterRoom = useCallback((friend)=>{
         // await axios.post("/room/enter", { roomNo : friend.friendFk });
         //방으로 이동     
         navigate(`/room-chat/${friend.friendFk}`);   
@@ -102,15 +113,15 @@ const FriendList = ()=>{
     }, [keyword, friendList]);
 
     return (<>
-    <div className="row pb-4" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
+    <div className="row" style={{ backgroundColor: "#141d29", minHeight: "100vh" }}>
     <div className="col">
-    <div className="row mt-4 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-4 justify-content-center">
+        <div className="col">
             <h3>친구 목록</h3>
         </div>
     </div>
-    <div className="row mt-2 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-2 justify-content-center">
+        <div className="col">
             {/* 입력값 useMemo로 memberList에서 조회후 출력*/}
             <input type="text" className="form-control" placeholder="아이디" 
             value={keyword} onChange={changeKeyword}/> 
@@ -120,9 +131,14 @@ const FriendList = ()=>{
                         <li key={friend.friendFk} className="list-group-item" 
                         onClick={e=>selectKeyword(friend.friendFk)}>
                             {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                            <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
-                            <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
-                            <button className="btn btn-secondary ms-4">프로필 보기</button>
+                            {memberJoin.map(member=>(
+                                member.join === 'N' ? (
+                                    <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                                ) : (
+                                    <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
+                                )
+                            ))}
+                            <button className="btn btn-secondary ms-4" onClick={()=> viewProfile(friend)}>프로필 보기</button>
                             <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                         </li>
                     ))}
@@ -130,16 +146,21 @@ const FriendList = ()=>{
             )}
         </div>
     </div>
-    <div className="row mt-2 d-flex justify-content-center">
-        <div className="col-3">
+    <div className="row mt-2 justify-content-center">
+        <div className="col">
     {open === false && (
         <ul className="list-group">
                 {friendList.map(friend=>(
                     <li key={friend.friendFk} className="list-group-item">
                         {memberId === friend.friendTo ? friend.friendFrom : friend.friendTo}
-                        <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
-                        <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅입장</button>
-                        <button className="btn btn-secondary ms-4">프로필 보기</button>
+                        {memberJoin.map(member=>(
+                                member.join === 'N' ? (
+                                    <button className="btn btn-success ms-4" onClick={() => chatClick(friend)}>채팅</button>
+                                ) : (
+                                    <button className="btn btn-success ms-4" onClick={() => enterRoom(friend)}>채팅</button>
+                                )
+                            ))}
+                        <button className="btn btn-secondary ms-4" onClick={()=> viewProfile(friend)}>프로필 보기</button>
                         <button className="btn btn-danger ms-4" onClick={()=> deleteFriend(friend)}>삭제</button>
                     </li>
                 ))}
