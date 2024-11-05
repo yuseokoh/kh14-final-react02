@@ -21,7 +21,7 @@ const MemberEdit = () => {
 
   const loadMember = useCallback(async () => {
     try {
-      const resp = await axios.get(`http://localhost:8080/member/${memberId}`);
+      const resp = await axios.get("http://localhost:8080/member/");
       setMember(resp.data);
     } catch (e) {
       setMember(null);

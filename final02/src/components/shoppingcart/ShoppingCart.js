@@ -219,7 +219,6 @@ const ShoppingCart = () => {
                 >{cart.gameTitle}</h4>
                 <p className={styles.gamePrice}>{(cart.gamePrice || 0).toLocaleString()}₩</p>
               </div>
-                    <button className={styles.giftButton}>선물용</button>
                     <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
             </div>
           ))

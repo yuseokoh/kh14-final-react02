@@ -75,9 +75,10 @@ const FriendList = ()=>{
       }, [roomList]);
 
       const viewProfile = useCallback((friend)=>{
-        const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
-        navigate(`/member/mypage/${targetId}`);
+        // const targetId = memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
+        navigate(`/member/profile/${friend.friendTo}`);
       }, []);
+
 
       const createChatRoom = useCallback(async (friend)=>{
         if (!memberId || memberLoading === false) return;

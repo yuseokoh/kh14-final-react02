@@ -30,7 +30,7 @@ const Progress = styled.div`
 `;
 
 
-const MyPage = () => {
+const Profile = () => {
     const { t } = useTranslation();
     const [member, setMember] = useState({});
     const [image, setImage] = useState(null);
@@ -40,16 +40,16 @@ const MyPage = () => {
     const login = useRecoilValue(loginState);
 
 
-    const loadMember = useCallback(async () => {
+    const loadMember = useCallback(async (friend) => {
         try {
-            const resp = await axios.get("http://localhost:8080/member/");
-            console.log("Member data received:", resp.data); // 데이터 출력
+            const resp = await axios.get(`http://localhost:8080/member/${friend.friendTo}`);
             setMember(resp.data);
         } catch (error) {
             console.error("Error loading member data:", error);
         }
     }, []);
 
+    
     const loadImage = useCallback(async (memberId) => {
         try {
             const resp = await axios.get(`/member/image/${memberId}`);
@@ -88,7 +88,7 @@ const MyPage = () => {
             await axios.delete(`/member/delete/${member.memberId}`);
             navigate("/"); // 삭제 후 메인 페이지로 이동
             logout("/");
-
+            
         } catch (error) {
             console.error("Error deleting member:", error);
         }
@@ -156,7 +156,7 @@ const MyPage = () => {
                         {t(`levels.${levelInfo.level}`).toUpperCase()}
                     </div>
                     <div>
-
+                        
                         {/* Progress bar */}
                         <ProgressBar>
                             <Progress width={progressPercentage}>
@@ -190,7 +190,7 @@ const MyPage = () => {
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
                 <button
                     className={styles.editButton}
-                    onClick={() => navigate(`/member/mypageedit`)}  // memberId 없이 수정 페이지로 이동
+                    onClick={() => navigate(`/member/mypageedit/${memberId}`)}
                 >
                     {t("edit")}
                 </button>
@@ -207,4 +207,4 @@ const MyPage = () => {
     );
 };
 
-export default MyPage;
+export default Profile;
