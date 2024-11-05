@@ -236,7 +236,7 @@ const Menu = () => {
 
                             {login ? (<>
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="/member/mypage/:memberId">
+                                <NavLink className="nav-link" to="/member/mypage/">
                                     {memberId} ({memberLevel})
                                 </NavLink>
                             </li>

@@ -219,12 +219,15 @@ const ShoppingCart = () => {
               </div>
               <div className={styles.actionButtons}>
                 {libList.includes(cart.gameNo) ? (
+                  <>
                   <button
-                    className={styles.wishlist_cart_button}
+                    className={styles.giftButton}
                     onClick={() => navigate(`/play/${cart.gameNo}`)}
                   >
                     플레이하기
                   </button>
+                  <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
+                  </>
                 ) : (
                   <>
                     <button className={styles.giftButton}>선물용</button>

@@ -74,8 +74,8 @@ const MainContent = () => {
                         {/* 프라이빗 라우터 적용 */}
                         <Route path="/game/add" element={<PrivateRoute element={<GameAdd />} />} />
                         <Route path="/game/edit/:gameNo" element={<PrivateRoute element={<GameEdit />} />} />
-                        <Route path="/member/mypage/:memberId" element={<PrivateRoute element={<MyPage />} />} />
-                        <Route path="/member/mypageedit/:memberId" element={<PrivateRoute element={<MyPageEdit />} />} />
+                        <Route path="/member/mypage" element={<PrivateRoute element={<MyPage />} />} />
+                        <Route path="/member/mypageedit" element={<PrivateRoute element={<MyPageEdit />} />} />
                         <Route path="/cancel-payment/detail/:paymentNo" element={<PrivateRoute element={<CancelPaymentPage />} />} />
                         <Route path="/cart/success/:partnerOrderId" element={<PrivateRoute element={<PaymentSuccessPage />} />} />
                         <Route path="/friend/list" element={<PrivateRoute element={<FriendList />} />} />
