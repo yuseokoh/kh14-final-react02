@@ -20,7 +20,7 @@ i18n
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
     },
-    debug: true, // 디버깅 활성화 (optional)
+    debug: false, // 디버깅 활성화 (optional)
     interpolation: {
       escapeValue: false,
     },
