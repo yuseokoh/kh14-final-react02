@@ -33,13 +33,9 @@ function KakaoLoginPage() {
       .then(response => {
         console.log("응답 데이터: ", response.data); 
       
-        const accessToken = response.data.accessToken;
-        const jwtToken = response.data.jwtToken;
-        const refreshToken = response.data.refreshToken;
-        const emailRequired = response.data.emailRequired;
-        const kakaoId = response.data.kakaoId;
-        const nickname = response.data.nickname;
-        
+      // 응답에서 필요한 데이터 추출
+      const { accessToken, jwtToken, refreshToken, emailRequired, kakaoId, nickname } = response.data;
+
         console.log("Access Token:", accessToken);
         console.log("JWT Token:", jwtToken);
         console.log("Refresh Token:", refreshToken);

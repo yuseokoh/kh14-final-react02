@@ -58,6 +58,8 @@ import MyPageEdit from "./member/MyPageEdit";
 import Ranking from "./play/Ranking";
 import Chat from "./chat/Chat";
 import WebsocketClient from "./websocket/WebsocketClient";
+import KakaoLoginPage2 from "./member/KakaoLoginPage2";
+import KakaoLoginPage2Proceed from "./member/KakaoLoginPage2Proceed";
 
 
 
@@ -142,6 +144,8 @@ const MainContent = () => {
                     <Route path="/member/signup" element={<SingUp />} />
                     {/* 카카오로그인 테스트 */}
                     <Route path="/member/KakaoLoginPage" element={<KakaoLoginPage />} />
+                    <Route path="/member/KakaoLoginPage2" element={<KakaoLoginPage2 />} />
+                    <Route path="/member/KakaoLoginPage2Proceed" element={<KakaoLoginPage2Proceed/>} />
                     <Route path="/member/KakaoEmail" element={<KakaoEmail/>}/>
                     {/* 찜 */}
                     <Route path="/wishlist" element={<WishList />} />

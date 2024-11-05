@@ -47,53 +47,45 @@ const Menu = () => {
     //     navigate("/");
     // }, [memberId, memberLevel]);
 
-    // 로그아웃 기능 수정
-    const logout = useCallback((e) => {
-        // recoil에 저장된 memberId와 memberLevel을 제거
-        setMemberId("");
-        setMemberLevel("");
-        setKakaoId("");
-        setKakaoAccessToken("");
+// 로그아웃 기능 
+const logout = useCallback(() => {
+    // Recoil에 저장된 상태를 초기화
+    setMemberId(""); // memberIdState 초기화
+    setMemberLevel(""); // memberLevelState 초기화
+    setKakaoId(""); // kakaoIdState 초기화
+    setKakaoAccessToken(""); // kakaoAccessTokenState 초기화
 
+    // axios에 설정된 Authorization 헤더 제거
+    delete axios.defaults.headers.common["Authorization"];
 
-        // axios에 설정된 Authorization 헤더도 제거
-        delete axios.defaults.headers.common["Authorization"];
+    // LocalStorage, SessionStorage의 데이터 삭제
+    window.localStorage.removeItem("refreshToken");
+    window.sessionStorage.removeItem("refreshToken");
+    window.localStorage.removeItem("jwtToken");
+    window.localStorage.removeItem("kakaoAccessToken");
+    window.localStorage.removeItem("kakaoId");
 
-        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
-        window.localStorage.removeItem("refreshToken");
-        window.sessionStorage.removeItem("refreshToken");
-        window.localStorage.removeItem("jwtToken");
-        window.localStorage.removeItem("kakaoAccessToken");
-        window.localStorage.removeItem("kakaoId");
+    // 카카오 로그아웃 요청
+    const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
+    if (kakaoAccessToken) {
+        axios.get("https://kapi.kakao.com/v1/user/logout", {
+            headers: {
+                Authorization: `Bearer ${kakaoAccessToken}`
+            }
+        })
+        .then(response => {
+            console.log("카카오 로그아웃 성공", response);
+        })
+        .catch(error => {
+            console.error("카카오 로그아웃 실패", error);
+        });
+    }
 
+    // 페이지 이동
+    navigate("/");
+}, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, navigate]);
 
-        // 카카오 로그인 관련 토큰 제거
-        const kakaoAccessToken = window.localStorage.getItem("kakaoAccessToken");
-        if (kakaoAccessToken) {
-            // 카카오 로그아웃 요청 부분 수정
-            axios.get("https://kapi.kakao.com/v1/user/logout", {
-                headers: {
-                    Authorization: `Bearer ${kakaoAccessToken}`
-                }
-            })
-
-                .then(response => {
-                    console.log("카카오 로그아웃 성공", response);
-                    // 로그아웃 후 localStorage에서 카카오 관련 정보 삭제
-                    window.localStorage.removeItem("kakaoAccessToken");
-                    window.localStorage.removeItem("kakaoId");
-                })
-                .catch(error => {
-                    console.error("카카오 로그아웃 실패", error);
-                });
-        } else {
-            console.warn("카카오 액세스 토큰이 없습니다.");
-        }
-
-        // 페이지 이동
-        navigate("/");
-    }, [setMemberId, setMemberLevel, setKakaoId, setKakaoAccessToken, kakaoAccessToken, navigate]);
-
+   
     //view
     return (
         <>
