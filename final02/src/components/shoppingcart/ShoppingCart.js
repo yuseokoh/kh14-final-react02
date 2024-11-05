@@ -32,7 +32,7 @@ const ShoppingCart = () => {
       console.error("Error loading library list:", error);
     }
   }, []);
-  
+
 
   const loadCartList = useCallback(async () => {
     try {
@@ -42,26 +42,26 @@ const ShoppingCart = () => {
         index === self.findIndex((c) => c.gameNo === cart.gameNo)
       );
       setCartList(uniqueCartList);
-  
+
       const total = uniqueCartList.reduce((sum, cart) => sum + (cart.gamePrice || 0), 0);
       setTotalPrice(total);
     } catch (error) {
       console.error("Error loading cart list", error);
     }
   }, []);
-  
+
 
   //게임 리스트 로드
   const loadGameList = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
       console.log("게임 목록 데이터:", response.data);
-  
+
       // 배열을 섞는 함수
       const shuffleArray = (array) => {
         return array.sort(() => Math.random() - 0.5);
       };
-  
+
       const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
       setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
     } catch (error) {
@@ -108,8 +108,8 @@ const ShoppingCart = () => {
     }
     // 특정 조건이나 디버깅 로그 추가로 확인할 수 있음
     console.log('useEffect 호출됨: Cart, Library, Game 목록 로드');
-  }, [login, memberId]); 
-  
+  }, [login, memberId]);
+
 
   useEffect(() => {
     if (cartList.length > 0) {
@@ -120,7 +120,7 @@ const ShoppingCart = () => {
   const getCurrentUrl = useCallback(() => {
     const basePath = window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     return `${window.location.origin}${basePath}`;
-}, []);
+  }, []);
 
 
   const handleItemSelection = (cartId) => {
@@ -219,21 +219,8 @@ const ShoppingCart = () => {
                 >{cart.gameTitle}</h4>
                 <p className={styles.gamePrice}>{(cart.gamePrice || 0).toLocaleString()}₩</p>
               </div>
-              <div className={styles.actionButtons}>
-                {libList.includes(cart.gameNo) ? (
-                  <button
-                    className={styles.wishlist_cart_button}
-                    onClick={() => navigate(`/play/${cart.gameNo}`)}
-                  >
-                   {t("shoppingCart.play")}
-                  </button>
-                ) : (
-                  <>
-                    <button className={styles.giftButton}>{t("shoppingCart.giftOption")}</button>
-                    <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>  {t("shoppingCart.remove")}</button>
-                  </>
-                )}
-              </div>
+                    <button className={styles.giftButton}>선물용</button>
+                    <button className={styles.removeButton} onClick={() => delCart(cart.gameNo)}>제거</button>
             </div>
           ))
         )}
