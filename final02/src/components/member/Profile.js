@@ -66,33 +66,7 @@ const Profile = () => {
         }
     }, [targetId]);
 
-    const logout = useCallback((e) => {
-        // recoil에 저장된 memberId와 memberLevel을 제거
-        setMemberId("");
-        setMemberLevel("");
-
-        // axios에 설정된 Authorization 헤더도 제거
-        delete axios.defaults.headers.common["Authorization"];
-
-        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
-        window.localStorage.removeItem("refreshToken");
-        window.sessionStorage.removeItem("refreshToken");
-
-        // 페이지 이동
-        navigate("/");
-    }, [setMemberId, setMemberLevel, , , , navigate]);
-
-    const delmember = useCallback(async () => {
-        try {
-            await axios.delete(`/member/delete/${member.memberId}`);
-            navigate("/"); // 삭제 후 메인 페이지로 이동
-            logout("/");
-            
-        } catch (error) {
-            console.error("Error deleting member:", error);
-        }
-    }, [member.memberId, navigate]);
-
+    
     useEffect(() => {
         if (targetId === null) return; 
             loadMember();

@@ -328,9 +328,15 @@ const Menu = () => {
                             </>)}
                             {/* 모달을 열기 위한 버튼 */}
             <li className="nav-item">
-                                    <button className="btn btn-link nav-link" onClick={openModal}>
+            {!isModalOpen?(
+                                <button className="btn btn-link nav-link" onClick={openModal}>
                                         친구
                                     </button>
+                                    ):(
+                                        <button className="btn btn-link nav-link" onClick={closeModal}>
+                                        친구
+                                    </button>
+                                    )}
                                 </li>
             {/* 모달 컴포넌트 */}
             <Modal
@@ -348,6 +354,7 @@ const Menu = () => {
                                             border: 'none', 
                                             backgroundColor: '#141d29', 
                                             zIndex: '9999', 
+                                            minWidth: '420px',
                                         },
                                         overlay: {
                                             backgroundColor: 'rgba(0, 0, 0, 0.75)', 
@@ -357,8 +364,10 @@ const Menu = () => {
                                     <FriendList />
                                     <button onClick={closeModal}>닫기</button>
                                 </Modal>
+                                <li>
+                                    <LanguageSelector />
+                                </li>
                         </ul>
-                        <LanguageSelector />
                         
                     </div>
                 </div>
