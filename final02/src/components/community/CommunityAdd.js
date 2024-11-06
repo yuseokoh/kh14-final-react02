@@ -3,6 +3,7 @@ import Jumbotron from "../Jumbotron";
 import { useCallback, useState } from 'react';
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify"; 
+import './CommunityAdd.css'; 
 
 const CommunityAdd = () => {
     const navigate = useNavigate();
@@ -10,7 +11,7 @@ const CommunityAdd = () => {
     // 게시글 및 파일 관련 상태
     const [input, setInput] = useState({
         communityTitle: "",
-        communityState: "",
+        // communityState: "",
         communityCategory: "자유",  
         communityContent: ""
     });
@@ -81,28 +82,30 @@ const CommunityAdd = () => {
     // 화면 렌더링
     return (
         <>
-            <Jumbotron title="게시글 등록" />
+        <hr></hr>
+            {/* <Jumbotron title="게시글 등록" /> */}
 
-            <div className="row mt-4">
-                <div className="col">
+                    {/* <div className="row mt-4">
+                        <div className="col">
+                            <label>상태</label>
+                            <select name="communityState" className="form-control" value={input.communityState} onChange={changeInput}>
+                                <option value="public">공개</option>
+                                <option value="private">비공개</option>
+                            </select>
+                        </div>
+                    </div> */}
+                    <div className="kjhadd-container">
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>제목</label>
-                    <input type="text" name="communityTitle" className="form-control"
+                    <input type="text" name="communityTitle" className="kjhinput"
                         value={input.communityTitle} onChange={changeInput} />
                 </div>
             </div>
-            {/* <div className="row mt-4">
-                <div className="col">
-                    <label>상태</label>
-                    <select name="communityState" className="form-control" value={input.communityState} onChange={changeInput}>
-                        <option value="public">공개</option>
-                        <option value="private">비공개</option>
-                    </select>
-                </div>
-            </div> */}
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>카테고리</label>
-                    <select name="communityCategory" className="form-control" value={input.communityCategory} onChange={changeInput}>
+                    <select name="communityCategory" className="kjhinput" value={input.communityCategory} onChange={changeInput}>
                         <option value="자유">자유</option>
                         <option value="질문">질문</option>
                         <option value="공략">공략</option>
@@ -110,24 +113,24 @@ const CommunityAdd = () => {
                     </select>
                 </div>
             </div>
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>내용</label>
-                    <textarea name="communityContent" className="form-control"
+                    <textarea name="communityContent" className="kjhtextarea" style={{resize:"none" ,minHeight:"200px"}}
                         value={input.communityContent} onChange={changeInput} />
                 </div>
             </div>
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow">
+                <div className="kjhcol">
                 <label>파일 첨부</label>
-                    <input type="file" multiple onChange={changeFiles} className="form-control" />
+                    <input type="file" multiple onChange={changeFiles} className="kjhinput" />
                     <div className="mt-2">
                         {previewUrls.map((url, index) => (
                             <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
                                 <img src={url} alt="미리보기" style={{ maxWidth: "100px", maxHeight: "100px" }} />
                                 <button
                                     type="button"
-                                    className="btn btn-sm btn-danger"
+                                    className="kjhbtn kjhbtn-danger"
                                     onClick={() => removePreview(index)}
                                     style={{ position: 'absolute', top: '0', right: '0' }}
                                 >
@@ -136,20 +139,22 @@ const CommunityAdd = () => {
                             </div>
                         ))}
                     </div>
+                </div>  
+            </div>
+            
+
+            <div className="kjhrow">
+                <div className="kjhcol kjhtext-center">
+                <span className="kjhmessage">{message}</span>
+                </div>
+            </div>  
+
+            <div className="kjhrow">
+                <div className="kjhcol kjhtext-center">
+                    <button type="button" className="kjhbtn kjhbtn-register" onClick={saveCommunity}>등록</button>
+                    <button type="button" className="kjhbtn kjhbtn-list ms-2" onClick={() => navigate("/community/list")}>목록</button>
                 </div>
             </div>
-
-            <div className="row">
-                <div className="col text-danger text-center">
-                    {message}
-                </div>
-            </div>
-
-            <div className="row mt-4">
-                <div className="col text-center">
-                    <button type="button" className="btn btn-lg btn-success" onClick={saveCommunity}>등록</button>
-                    <button type="button" className="btn btn-lg btn-secondary ms-2" onClick={() => navigate("/community/list")}>목록</button>
-                </div>
             </div>
         </>
     );

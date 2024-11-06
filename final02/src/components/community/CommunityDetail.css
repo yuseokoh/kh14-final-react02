@@ -1,0 +1,157 @@
+/* 상세 페이지 전체 컨테이너 */
+.kjh99detail-container {
+    background-color: #1b2838;
+    color: #c7d5e0;
+    padding: 20px;
+    border-radius: 0px;
+    max-width: 800px;
+    margin: auto;
+    overflow-y: auto; /* 스크롤 가능하도록 설정 */
+}
+
+/* 제목, 작성자, 카테고리, 내용 섹션 */
+.kjh99row {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.kjh99col-title {
+    width: 15%;
+    font-weight: bold;
+}
+
+.kjh99col-content {
+    width: 85%;
+}
+
+.kjh99col-time {
+    width: 100%;
+    text-align: end;
+    font-size: 12px;
+    color: #99aab5;
+}
+
+/* 이미지 섹션 */
+.kjh99image-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.kjh99community-image {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid #2a475e;
+}
+
+/* 버튼 스타일 */
+.kjh99button-section {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.kjh99button {
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+}
+
+.kjh99list-button {
+    background-color: #5a6971;
+    color: white;
+}
+
+.kjh99edit-button {
+    background-color: #c67c00;
+    color: white;
+}
+
+.kjh99delete-button {
+    background-color: #b71c1c;
+    color: white;
+}
+
+/* 좋아요 / 싫어요 버튼 */
+.kjh99like-button, .kjh99dislike-button {
+    background-color: #2b3e50;
+    color: white;
+    margin-left: 10px;
+}
+
+.kjh99like-button-active {
+    background-color: #2b5d8a;
+}
+
+.kjh99dislike-button-active {
+    background-color: #8a2b2b;
+}
+
+/* 댓글 입력 및 리스트 스타일 */
+.kjh99reply-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.kjh99reply-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #2a475e;
+    background-color: #1b2838;
+    color: #c7d5e0;
+}
+
+.kjh99reply-button {
+    background-color: #5c7e10;
+    color: white;
+}
+
+/* 댓글 스타일 */
+.kjh99reply-container {
+    background-color: #273746;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    color: #c7d5e0;
+    position: relative;
+}
+
+.kjh99reply-writer {
+    font-weight: bold;
+}
+
+.kjh99reply-time {
+    font-size: 12px;
+    color: #99aab5;
+}
+
+.kjh99reply-content {
+    margin-top: 8px;
+    color: #dcdcdc;
+    
+}
+
+.kjh99reply-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 8px;
+    bottom: 10px; /* 아래쪽에 위치 */
+    right: 10px; /* 오른쪽에 위치 */
+}
+
+.kjh99community-image {
+    width: 200px; /* 원하는 너비로 설정 */
+    height: 200px; /* 원하는 높이로 설정 */
+    object-fit: cover; /* 이미지 비율을 유지하면서 영역에 맞춰 자르기 */
+    border-radius: 4px;
+    border: 1px solid #2a475e;
+    margin-top: 10px; /* 내용과 이미지 사이 간격 */
+}

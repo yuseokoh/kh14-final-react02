@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
 import Jumbotron from "../Jumbotron";
+import './CommunityAdd.css'; 
 
 const CommunityEdit = () => {
     const { communityNo } = useParams();
@@ -119,16 +120,16 @@ const CommunityEdit = () => {
 
     return (community !== null ? (
         <>
-            <Jumbotron title={`${community.communityNo}번 글 수정`} />
+            {/* <Jumbotron title={`${community.communityNo}번 글 수정`} /> */}
 
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>제목</label>
-                    <input type="text" name="communityTitle" className="form-control"
+                    <input type="text" name="communityTitle" className="kjhinput"
                         value={community.communityTitle} onChange={changeCommunity} />
                 </div>
             </div>
-            <div className="row mt-4">
+            {/* <div className="row mt-4">
                 <div className="col">
                     <label>상태</label>
                     <select name="communityState" className="form-control"
@@ -137,11 +138,11 @@ const CommunityEdit = () => {
                         <option value="private">비공개</option>
                     </select>
                 </div>
-            </div>
-            <div className="row mt-4">
-                <div className="col">
+            </div> */}
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>카테고리</label>
-                    <select name="communityCategory" className="form-control"
+                    <select name="communityCategory" className="kjhinput"
                         value={community.communityCategory} onChange={changeCommunity} >
                         <option value="자유">자유</option>
                         <option value="질문">질문</option>
@@ -150,33 +151,24 @@ const CommunityEdit = () => {
                     </select>
                 </div>
             </div>
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow">
+                <div className="kjhcol">
                     <label>내용</label>
-                    <textarea name="communityContent" className="form-control"
+                    <textarea name="communityContent" className="kjhtextarea" style={{resize:"none" ,minHeight:"200px"}}
                         value={community.communityContent} onChange={changeCommunity} />
                 </div>
             </div>
 
             {/* Existing Images */}
             {existingImages.length > 0 && (
-                <div className="row mt-4">
-                    <div className="col">
+                <div className="kjhrow">
+                    <div className="kjhcol">
                         <label>기존 첨부 이미지</label>
-                        <div>
+                        <div className="kjhexisting-images">
                             {existingImages.map(image => (
-                                <div key={image.attachmentNo} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
-                                    <img
-                                        src={`http://localhost:8080/community/download/${image.attachmentNo}`}
-                                        alt={`Attachment ${image.attachmentNo}`}
-                                        style={{ maxWidth: "100px", maxHeight: "100px" }}
-                                    />
-                                    <button 
-                                        type="button" 
-                                        className="btn btn-sm btn-danger" 
-                                        onClick={() => handleExistingImageDelete(image.attachmentNo)}
-                                        style={{ position: 'absolute', top: '0', right: '0' }}
-                                    >
+                                 <div key={image.attachmentNo} className="kjhimage-container">
+                                 <img src={`http://localhost:8080/community/download/${image.attachmentNo}`} alt={`Attachment ${image.attachmentNo}`} className="kjhimage-preview" />
+                                 <button type="button" className="kjhbtn kjhbtn-danger" onClick={() => handleExistingImageDelete(image.attachmentNo)}>
                                         삭제
                                     </button>
                                 </div>
@@ -187,20 +179,15 @@ const CommunityEdit = () => {
             )}
 
             {/* New File Upload */}
-            <div className="row mt-4">
-                <div className="col">
+            <div className="kjhrow ">
+                <div className="kjhcol">
                     <label>새 파일 첨부</label>
-                    <input type="file" className="form-control" onChange={handleFileChange} multiple />
+                    <input type="file" className="kjhinput" onChange={handleFileChange} multiple />
                     <div className="mt-2">
                         {previewUrls.map((url, index) => (
-                            <div key={index} style={{ position: 'relative', display: 'inline-block', margin: '5px' }}>
-                                <img src={url} alt="미리보기" style={{ maxWidth: "100px", maxHeight: "100px" }} />
-                                <button
-                                    type="button"
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => removeImage(index)}
-                                    style={{ position: 'absolute', top: '0', right: '0' }}
-                                >
+                            <div key={index} className="kjhimage-container">
+                                <img src={url} alt="미리보기" className="kjhimage-preview"/>
+                                <button type="button" className="kjhbtn kjhbtn-danger" onClick={() => removeImage(index)}>
                                     삭제
                                 </button>
                             </div>
@@ -209,16 +196,16 @@ const CommunityEdit = () => {
                 </div>
             </div>
 
-            <div className="row mt-4">
-                <div className="col text-danger text-center">
+            <div className="kjhrow">
+                <div className="kjhcol text-danger text-center">
                     {message}
                 </div>
             </div>
 
-            <div className="row mt-4">
-                <div className="col text-center">
-                    <button type="button" className="btn btn-lg btn-success" onClick={updateCommunity}>수정</button>
-                    <button type="button" className="btn btn-lg btn-secondary ms-2" onClick={() => navigate("/community/list")}>목록</button>
+            <div className="kjhrow">
+                <div className="kjhcol text-center">
+                    <button type="button" className="kjhbtn kjhbtn-register" onClick={updateCommunity}>수정</button>
+                    <button type="button" className="kjhbtn kjhbtn-list ms-2" onClick={() => navigate("/community/list")}>목록</button>
                 </div>
             </div>
         </>

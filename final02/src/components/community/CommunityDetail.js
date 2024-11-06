@@ -9,6 +9,8 @@ import momentTimezone from 'moment-timezone';
 import { toast, ToastContainer } from "react-toastify";
 import { loginState, memberIdState, memberLoadingState } from "../../utils/recoil";
 import { useRecoilValue } from "recoil";
+import './CommunityDetail.css'; 
+
 
 
 //시간
@@ -237,159 +239,111 @@ const CommunityDetail = () => {
     if (community === null) return <Navigate to="/notFound" />;
 
     return (
-        <div key={key}>
-            <Jumbotron title={`${communityNo}번 글 상세정보`} />
-            <div className="row mt-4" ref={titleRef}>
-                <div className="col-sm-3">제목</div>
-                <div className="col-sm-7">{community.communityTitle}</div>
-                <div className="col-sm-2 text-end">
-                    <span>
-                        {community.communityUtime 
-                            ? formatDate(community.communityUtime, true) 
-                            : formatDate(community.communityWtime)}
-                    </span>
-                    </div>
-            </div>
+        <div key={key} className="kjh99detail-container">
+    {/* 제목 */}
+    <div className="kjh99row">
+        <div className="kjh99col-title">제목</div>
+        <div className="kjh99col-content">{community.communityTitle}</div>
+        <div className="kjh99col-time">
+            {community.communityUtime 
+                ? formatDate(community.communityUtime, true) 
+                : formatDate(community.communityWtime)}
+        </div>
+    </div>
 
-            
+    {/* 작성자, 카테고리, 내용 */}
+    <div className="kjh99row">
+        <div className="kjh99col-title">작성자</div>
+        <div className="kjh99col-content">{community.communityWriter}</div>
+    </div>
+    <div className="kjh99row">
+        <div className="kjh99col-title">카테고리</div>
+        <div className="kjh99col-content">{community.communityCategory}</div>
+    </div>
+    <div className="kjh99row">
+        <div className="kjh99col-title">내용</div>
+        <div className="kjh99col-content-with-image"></div>
+        <div className="kjh99col-content">{community.communityContent}</div>
+    </div>
 
-            {/* <div className="row mt-4" ref={titleRef}>
-                <div className="col-sm-3">제목</div>
-                <div className="col-sm-9">{community.communityTitle}</div>
-            </div> */}
-            <div className="row mt-4">
-                <div className="col-sm-3">작성자</div>
-                <div className="col-sm-9">{community.communityWriter}</div>
-            </div>
-            {/* <div className="row mt-4">
-                <div className="col-sm-3">상태</div>
-                <div className="col-sm-9">{community.communityState}</div>
-            </div> */}
-            <div className="row mt-4">
-                <div className="col-sm-3">카테고리</div>
-                <div className="col-sm-9">{community.communityCategory}</div>
-            </div>
-            <div className="row mt-4">
-                <div className="col-sm-3">내용</div>
-                <div className="col-sm-9">{community.communityContent}</div>
-            </div>
-
-            {/* 이미지 표시 영역 */}
-            {communityImageList.length > 0 && (
-    <div className="row mt-4">
-        <div className="col-sm-3">첨부 이미지</div>
-        <div className="col-sm-9">
+    {/* 이미지 표시 영역 */}
+    {communityImageList.length > 0 && (
+        <div className="kjh99image-section">
             {communityImageList.map((image) => (
                 <img
                     key={image.attachmentNo}
-                    src={`http://localhost:8080/community/download/${image.attachmentNo}`} // 서버의 URL을 명시적으로 포함
+                    src={`http://localhost:8080/community/download/${image.attachmentNo}`}
                     alt={`Community Image ${image.attachmentNo}`}
-                    style={{ maxWidth: "100%", marginBottom: "10px" }}
+                    className="kjh99community-image"
                 />
             ))}
         </div>
-    </div>
-)}
+    )}
 
-            <div className="row mt-4">
-                <div className="col text-end">
-                    <button className="btn btn-secondary ms-2" onClick={() => navigate("/community/list")}>목록</button>
-                    
-                    {/* <button className="btn btn-warning ms-2" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
-                    <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button> */}
-                    { community&&community.communityWriter === memberId && (
-                        <>
-                            <button className="btn btn-warning ms-2" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
-                            <button className="btn btn-danger ms-2" onClick={deleteCommunity}>삭제하기</button>
-                        </>
+    {/* 버튼 섹션 */}
+    <div className="kjh99button-section">
+        <button className="kjh99button kjh99list-button" onClick={() => navigate("/community/list")}>목록</button>
+        {community && community.communityWriter === memberId && (
+            <>
+                <button className="kjh99button kjh99edit-button" onClick={() => navigate(`/community/edit/${communityNo}`)}>수정하기</button>
+                <button className="kjh99button kjh99delete-button" onClick={deleteCommunity}>삭제하기</button>
+            </>
+        )}
+    </div>
+
+    {/* 댓글 작성 및 좋아요 / 싫어요 버튼 */}
+    <div className="kjh99reply-section">
+        <input type="text" name="replyContent" className="kjh99reply-input"
+            value={replyInput} onChange={e => setReplyInput(e.target.value)} />
+        <button className="kjh99button kjh99reply-button" onClick={insertReply}>작성하기</button>
+        <button
+            className={`kjh99button ${isLiked ? "kjh99like-button-active" : "kjh99like-button"}`}
+            onClick={handleLike}
+        >
+            좋아요 {likeCount}
+        </button>
+        <button
+            className={`kjh99button ${isDisliked ? "kjh99dislike-button-active" : "kjh99dislike-button"}`}
+            onClick={handleDislike}
+        >
+            싫어요 {dislikeCount}
+        </button>
+    </div>
+
+    {/* 댓글 리스트 */}
+    {result.replyList.map((reply, index) => (
+        <div className="kjh99reply-container" key={`${reply.replyNo}-${index}`}>
+            <div className="kjh99reply-writer">{reply.replyWriter}</div>
+            <div className="kjh99reply-time">
+                {reply.replyUtime 
+                    ? formatDate(reply.replyUtime, true) 
+                    : formatDate(reply.replyWtime)}
+            </div>
+            <div className="kjh99reply-content">
+                {replyEditId === reply.replyNo ? (
+                    <input
+                        type="text"
+                        value={editedContent}
+                        onChange={(e) => setEditedContent(e.target.value)}
+                        className="kjh99reply-edit-input"
+                    />
+                ) : (
+                    reply.replyContent
+                )}
+            </div>
+            {reply.replyWriter === memberId && (
+                <div className="kjh99reply-buttons">
+                    <button className="kjh99button kjh99delete-button" onClick={() => deleteReply(reply.replyNo)}>삭제</button>
+                    {replyEditId === reply.replyNo ? (
+                        <button className="kjh99button kjh99confirm-button" onClick={() => updateReply(reply.replyNo)}>완료</button>
+                    ) : (
+                        <button className="kjh99button kjh99edit-button" onClick={() => { setReplyEditId(reply.replyNo); setEditedContent(reply.replyContent); }}>수정</button>
                     )}
                 </div>
-            </div>
-            
-
-            <div className="row mt-4">
-                <div className="col">
-                    <input type="text" name="replyContent" className="form-control"
-                        value={replyInput} onChange={e => setReplyInput(e.target.value)} />
-                    <button className="btn btn-success placeholder col-2 ms-2" onClick={insertReply}>작성하기</button>
-                    <button
-                        className={`btn ms-2 ${isLiked ? "btn-primary" : "btn-outline-primary"}`}
-                        onClick={handleLike}
-                    >
-                        좋아요 {likeCount}
-                    </button>
-                    <button
-                        className={`btn ms-2 ${isDisliked ? "btn-danger" : "btn-outline-danger"}`}
-                        onClick={handleDislike}
-                    >
-                        싫어요 {dislikeCount}
-                    </button>
-                </div>
-            </div>
-
-            {result.replyList.map((reply, index) => (
-                <div className="row mt-4" key={`${reply.replyNo}-${index}`} style={{ position: 'relative' }}>
-                    <div className="col">
-                        <div className="row">
-                            <div className="col-3">작성자</div>
-                            <div className="col-9">{reply.replyWriter}</div>
-                        </div>
-                        <div className="row">
-                            <div className="col-3">작성시간</div>
-                            <div className="col-9">
-                                {/* {reply.replyWtime} {reply.replyUtime ? `(${reply.replyUtime} 수정됨)` : ""} */}
-                                {reply.replyUtime 
-                                    ? formatDate(reply.replyUtime, true) 
-                                    : formatDate(reply.replyWtime)}
-                            </div>
-                        </div>
-                        <div className="row">
-                            <div className="col-3">작성내용</div>
-                            <div className="col-9">
-                                {replyEditId === reply.replyNo ? (
-                                    <input
-                                        type="text"
-                                        value={editedContent}
-                                        onChange={(e) => setEditedContent(e.target.value)}
-                                        className="form-control"
-                                    />
-                                ) : (
-                                    reply.replyContent
-                                )}
-                            </div>
-                        </div>
-                        {reply.replyWriter ===memberId && (
-                            <>
-                                <button
-                                    onClick={() => deleteReply(reply.replyNo)}
-                                    className="btn btn-danger"
-                                    style={{ position: 'absolute', top: '10px', right: '10px' }}
-                                >
-                                    삭제
-                                </button>
-                                {replyEditId === reply.replyNo ? (
-                                    <button
-                                        onClick={() => updateReply(reply.replyNo)}
-                                        className="btn btn-primary"
-                                        style={{ position: 'absolute', top: '10px', right: '80px' }}
-                                    >
-                                        완료
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={() => { setReplyEditId(reply.replyNo); setEditedContent(reply.replyContent); }}
-                                        className="btn btn-secondary"
-                                        style={{ position: 'absolute', top: '10px', right: '80px' }}
-                                    >
-                                        수정
-                                    </button>
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
-            ))}
+            )}
         </div>
+    ))}
+</div>
     );
 };
 

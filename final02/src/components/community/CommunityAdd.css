@@ -1,0 +1,109 @@
+/* Basic Reset for Rows and Columns */
+.kjhrow {
+    display: flex;
+    justify-content: center;
+    background-color: #2c3e50;
+    padding: 0.5rem 0;
+    border-radius: 0;
+    margin: 0;
+}
+
+.kjhcol {
+    width: 50%;
+    padding: 0.5rem;
+}
+
+/* Label Styling */
+.kjhcol label {
+    display: block;
+    font-size: 0.9rem;
+    color: #c7d5e0;
+    margin-bottom: 0.3rem; /* Space between label and input */
+}
+
+/* Input, Select, and Textarea Styling */
+.kjhinput, .kjhtextarea, .kjhselect {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #1b2838;
+    color: #c7d5e0;
+    border: 1px solid #2a475e;
+    border-radius: 4px;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.kjhtextarea {
+    min-height: 100px;
+    resize: none;
+}
+
+/* Button Styling */
+.kjhbtn {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+.kjhbtn-register {
+    background-color: #5c7e10;
+    color: white;
+}
+
+.kjhbtn-list {
+    background-color: #5a6971;
+    color: white;
+}
+
+.kjhbtn-danger {
+    background-color: #c23b22;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* Existing and Preview Images Styling */
+.kjhexisting-images, .kjhimage-preview {
+    display: inline-block;
+    margin: 5px;
+}
+
+.kjhimage-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.kjhimage-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border: 1px solid #2a475e;
+    border-radius: 4px;
+}
+
+/* Error Message Styling */
+.kjhmessage {
+    color: #e74c3c;
+    text-align: center;
+}
+
+.kjhtext-center {
+    text-align: center;
+}
+
+/* Header and Footer */
+.kjhheader, .kjhfooter {
+    background-color: #171a21;
+    color: #c7d5e0;
+    padding: 1rem;
+    text-align: center;
+}
+
+/* Form Wrapper */
+.kjhadd-container {
+    background-color: #2c3e50;
+    margin: 0;
+    padding: 1rem;
+}
