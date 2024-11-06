@@ -206,67 +206,56 @@ const CommunityList = () => {
             {/* <Jumbotron title="게임게시판" content="커뮤니티" /> */}
 
             {/* Search Bar */}
-            <div className="kjh-margin kjh-row kjh-search-bar">
-        <div className="kjh-col kjh-input-group">
-            <select className="kjh-form-select" name="column" value={input.column} onChange={changeInput}>
-                <option value="community_title">제목</option>
-                <option value="community_writer">작성자</option>
-            </select>
-            <input type="search" className="kjh-form-control" name="keyword" value={input.keyword} onChange={changeInput} />
-            <button className="kjh-btn kjh-btn-secondary" onClick={setFirstPage}>검색</button>
-        </div>
+            <div className="kjh-margin kjh-row kjh-search-bar container">
+    <div className="kjh-col kjh-input-group" style={{ flexGrow: 1 }}>
+        <select className="kjh-form-select" name="column" value={input.column} onChange={changeInput}>
+            <option value="community_title">제목</option>
+            <option value="community_writer">작성자</option>
+        </select>
+        <input type="search" className="kjh-form-control" name="keyword" value={input.keyword} onChange={changeInput} />
+        <button className="kjh-btn" onClick={setFirstPage}>검색</button>
     </div>
-
-    {/* Post Register Button */}
-    <div className="kjh-col text-end kjh-mt-2">
-        <button className="kjh-btn kjh-btn-primary" onClick={handleRegisterClick}>게시글 등록 <FaPlus /></button>
+    <div className="kjh-col text-end">
+        <button className="kjh-btn" onClick={handleRegisterClick}>게시글 등록 <FaPlus /></button>
     </div>
+</div>
 
-    {/* Post List with Dynamic Card Sizes */}
-    <div className="kjh-grid">
-        {result.communityList.map((community, index) => {
-            // Determine card size class based on content length or presence of image
-            const cardSizeClass = community.imageUrl
-                ? "kjh-card-large"
-                : community.communityContent.length > 100
-                ? "kjh-card-medium"
-                : "kjh-card-small";
+<div className="kjh-grid">
+    {result.communityList.map((community) => {
+        const cardSizeClass = community.imageUrl
+            ? "kjh-card-large"
+            : community.communityContent.length > 100
+            ? "kjh-card-medium"
+            : "kjh-card-small";
 
-            return (
-                <div className={`kjh-card ${cardSizeClass}`} key={community.communityNo} onClick={() => navigate("/community/detail/" + community.communityNo)}>
-                    {/* Image (Only for large cards or posts with images) */}
-                    {community.imageUrl && (
-                        <img src={community.imageUrl} className="kjh-card-img-top" alt="게시글 이미지" />
-                    )}
-                    <div className="kjh-card-body">
-                        {/* Title (Show for larger cards or text-heavy posts) */}
-                        <h5 className="kjh-card-title">{community.communityTitle}</h5>
-                        <div className="kjh-meta-text text-end">
-                            {community.communityUtime ? formatDate(community.communityUtime, true) : formatDate(community.communityWtime)}
-                        </div>
-
-                        {/* Content (Truncated for smaller cards) */}
-                        <div className="kjh-card-text kjh-content-text">
-                            {community.communityContent}
-                        </div>
-
-                        {/* Stats and Writer */}
-                        <div className="kjh-stats-row">
-                            <div className="kjh-col text-start">
-                                <FaThumbsUp /> {community.netLikes}
-                            </div>
-                            <div className="kjh-col text-end">
-                                <FaCommentDots /> {community.communityReplies}
-                            </div>
-                            <div className="kjh-col-12 kjh-writer-text">
-                                {community.communityWriter} 작성자
-                            </div>
-                        </div>
+        return (
+            <div className={`kjh-card ${cardSizeClass}`} key={community.communityNo} onClick={() => navigate("/community/detail/" + community.communityNo)}>
+                {community.imageUrl && (
+                    <img src={community.imageUrl} className="kjh-card-img-top" alt="게시글 이미지" />
+                )}
+                <div className="kjh-card-body">
+                    <h5 className="kjh-card-title">{community.communityTitle}</h5>
+                    <div className="kjh-meta-text">
+                        <span>{community.communityCategory}</span>
+                        <span>{community.communityUtime ? formatDate(community.communityUtime, true) : formatDate(community.communityWtime)}</span>
+                    </div>
+                    <div className="kjh-content-text">
+                        {community.communityContent}
+                    </div>
+                    <div className="kjh-stats-row">
+                        <div><FaThumbsUp /> {community.netLikes}</div>
+                        <div><FaCommentDots /> {community.communityReplies}</div>
+                        <div className="kjh-writer-text">{community.communityWriter} 작성자</div>
                     </div>
                 </div>
-            );
-        })}
-    </div>
+            </div>
+        );
+    })}
+</div>
+
+
+
+
             
         </>
     );
