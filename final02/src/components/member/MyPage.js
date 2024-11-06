@@ -204,7 +204,7 @@ const MyPage = () => {
                     // onClick={() => navigate(`/member/delete/${memberId}`)}
                     onClick={delmember}
                 >
-                    회원탈퇴
+                     {t("exit")}
                 </button>
 
                 <button onClick={handleGoToCancelPage} className={styles.payButton}>

@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { memberIdState } from "../../utils/recoil";
 import styles from './PaymentListPage.module.css';
 import { useTranslation } from 'react-i18next';
-
+import { FaGamepad } from 'react-icons/fa'; // FaGamepad 아이콘 가져오기
 const PaymentListPage = () => {
     const { i18n } = useTranslation(); // i18n 객체 가져오기
     const [payments, setPayments] = useState([]);
@@ -48,13 +48,13 @@ const PaymentListPage = () => {
 
     return (
         <div className={styles.paymentListPage}>
-            <h1>결제 내역</h1>
+             <h1>{memberId}님의 결제 내역</h1> {/* memberId 포함 */}
             {payments.length > 0 ? (
                 <div className={styles.paymentGrid}>
                     {payments.map((payment, index) => (
                         <div key={index} className={styles.paymentCard}>
                             <div className={styles.paymentCardHeader}>
-                                <h4>{payment.paymentName}</h4>
+                            <h4><FaGamepad /> {payment.paymentName}</h4> {/* 아이콘 추가 */}
                             </div>
                             <div className={styles.paymentDetails}>
                                 <span><strong>총액:</strong> 
