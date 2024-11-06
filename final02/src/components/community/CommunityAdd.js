@@ -82,7 +82,7 @@ const CommunityAdd = () => {
     // 화면 렌더링
     return (
         <>
-        <hr></hr>
+       
             {/* <Jumbotron title="게시글 등록" /> */}
 
                     {/* <div className="row mt-4">
@@ -116,7 +116,7 @@ const CommunityAdd = () => {
             <div className="kjhrow">
                 <div className="kjhcol">
                     <label>내용</label>
-                    <textarea name="communityContent" className="kjhtextarea" style={{resize:"none" ,minHeight:"200px"}}
+                    <textarea name="communityContent" className="kjhtextarea" style={{resize:"none" ,minHeight:"250px"}}
                         value={input.communityContent} onChange={changeInput} />
                 </div>
             </div>
