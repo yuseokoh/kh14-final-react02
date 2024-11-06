@@ -1,5 +1,5 @@
 /* App.css 또는 별도의 CSS 파일에 추가 */
-.toast-steam {
+.kjhtoast-steam {
     background-color: #171a21 !important; /* Steam의 진한 파란색 */
     color: #66c0f4 !important; /* Steam의 밝은 하늘색 */
     font-family: Arial, sans-serif !important; /* Steam에 잘 어울리는 기본 글꼴 */
@@ -7,10 +7,120 @@
     border-radius: 8px;
 }
 
-.toast-steam .Toastify__toast-icon svg {
+.kjhtoast-steam .Toastify__toast-icon svg {
     fill: #66c0f4; /* 아이콘 색상도 Steam 스타일에 맞춤 */
 }
 
-.toast-steam .Toastify__close-button {
+.kjhtoast-steam .Toastify__close-button {
     color: #66c0f4; /* 닫기 버튼 색상 */
 }
+/* Basic Reset for Consistency */
+.kjh-row, .kjh-col, .kjh-card, .kjh-btn, .kjh-form-select, .kjh-form-control {
+    margin: 0;
+    padding: 0;
+}
+
+/* Grid Layout for Dynamic Card Sizes */
+.kjh-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+/* General Card Styling */
+.kjh-card {
+    background-color: #1B2838;
+    color: #C7D5E0;
+    border: 1px solid #2A475E;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Large Cards */
+.kjh-card-large {
+    grid-column: span 2;
+    max-height: 400px;
+}
+
+.kjh-card-large .kjh-card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Medium Cards */
+.kjh-card-medium {
+    grid-column: span 1;
+    max-height: 300px;
+}
+
+.kjh-card-medium .kjh-card-img-top {
+    height: 150px;
+    object-fit: cover;
+}
+
+/* Small Cards */
+.kjh-card-small {
+    grid-column: span 1;
+    max-height: 200px;
+}
+
+/* Card Image Styling */
+.kjh-card-img-top {
+    width: 100%;
+    border-bottom: 1px solid #2A475E;
+}
+
+/* Card Body Styling */
+.kjh-card-body {
+    padding: 10px;
+    flex-grow: 1;
+}
+
+/* Title and Meta Text */
+.kjh-card-title {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #66C0F4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 0.5rem;
+}
+
+.kjh-meta-text {
+    font-size: 0.85rem;
+    color: #8F98A0;
+    text-align: right;
+}
+
+/* Content Text Styling */
+.kjh-content-text {
+    font-size: 0.85rem;
+    line-height: 1.2;
+    color: #C7D5E0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Stats and Writer Text */
+.kjh-stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #C7D5E0;
+    margin-top: 5px;
+}
+
+.kjh-writer-text {
+    font-size: 0.75rem;
+    color: #8F98A0;
+}
+
+.kjh-margin{
+    margin-top: 10px;
+}
+
+
