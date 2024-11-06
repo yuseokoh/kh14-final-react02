@@ -9,6 +9,7 @@ import { useRecoilState } from "recoil";
 import { memberIdState, memberLevelState, memberLoadingState, receiverIdState } from "./utils/recoil";
 import axios from "axios";
 import './i18n'; // i18n 초기화 파일 import
+import UseLoginState from "./UseLoginState"; 
 
 //화면 전체에 영향을 미칠 수 있는 작업들을 구현
 //- 새로고침 시 로그인 갱신 처리
@@ -58,6 +59,8 @@ const App = ()=>{
     setMemberLoading(true);
   }, []); 
 
+  
+  UseLoginState();
 
   return (
     <>

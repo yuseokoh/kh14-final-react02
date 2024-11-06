@@ -262,7 +262,13 @@ const Menu = () => {
                             {login ? (<>
                             <li className="nav-item">
                                 <NavLink className="nav-link" to="/member/mypage/">
-                                    {memberId} ({memberLevel})
+                                {memberId && memberLevel ? (
+          // 연동된 상태 혹은 일반 멤버 로그인 상태
+          `${memberId} (${memberLevel})`
+        ) : kakaoId ? (
+          // 카카오 로그인 상태
+          `카카오: ${kakaoId} (${memberLevel})`
+        ) : null}
                                 </NavLink>
                             </li>
                             <div>
