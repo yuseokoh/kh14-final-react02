@@ -11,11 +11,38 @@ const GameEdit = () => {
     // Game data state
     const [game, setGame] = useState(null);
 
+    //현재 유저정보 스테이트
+    const [currentUser, setCurrentUser] = useState(null);
+
     // Image handling states
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [previewUrls, setPreviewUrls] = useState([]);
     const [existingImages, setExistingImages] = useState([]); // 기존 이미지 목록
     const [deletedImageNos, setDeletedImageNos] = useState([]); // 삭제할 이미지 번호들
+
+    // GameEdit.js에 추가할 state
+    const [requirements, setRequirements] = useState({
+        minimum: {
+            requirementType: 'minimum',
+            os: '',
+            processor: '',
+            memory: '',
+            graphics: '',
+            directxVersion: '',
+            storage: '',
+            soundCard: ''
+        },
+        recommended: {
+            requirementType: 'recommended',
+            os: '',
+            processor: '',
+            memory: '',
+            graphics: '',
+            directxVersion: '',
+            storage: '',
+            soundCard: ''
+        }
+    });
 
     // Load game data
     useEffect(() => {
@@ -28,6 +55,21 @@ const GameEdit = () => {
                 // 기존 이미지 로드
                 const imageResp = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
                 setExistingImages(imageResp.data || []);
+
+                // 시스템 요구사항 로드
+                const reqResponse = await axios.get(`http://localhost:8080/game/requirements/${gameNo}`);
+                const reqData = reqResponse.data.reduce((acc, req) => {
+                    acc[req.requirementType] = {
+                        ...req,
+                        requirementType: req.requirementType,
+                    };
+                    return acc;
+                }, {
+                    minimum: { requirementType: 'minimum' },
+                    recommended: { requirementType: 'recommended' }
+                });
+
+                setRequirements(reqData);
             } catch (err) {
                 console.error("데이터 로딩 실패:", err);
                 setGame(null);
@@ -35,6 +77,35 @@ const GameEdit = () => {
         };
         loadData();
     }, [gameNo]);
+
+    // handleRequirementChange 함수 추가
+    const handleRequirementChange = (type, field, value) => {
+        setRequirements(prev => ({
+            ...prev,
+            [type]: {
+                ...prev[type],
+                [field]: value
+            }
+        }));
+    };
+
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const token = sessionStorage.getItem("accessToken");
+                if (!token) return;
+
+                const response = await axios.get("http://localhost:8080/member/", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setCurrentUser(response.data);
+            } catch (error) {
+                console.error("사용자 정보 조회 실패:", error);
+            }
+        };
+        fetchUserInfo();
+    }, []);
 
     // File handling functions
     const handleFileSelect = (event) => {
@@ -86,7 +157,7 @@ const GameEdit = () => {
 
     const updateGame = useCallback(async () => {
         try {
-            const token = sessionStorage.getItem('refreshToken');
+            const token = sessionStorage.getItem('accessToken');
             const formData = new FormData();
 
             formData.append('game', new Blob([JSON.stringify(game)], {
@@ -97,37 +168,84 @@ const GameEdit = () => {
                 formData.append('files', file);
             });
 
-            // 삭제할 이미지 번호들을 문자열 배열로 직접 추가
             deletedImageNos.forEach(no => {
                 formData.append('deletedImageNos', no);
             });
 
+            // 게임 정보 업데이트
             await axios.put(
-                `http://localhost:8080/game/${gameNo}`,  // URL 수정
+                `http://localhost:8080/game/${gameNo}`,
                 formData,
                 {
                     headers: {
-                        'Authorization': `Bearer ${token}`,  // 토큰 추가
+                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'multipart/form-data',
                     },
                 }
             );
 
+            // 시스템 요구사항 업데이트
+            await axios.put(
+                `http://localhost:8080/game/requirements/${gameNo}`,
+                [
+                    {
+                        ...requirements.minimum,
+                        gameNo: gameNo,
+                        requirementType: 'minimum'
+                    },
+                    {
+                        ...requirements.recommended,
+                        gameNo: gameNo,
+                        requirementType: 'recommended'
+                    }
+                ],
+                {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
 
-            // Cleanup preview URLs
+            // 미리보기 URL 정리 (기존 코드 유지)
             previewUrls.forEach(url => URL.revokeObjectURL(url));
 
             alert("수정이 완료되었습니다.");
             navigate("/game/detail/" + gameNo);
         } catch (error) {
             console.error("수정 실패:", error);
-            if (error.response?.data) {
-                alert(error.response.data);
-            } else {
-                alert("게임 정보 수정 중 오류가 발생했습니다.");
-            }
+            console.error("에러 상세:", error.response?.data);
+            alert("게임 정보 수정 중 오류가 발생했습니다.");
         }
-    }, [game, selectedFiles, deletedImageNos, gameNo, navigate, previewUrls]);
+    }, [game, selectedFiles, deletedImageNos, gameNo, requirements, navigate, previewUrls]);
+
+
+    // 삭제 함수 추가
+    const handleDelete = async () => {
+        try {
+            const token = sessionStorage.getItem("accessToken");
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+
+            // 삭제 확인
+            if (!window.confirm("정말 이 게임을 삭제하시겠습니까?")) {
+                return;
+            }
+
+            await axios.delete(`http://localhost:8080/game/${gameNo}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            alert("게임이 성공적으로 삭제되었습니다.");
+            navigate("/game/list");
+        } catch (error) {
+            console.error("게임 삭제 실패:", error);
+            alert("게임 삭제 중 오류가 발생했습니다.");
+        }
+    };
+
 
     return (game !== null ? (
         <div className={styles.container}>
@@ -304,7 +422,7 @@ const GameEdit = () => {
                         rows="3"
                     />
                 </div>
-                
+
                 <div className={styles.formGroup}>
                     <label>지원 플랫폼</label>
                     <input
@@ -316,13 +434,186 @@ const GameEdit = () => {
                     />
                 </div>
 
+                <div className={styles.systemRequirements}>
+                    <h3 className={styles.requirementTitle}>최소 시스템 사양</h3>
+                    <div className={styles.requirementGrid}>
+                        <div className={styles.formGroup}>
+                            <label>운영체제</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Windows 10 64-bit"
+                                value={requirements.minimum.os}
+                                onChange={(e) => handleRequirementChange('minimum', 'os', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>프로세서</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Intel Core i5-4460"
+                                value={requirements.minimum.processor}
+                                onChange={(e) => handleRequirementChange('minimum', 'processor', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>메모리</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: 8 GB RAM"
+                                value={requirements.minimum.memory}
+                                onChange={(e) => handleRequirementChange('minimum', 'memory', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>그래픽</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: NVIDIA GTX 1060"
+                                value={requirements.minimum.graphics}
+                                onChange={(e) => handleRequirementChange('minimum', 'graphics', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>DirectX</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Version 11"
+                                value={requirements.minimum.directxVersion}
+                                onChange={(e) => handleRequirementChange('minimum', 'directxVersion', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>저장공간</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: 50 GB"
+                                value={requirements.minimum.storage}
+                                onChange={(e) => handleRequirementChange('minimum', 'storage', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>사운드카드</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: DirectX Compatible"
+                                value={requirements.minimum.soundCard}
+                                onChange={(e) => handleRequirementChange('minimum', 'soundCard', e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <h3 className={styles.requirementTitle}>권장 시스템 사양</h3>
+                    <div className={styles.requirementGrid}>
+                        <div className={styles.formGroup}>
+                            <label>운영체제</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Windows 11 64-bit"
+                                value={requirements.recommended.os}
+                                onChange={(e) => handleRequirementChange('recommended', 'os', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>프로세서</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Intel Core i7-8700"
+                                value={requirements.recommended.processor}
+                                onChange={(e) => handleRequirementChange('recommended', 'processor', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>메모리</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: 16 GB RAM"
+                                value={requirements.recommended.memory}
+                                onChange={(e) => handleRequirementChange('recommended', 'memory', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>그래픽</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: NVIDIA RTX 3060"
+                                value={requirements.recommended.graphics}
+                                onChange={(e) => handleRequirementChange('recommended', 'graphics', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>DirectX</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: Version 12"
+                                value={requirements.recommended.directxVersion}
+                                onChange={(e) => handleRequirementChange('recommended', 'directxVersion', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>저장공간</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: 100 GB"
+                                value={requirements.recommended.storage}
+                                onChange={(e) => handleRequirementChange('recommended', 'storage', e.target.value)}
+                            />
+                        </div>
+                        <div className={styles.formGroup}>
+                            <label>사운드카드</label>
+                            <input
+                                type="text"
+                                className={styles.input}
+                                placeholder="예: DirectX Compatible"
+                                value={requirements.recommended.soundCard}
+                                onChange={(e) => handleRequirementChange('recommended', 'soundCard', e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 <div className={styles.buttonGroup}>
                     <button
                         className={styles.submitButton}
-                        onClick={updateGame}
+                        onClick={updateGame}  // saveGame이 아닌 updateGame 사용
                     >
                         수정
                     </button>
+                    {currentUser?.memberLevel === "관리자" && (
+                        <button
+                            className={styles.deleteButton}
+                            onClick={async () => {
+                                try {
+                                    if (!window.confirm("정말 이 게임을 삭제하시겠습니까?")) return;
+
+                                    const token = sessionStorage.getItem("accessToken");
+                                    await axios.delete(`http://localhost:8080/game/${gameNo}`, {
+                                        headers: { Authorization: `Bearer ${token}` }
+                                    });
+
+                                    alert("게임이 성공적으로 삭제되었습니다.");
+                                    navigate("/game/list");
+                                } catch (error) {
+                                    console.error("게임 삭제 실패:", error);
+                                    alert("게임 삭제 중 오류가 발생했습니다.");
+                                }
+                            }}
+                        >
+                            삭제
+                        </button>
+                    )}
                     <button
                         className={styles.cancelButton}
                         onClick={() => navigate(`/game/detail/${gameNo}`)}
@@ -330,6 +621,7 @@ const GameEdit = () => {
                         취소
                     </button>
                 </div>
+
             </div>
         </div>
     ) : (

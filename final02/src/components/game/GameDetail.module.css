@@ -830,3 +830,168 @@
     color: white;
     font-weight: bold;
   }
+  /* GameEdit.module.css 또는 GameAdd.module.css에 추가 */
+.systemRequirements {
+    background: #1b2838;
+    padding: 20px;
+    border-radius: 4px;
+    color: #acb2b8;
+    margin: 20px 0;
+}
+
+.requirementHeader {
+    font-size: 18px;
+    color: #ffffff;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #324556;
+    margin-bottom: 20px;
+}
+
+.requirementsContainer {
+    display: flex;
+    gap: 20px;
+}
+
+.requirementColumn {
+    flex: 1;
+    background: #16202d;
+    padding: 15px;
+    border-radius: 3px;
+}
+
+.requirementType {
+    font-size: 16px;
+    color: #ffffff;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #324556;
+}
+
+.requirementList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.requirementItem {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.requirementLabel {
+    font-size: 12px;
+    color: #7a8b9b;
+    text-transform: uppercase;
+}
+
+.requirementInput {
+    background: #32404e;
+    border: 1px solid #324556;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.requirementInput:focus {
+    outline: none;
+    border-color: #66c0f4;
+}
+
+.requirementInput::placeholder {
+    color: #556772;
+}
+
+.requirementInput:hover {
+    border-color: #4d6580;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .requirementsContainer {
+        flex-direction: column;
+    }
+    
+    .requirementColumn {
+        width: 100%;
+    }
+}
+
+/* GameDetail.module.css에 추가 */
+.systemRequirementsContainer {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    padding: 20px;
+    margin: 20px 0;
+    color: #acb2b8;
+}
+
+.systemRequirementsContainer h2 {
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #324556;
+}
+
+.requirementsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.requirementColumn {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 3px;
+}
+
+.requirementColumn h3 {
+    color: #66c0f4;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #324556;
+}
+
+.requirementsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.requirementItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.4;
+}
+
+.requirementLabel {
+    color: #7a8b9b;
+    font-size: 12px;
+    text-transform: uppercase;
+    min-width: 110px;
+    padding-right: 10px;
+    flex-shrink: 0;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .requirementsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .requirementItem {
+        flex-direction: column;
+    }
+
+    .requirementLabel {
+        min-width: auto;
+        margin-bottom: 4px;
+    }
+}
