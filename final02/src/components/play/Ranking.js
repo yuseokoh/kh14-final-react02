@@ -11,6 +11,8 @@ const Ranking = () => {
   const [searchList, setSearchList] = useState([]);//검색 결과
   const [showScoreRanking, setShowScoreRanking] = useState(true); // 점수 랭킹 표시 여부
   const [showLevelRanking, setShowLevelRanking] = useState(false); // 레벨 랭킹 표시 여부
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [pageSize] = useState(10); // 페이지당 항목 수
 
   //recoil
   const memberId = useRecoilValue(memberIdState);
@@ -50,20 +52,39 @@ const Ranking = () => {
   const checkScoreRanking = useCallback(()=>{
     setShowScoreRanking(true);
   }, [showScoreRanking])
-  const toggleScoreRanking = () => {
+  const toggleScoreRanking = useCallback(() => {
     setShowScoreRanking(true);
     setShowLevelRanking(false);
-  };
+    setCurrentPage(1);
+  }, []);
 
-  const toggleLevelRanking = () => {
+  const toggleLevelRanking = useCallback(() => {
     setShowLevelRanking(true);
     setShowScoreRanking(false);
-  };
+    setCurrentPage(1);
+  }, []);
+
+  const nextPage = useCallback(()=>{
+    setCurrentPage((prev)=> prev+1);
+  }, []);
+  const prevPage = useCallback(()=> {
+    if(currentPage > 1){
+      setCurrentPage((prev)=> prev -1);
+    }
+  }, []);
+
+  const paginatedData = useCallback((data)=>{
+    const startRank = (currentPage - 1) * pageSize;
+    const endRank = startRank + pageSize;
+    return data.slice(startRank, endRank);
+  }, [])
   //memo
   const searchResult = useMemo(()=>{
     if(keyword.length === 0) return [];
     return 
   }, []);
+  const paginatedScoreData = useMemo(() => paginatedData(scoreRanking), [scoreRanking, paginatedData]);
+  const paginatedLevelData = useMemo(() => paginatedData(levelRanking), [levelRanking, paginatedData]);
 
   return (
     <>
@@ -96,9 +117,9 @@ const Ranking = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {scoreRanking.map((score, index) => (
+                    {paginatedScoreData.map((score, index) => (
                       <tr key={score.playNo}>
-                        <td>{index + 1}</td>
+                        <td>{(currentPage - 1) * pageSize + index + 1}</td>
                         <td>{score.memberId}</td>
                         <td>{score.playScore}</td>
                         <td>{score.playLevel}</td>
@@ -106,6 +127,20 @@ const Ranking = () => {
                     ))}
                   </tbody>
                 </table>
+                {/* <button
+                    className="btn btn-secondary"
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                  >
+                    이전 페이지
+                  </button>
+                  <button
+                    className="btn btn-secondary ms-2"
+                    onClick={nextPage}
+                    disabled={currentPage * pageSize >= scoreRanking.length}
+                  >
+                    다음 페이지
+                  </button> */}
               </div>
             </div>
           </div>
@@ -129,9 +164,9 @@ const Ranking = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {levelRanking.map((level, index) => (
+                    {paginatedLevelData.map((level, index) => (
                       <tr key={level.playNo}>
-                        <td>{index + 1}</td>
+                        <td>{(currentPage - 1) * pageSize + index + 1}</td>
                         <td>{level.memberId}</td>
                         <td>{level.playScore}</td>
                         <td>{level.playLevel}</td>
@@ -139,6 +174,20 @@ const Ranking = () => {
                     ))}
                   </tbody>
                 </table>
+                {/* <button
+                    className="btn btn-secondary"
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                  >
+                    이전 페이지
+                  </button>
+                  <button
+                    className="btn btn-secondary ms-2"
+                    onClick={nextPage}
+                    disabled={currentPage * pageSize >= scoreRanking.length}
+                  >
+                    다음 페이지
+                  </button> */}
               </div>
             </div>
           </div>
