@@ -66,7 +66,7 @@ const ShoppingCart = () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
       const shuffledGames = response.data.sort(() => Math.random() - 0.5).slice(0, 6);
-      
+
       const gameListWithImages = await Promise.all(
         shuffledGames.map(async (game) => {
           const imageUrl = await loadGameImage(game.gameNo);
@@ -157,6 +157,9 @@ const ShoppingCart = () => {
     }
   };
 
+  const keepshop = useCallback(() => {
+    navigate("/");
+  }, [navigate]);
   return (
     <div className={styles.cartPageContainer}>
       <h1 className={styles.cart_title}>
@@ -169,11 +172,14 @@ const ShoppingCart = () => {
         ) : (
           cartList.map(cart => (
             <div key={cart.cartId} className={styles.cartItem}>
-              <input
-                type="checkbox"
-                checked={selectedItems.includes(cart.cartId)}
-                onChange={() => handleItemSelection(cart.cartId)}
-              />
+              <label className={styles.checkboxWrapper}>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(cart.cartId)}
+                  onChange={() => handleItemSelection(cart.cartId)}
+                />
+                <span className={styles.checkmark}></span>
+              </label>
               <img
                 src={cart.imageUrl || 'https://via.placeholder.com/200'}
                 alt={cart.gameTitle}
@@ -208,7 +214,24 @@ const ShoppingCart = () => {
           ))
         )}
       </div>
-
+      <div className={styles.cartSummaryContainer}>
+        <div className={styles.cartFooter}>
+          <button className={styles.continueShoppingButton} onClick={keepshop}>  {t("shoppingCart.continueShopping")}</button>
+          <div className={styles.totalPriceSection}>
+            <div className={styles.totalPriceLabel}>{t("shoppingCart.totalSelectedItems")}</div>
+            <div className={styles.totalPriceValue}>
+              {cartList
+                .filter(cart => selectedItems.includes(cart.cartId))
+                .reduce((sum, cart) => sum + (cart.gamePrice || 0), 0)
+                .toLocaleString()}₩
+            </div>
+            <p className={styles.taxNotice}>{t("shoppingCart.taxNotice")}</p>
+          </div>
+          <button type='button' onClick={sendPurchaseRequest} className={styles.checkoutButton}>
+          {t("shoppingCart.checkoutButton")}
+          </button>
+        </div>
+      </div>
       {/* 추천 게임 목록 슬라이드 */}
       <section className={styles.recommendedSection}>
         <h2 className={styles.recommendedTitle}>회원님에게 추천하는 게임</h2>

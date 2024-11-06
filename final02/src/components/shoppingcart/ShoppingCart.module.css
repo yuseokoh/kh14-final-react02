@@ -83,13 +83,12 @@
 }
 
 .actionButtons {
-  display: flex; /* 버튼들을 가로로 배치 */
-  gap: 10px; /* 버튼들 사이에 간격 추가 */
-  align-items: center; /* 버튼들이 수직으로 정렬되도록 설정 */
+  display: flex;
+  gap: 8px;
 }
 
-.removeButton {
-  padding: 6px 15px;
+.giftButton, .removeButton {
+  padding: 6px 12px;
   border: none;
   border-radius: var(--border-radius);
   font-size: 12px;
@@ -206,18 +205,6 @@
   width: 100%;
   max-width: 940px;
 }
-.wishlist_cart_button {
-  background: linear-gradient(to right, #75b022 5%, #588a1b 95%);
-  padding: 6px 15px;
-  border: none;
-  border-radius: 2px;
-  color: #ffffff;
-  font-size: 12px;
-  cursor: pointer;
-  width: 100%;
-  text-align: center;
-  text-transform: uppercase;
-}
 
 .topRatedGamesContainer {
   display: flex;
@@ -276,4 +263,77 @@
 
 .sliderButton:hover {
   color: #ffffff;
+}
+
+/* Custom checkbox container */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  position: relative;
+}
+
+/* Hide the default checkbox */
+.checkbox-wrapper input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Custom checkbox style */
+.checkbox-wrapper .checkmark {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--gpStoreDarkerGrey);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.checkbox-wrapper:hover .checkmark {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: var(--gpColor-Blue);
+}
+
+/* Checked state */
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark {
+  background-color: var(--gpColor-Blue);
+  border-color: var(--gpColor-Blue);
+}
+
+/* Checkmark icon */
+.checkbox-wrapper .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* Show checkmark when checked */
+.checkbox-wrapper input[type="checkbox"]:checked + .checkmark:after {
+  display: block;
+}
+
+/* Focus state */
+.checkbox-wrapper input[type="checkbox"]:focus + .checkmark {
+  box-shadow: 0 0 0 2px rgba(102, 192, 244, 0.2);
+}
+
+/* Disabled state */
+.checkbox-wrapper input[type="checkbox"]:disabled + .checkmark {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-color: #556772;
+  cursor: not-allowed;
 }
