@@ -255,9 +255,7 @@ const Menu = () => {
                                 </div>
                             </li>
                            
-                            <li className="nav-item">
-                                <NavLink className="nav-link" to="/member/KakaoLoginPage">{t('menu.kakao_login_test')}</NavLink>
-                            </li>
+                            
 
                             {login ? (<>
                             <li className="nav-item">
@@ -316,6 +314,9 @@ const Menu = () => {
                                 </NavLink>
                             </li>
                         </>) : (<>
+                            <li className="nav-item">
+                                <NavLink className="nav-link" to="/member/KakaoLoginPage">{t('menu.kakao_login_test')}</NavLink>
+                            </li>
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/member/MemberLogin">
                                         <i className="fa-solid fa-right-to-bracket"></i>
