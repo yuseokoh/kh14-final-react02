@@ -154,22 +154,23 @@ const CommunityDetail = () => {
         try {
             await axios.post(`/reply/insert/${communityNo}`, { replyContent: replyInput });
             setReplyInput("");
-            loadReply(1); // 필요한 경우에만 리플 로드
-            setKey(prevKey => prevKey + 1); // 새로고침 없이 리렌더링
+            window.location.reload(); // 페이지 전체 새로고침
         } catch (error) {
             console.error("Failed to insert reply:", error);
         }
-    }, [replyInput, communityNo, loadReply]);
+    }, [replyInput, communityNo]);
 
     const deleteReply = useCallback(async (replyNo) => {
         try {
             await axios.delete(`/reply/${replyNo}`);
-            setResult((prevResult) => ({
-                ...prevResult,
-                replyList: prevResult.replyList.filter(reply => reply.replyNo !== replyNo),
-                count: prevResult.count - 1
-            }));
-            setKey(prevKey => prevKey + 1); // 새로고침 없이 리렌더링
+            // setResult((prevResult) => ({
+            //     ...prevResult,
+            //     replyList: prevResult.replyList.filter(reply => reply.replyNo !== replyNo),
+            //     count: prevResult.count - 1
+            // }));
+            // loadReply(1); // 댓글 목록을 다시 로드하여 변경 사항 반영
+            // setKey(prevKey => prevKey + 1); // 새로고침 없이 리렌더링
+            window.location.reload(); // 페이지 전체 새로고침
         } catch (error) {
             console.error("Failed to delete reply:", error);
         }
@@ -183,12 +184,11 @@ const CommunityDetail = () => {
             await axios.put(`/reply/${replyNo}`, { replyContent: editedContent });
             setReplyEditId(null);
             setEditedContent("");
-            loadReply(1);
-            setKey(prevKey => prevKey + 1); // 새로고침 없이 리렌더링
+            window.location.reload(); // 페이지 전체 새로고침
         } catch (error) {
             console.error("Failed to update reply:", error);
         }
-    }, [editedContent, loadReply]);
+    }, [editedContent]);
 
     const loadCommunity = useCallback(async () => {
         try {
