@@ -10,7 +10,13 @@
     "logout": "로그아웃",
     "library" :"라이브러리",
     "wishlist": "찜",
-    "cart": "장바구니"
+    "cart": "장바구니",
+    "friend":"친구"
+    ,
+      "close_button_label": "Close",
+        "kakao_login_test": "카카오 로그인 테스트",
+        "sales_receipt": "매출 전표"
+    
   },
   "loginPage": {
     "title": "로그인",
