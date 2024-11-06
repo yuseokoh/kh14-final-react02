@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil'; 
-import { kakaoIdState, kakaoAccessTokenState } from "../../utils/recoil";
+import { useRecoilState, useSetRecoilState } from 'recoil'; 
+import { kakaoIdState, kakaoAccessTokenState, memberLevelState, memberIdState } from "../../utils/recoil";
 
 function KakaoLoginPage() {
   const REST_API_KEY = "e027bcf677db65dbc9a5954313eb0a3f";
@@ -13,8 +13,10 @@ function KakaoLoginPage() {
   const [stay, setStay] = useState(false); // stay state 사용
 
   // Recoil 상태 설정 함수 가져오기
+  const setMemberId = useSetRecoilState(memberIdState);
   const setKakaoId = useSetRecoilState(kakaoIdState);
   const setKakaoAccessToken = useSetRecoilState(kakaoAccessTokenState);
+  const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
 
   const KakaoLogin = () => {
     // 카카오 로그인 페이지로 리다이렉트
@@ -34,7 +36,7 @@ function KakaoLoginPage() {
         console.log("응답 데이터: ", response.data); 
       
       // 응답에서 필요한 데이터 추출
-      const { accessToken, jwtToken, refreshToken, emailRequired, kakaoId, nickname } = response.data;
+      const { accessToken, jwtToken, refreshToken, emailRequired, kakaoId, nickname, memberLevel } = response.data;
 
         console.log("Access Token:", accessToken);
         console.log("JWT Token:", jwtToken);
@@ -65,8 +67,8 @@ function KakaoLoginPage() {
           // sessionStorage.setItem('nickname', nickname);
       
           // 2. Recoil 상태에도 저장
-          setKakaoId(kakaoId);
-          setKakaoAccessToken(accessToken);
+          setMemberId(kakaoId);
+          setMemberLevel(memberLevel);
           console.log('Recoil에 저장된 Kakao ID:', kakaoId);
           console.log('Recoil에 저장된 Access Token:', accessToken);
       
@@ -74,12 +76,12 @@ function KakaoLoginPage() {
           navigate('/');
         } else {
           console.error("JWT Token is missing");
-          alert('로그인 실패');
+          // alert('로그인 실패');
         }
       })
       .catch(error => {
         console.error("로그인 실패: ", error.response ? error.response.data : error.message);
-        alert('로그인에 실패했습니다.');
+        // alert('로그인에 실패했습니다.');
       });
     }
   }, [navigate, setKakaoId, setKakaoAccessToken, stay]);
