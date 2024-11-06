@@ -228,6 +228,7 @@
           "birthDate": "생년월일",
           "edit": "수정하기",
           "delete":"삭제하기",
+          "exit":"회원탈퇴",
           "levels": {
               "challenger": "챌린저",
               "master": "마스터",

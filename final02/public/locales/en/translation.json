@@ -232,6 +232,7 @@
           "birthDate": "Birth Date",
           "edit": "Edit",
           "delete":"Delete",
+          "exit":"secession",
           "levels": {
               "challenger": "Challenger",
               "master": "Master",
