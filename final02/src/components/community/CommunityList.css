@@ -1,26 +1,73 @@
-/* App.css 또는 별도의 CSS 파일에 추가 */
+/* App.css or separate CSS file */
+body {
+    background-color: #171a21 !important; /* Steam 스타일에 맞는 어두운 배경 */
+    color: #C7D5E0; /* 기본 텍스트 색상 */
+}
+
 .kjhtoast-steam {
-    background-color: #171a21 !important; /* Steam의 진한 파란색 */
-    color: #66c0f4 !important; /* Steam의 밝은 하늘색 */
-    font-family: Arial, sans-serif !important; /* Steam에 잘 어울리는 기본 글꼴 */
+    background-color: #171a21 !important;
+    color: #66c0f4 !important;
+    font-family: Arial, sans-serif !important;
     font-weight: bold;
     border-radius: 8px;
 }
 
 .kjhtoast-steam .Toastify__toast-icon svg {
-    fill: #66c0f4; /* 아이콘 색상도 Steam 스타일에 맞춤 */
+    fill: #66c0f4;
 }
 
 .kjhtoast-steam .Toastify__close-button {
-    color: #66c0f4; /* 닫기 버튼 색상 */
+    color: #66c0f4;
 }
-/* Basic Reset for Consistency */
+
+/* Basic Reset */
 .kjh-row, .kjh-col, .kjh-card, .kjh-btn, .kjh-form-select, .kjh-form-control {
     margin: 0;
     padding: 0;
 }
 
-/* Grid Layout for Dynamic Card Sizes */
+/* Search Bar Styling */
+.kjh-search-bar {
+    background-color: #1B2838;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between; /* 검색창 왼쪽, 등록 버튼 오른쪽 정렬 */
+}
+
+.kjh-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+
+.kjh-form-select, .kjh-form-control {
+    background-color: #2A475E;
+    color: #C7D5E0;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    font-weight: bold;
+}
+
+.kjh-btn {
+    background-color: #66c0f4;
+    color: #171a21;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.kjh-btn:hover {
+    background-color: #558bb3;
+}
+
+/* Grid Layout with Flexible Card Sizing */
 .kjh-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -32,7 +79,7 @@
     background-color: #1B2838;
     color: #C7D5E0;
     border: 1px solid #2A475E;
-    border-radius: 5px;
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -40,24 +87,21 @@
 
 /* Large Cards */
 .kjh-card-large {
-    grid-column: span 2;
+    grid-column: span 3;
     max-height: 400px;
 }
 
-.kjh-card-large .kjh-card-img-top {
-    height: 200px;
-    object-fit: cover;
+.kjh-card-large .kjh-card-img-top,
+.kjh-card-medium .kjh-card-img-top {
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
 }
 
 /* Medium Cards */
 .kjh-card-medium {
-    grid-column: span 1;
+    grid-column: span 2;
     max-height: 300px;
-}
-
-.kjh-card-medium .kjh-card-img-top {
-    height: 150px;
-    object-fit: cover;
 }
 
 /* Small Cards */
@@ -69,43 +113,41 @@
 /* Card Image Styling */
 .kjh-card-img-top {
     width: 100%;
+    object-fit: cover;
+    max-height: 200px;
     border-bottom: 1px solid #2A475E;
 }
 
-/* Card Body Styling */
+/* Card Body */
 .kjh-card-body {
     padding: 10px;
     flex-grow: 1;
 }
 
-/* Title and Meta Text */
 .kjh-card-title {
     font-size: 1rem;
     font-weight: bold;
     color: #66C0F4;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     margin-bottom: 0.5rem;
 }
 
 .kjh-meta-text {
     font-size: 0.85rem;
     color: #8F98A0;
-    text-align: right;
+    display: flex;
+    justify-content: space-between;
 }
 
-/* Content Text Styling */
+/* Content Styling */
 .kjh-content-text {
     font-size: 0.85rem;
-    line-height: 1.2;
     color: #C7D5E0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Stats and Writer Text */
+/* Stats and Writer */
 .kjh-stats-row {
     display: flex;
     justify-content: space-between;
@@ -119,8 +161,6 @@
     color: #8F98A0;
 }
 
-.kjh-margin{
+.kjh-margin {
     margin-top: 10px;
 }
-
-
