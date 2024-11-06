@@ -96,6 +96,7 @@ const FriendRequest = () => {
   const getRequest = useCallback(async (target)=>{
     const resp = await axios.put("http://localhost:8080/friend/"+target.friendFk);
     loadRequestToOther();
+    loadRequestFromOther();
   }, []);
   //거절, 취소
   const deleteRequest = useCallback(async (target)=>{

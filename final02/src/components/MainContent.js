@@ -72,6 +72,7 @@ import AdminPaymentPage from "./payment/AdminPaymentPage";
 import MemberLevelRequest from "./member/MemberLevelRequest";
 import AdminMemberEdit from "./member/AdminMemberEdit";
 import PaymentListPage from "./payment/PaymentListPage";
+import Profile from "./member/Profile";
 
 
 const MainContent = () => {
@@ -89,6 +90,7 @@ const MainContent = () => {
                         <Route path="/game/add" element={<PrivateRoute element={<GameAdd />} />} />
                         <Route path="/game/edit/:gameNo" element={<PrivateRoute element={<GameEdit />} />} />
                         <Route path="/member/mypage" element={<PrivateRoute element={<MyPage />} />} />
+                        <Route path="/member/profile/:targetId" element={<PrivateRoute element={<Profile />} />} />
                         <Route path="/member/mypageedit" element={<PrivateRoute element={<MyPageEdit />} />} />
                         <Route path="/cancel-payment/:paymentNo" element={<PrivateRoute element={<CancelPaymentPage />} />} />
                         <Route path="/cart/success/:partnerOrderId" element={<PrivateRoute element={<PaymentSuccessPage />} />} />
