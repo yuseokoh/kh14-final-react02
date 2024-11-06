@@ -83,11 +83,12 @@
 }
 
 .actionButtons {
-  display: flex;
-  gap: 8px;
+  display: flex; /* 버튼들을 가로로 배치 */
+  gap: 10px; /* 버튼들 사이에 간격 추가 */
+  align-items: center; /* 버튼들이 수직으로 정렬되도록 설정 */
 }
 
-.giftButton, .removeButton {
+.removeButton {
   padding: 6px 15px;
   border: none;
   border-radius: var(--border-radius);

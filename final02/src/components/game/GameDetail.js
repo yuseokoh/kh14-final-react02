@@ -125,7 +125,7 @@ const SystemRequirements = ({ minimum, recommended }) => {
  * ReviewSystem 컴포넌트
  * 게임 리뷰 시스템을 관리하는 컴포넌트
  */
-const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpdate  }) => {
+const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpdate }) => {
     // 리뷰 목록 및 페이지네이션 상태 관리
     const [reviews, setReviews] = useState([]);
     const [pagination, setPagination] = useState({
@@ -219,7 +219,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
             alert(login ? "일반회원만 리뷰를 작성할 수 있습니다." : "로그인이 필요합니다.");
             return;
         }
-    
+
         const token = sessionStorage.getItem('refreshToken');
         const config = {
             headers: {
@@ -227,7 +227,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
                 'Content-Type': 'application/json'
             }
         };
-    
+
         try {
             // 리뷰 작성 또는 수정
             if (reviewForm.mode === 'create') {
@@ -243,7 +243,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
                     config
                 );
             }
-    
+
             // 폼 초기화
             setReviewForm({
                 isOpen: false,
@@ -251,16 +251,16 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
                 data: { reviewContent: '', reviewScore: 5 },
                 editingReviewNo: null
             });
-    
+
             // 리뷰 목록과 권한 새로고침
             await Promise.all([
                 loadReviews(pagination.currentPage),
                 checkPermissions()
             ]);
-    
+
             // 게임 정보 (평점 포함) 새로고침
             await onReviewUpdate();
-    
+
         } catch (error) {
             console.error("리뷰 제출 실패:", error);
             alert(error.response?.data || "리뷰 처리 중 오류가 발생했습니다.");
@@ -300,7 +300,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
                     }
                 );
 
-               // 리뷰 목록과 권한 새로고침
+                // 리뷰 목록과 권한 새로고침
                 await Promise.all([
                     loadReviews(pagination.currentPage),
                     checkPermissions(),
@@ -500,6 +500,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
 const GameDetail = () => {
     const navigate = useNavigate();
     const { gameNo } = useParams();
+    const [libList, setLibList] = useState([]); // 구매한 게임 리스트 상태 추가
 
     // Recoil 상태
     const login = useRecoilValue(loginState);
@@ -553,6 +554,18 @@ const GameDetail = () => {
         }
     }, [navigate]);
 
+    // 구매한 게임 목록 로드
+    const loadLibraryList = useCallback(async () => {
+        try {
+            const resp = await axios.get("/library/");
+            // gameNo 기준 중복 제거
+            const uniqueLibList = resp.data.map((item) => item.gameNo)
+                .filter((gameNo, index, self) => self.indexOf(gameNo) === index);
+            setLibList(uniqueLibList);
+        } catch (error) {
+            console.error("Error loading library list:", error);
+        }
+    }, []);
     /**
      * 게임 데이터를 로드하는 함수
      */
@@ -600,6 +613,7 @@ const GameDetail = () => {
     // 초기 데이터 로드
     useEffect(() => {
         loadGameData();
+        loadLibraryList();
     }, [loadGameData]);
 
     if (loading) return <div className={styles.loading}>로딩 중...</div>;
@@ -711,18 +725,32 @@ const GameDetail = () => {
 
                             {/* 구매 버튼 영역 */}
                             <div className={styles.purchaseButtons}>
-                                <button
-                                    className={styles.addToCartButton}
-                                    onClick={() => addCart(game)}
-                                >
-                                    장바구니에 추가
-                                </button>
-                                <button
-                                    className={styles.wishlistButton}
-                                    onClick={() => addWishList(game)}
-                                >
-                                    위시리스트에 추가
-                                </button>
+                                {libList.includes(game.gameNo) ? (
+                                    <>
+                                    <h4 className={styles.alreadyPurchasedMessage}>이미 구매하신 게임입니다</h4>
+                                    <button
+                                        className={styles.removeButton}
+                                        onClick={() => navigate(`/play/${game.gameNo}`)}
+                                    >
+                                        플레이하기
+                                    </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button
+                                            className={styles.addToCartButton}
+                                            onClick={() => addCart(game)}
+                                        >
+                                            장바구니에 추가
+                                        </button>
+                                        <button
+                                            className={styles.wishlistButton}
+                                            onClick={() => addWishList(game)}
+                                        >
+                                            위시리스트에 추가
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -735,7 +763,7 @@ const GameDetail = () => {
                     memberId={memberId}
                     memberLevel={memberLevel}
                     game={game}
-                    onReviewUpdate={handleReviewUpdate} 
+                    onReviewUpdate={handleReviewUpdate}
                 />
 
                 {/* 관리자/개발자 전용 버튼 */}
@@ -750,7 +778,7 @@ const GameDetail = () => {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 
