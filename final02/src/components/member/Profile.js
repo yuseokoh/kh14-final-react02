@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { loginState, memberIdState, memberLevelState } from "../../utils/recoil";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styles from './MyPage.module.css';
 import { useTranslation } from 'react-i18next';
 import styled from "styled-components";
@@ -38,21 +38,20 @@ const Profile = () => {
     const [memberId, setMemberId] = useRecoilState(memberIdState);
     const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const login = useRecoilValue(loginState);
+    const { targetId } = useParams();
 
-
-    const loadMember = useCallback(async (friend) => {
+    const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get(`http://localhost:8080/member/${friend.friendTo}`);
+            const resp = await axios.get(`http://localhost:8080/member/${targetId}`);
             setMember(resp.data);
         } catch (error) {
             console.error("Error loading member data:", error);
         }
-    }, []);
+    }, [targetId]);
 
-    
-    const loadImage = useCallback(async (memberId) => {
+    const loadImage = useCallback(async () => {
         try {
-            const resp = await axios.get(`/member/image/${memberId}`);
+            const resp = await axios.get(`/member/image/${targetId}`);
             const { attachment } = resp.data;
 
             if (attachment) {
@@ -65,7 +64,7 @@ const Profile = () => {
             console.error("Error loading image:", error);
             setImage('/default-profile.png');
         }
-    }, []);
+    }, [targetId]);
 
     const logout = useCallback((e) => {
         // recoil에 저장된 memberId와 memberLevel을 제거
@@ -95,11 +94,11 @@ const Profile = () => {
     }, [member.memberId, navigate]);
 
     useEffect(() => {
-        if (login && memberId) {
-            loadMember(memberId);
-            loadImage(memberId);
-        }
-    }, [login, memberId]);
+        if (targetId === null) return; 
+            loadMember();
+            loadImage();
+            }, [targetId]);
+
 
     const imageUrl = image || '/default-profile.png';
 
@@ -187,22 +186,6 @@ const Profile = () => {
                 </div>
             </div>
 
-            <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                <button
-                    className={styles.editButton}
-                    onClick={() => navigate(`/member/mypageedit/${memberId}`)}
-                >
-                    {t("edit")}
-                </button>
-                <button
-                    className={styles.delButton}
-                    // onClick={() => navigate(`/member/delete/${memberId}`)}
-                    onClick={delmember}
-                >
-                    {t("delete")}
-                </button>
-
-            </div>
         </div>
     );
 };

@@ -11,7 +11,7 @@ import LoginImage from './Login.jpg';
 
 const PaymentSuccessPage = () => {
     const { t } = useTranslation();
-    const { partnerOrderId,paymentNo } = useParams();
+    const { partnerOrderId} = useParams();
     const navigate = useNavigate();
     const login = useRecoilValue(loginState);
     const memberLoading = useRecoilValue(memberLoadingState);
@@ -59,13 +59,13 @@ const PaymentSuccessPage = () => {
             });
     
             if (resp.status === 200) {
-                window.sessionStorage.setItem("paymentNo", partnerOrderId);
-                const updatedGameList = resp.data.paymentDetailList; // 각 게임에 paymentDetailNo 포함된 리스트
-                setGameList(updatedGameList);
-                setGameList(checkedGameList);
+                
+                const checkedGameList = resp.data.paymentDetailList; // 각 게임에 paymentDetailNo 포함된 리스트
+                setGameList( checkedGameList);
+               
                 setResult(true);
     
-                for (const game of updatedGameList) {
+                for (const game of  checkedGameList) {
                     const libraryDto = {
                         gameNo: game.paymentDetailItem, // 게임 번호 (gameNo)
                         paymentDetailNo: game.paymentDetailNo, // 고유한 paymentDetailNo 설정
@@ -90,32 +90,30 @@ const PaymentSuccessPage = () => {
             console.error(e);
             setResult(false);
         }
+        finally {
+            window.sessionStorage.removeItem("tid");
+            window.sessionStorage.removeItem("checkedGameList");
+        }
     }, [partnerOrderId, t, memberId]);
     
 
-  
+    console.log(gameList);
 
     const totalAmount = useMemo(() => {
         return gameList.reduce((total, game) => {
-            console.log("gamePrice:", game.gamePrice, "qty:", game.qty);
-            const price = parseFloat(game.gamePrice) || 0;
-            const qty = parseInt(game.qty) || 0;
-            return total + (price * qty);
+            console.log("gamePrice:", game.
+                paymentDetailPrice
+                , "qty:", game.paymentDetailQty);
+           
+            const price = parseFloat(game.paymentDetailPrice) || 0;
+      
+            return total + ( price );
         }, 0);
     }, [gameList]);
     
    
       
-    const handleGoToCancelPage = () => {
-        const paymentNo = sessionStorage.getItem("paymentNo");
-      
-        if (!paymentNo) {
-          alert('결제 번호가 유효하지 않습니다. 결제 정보를 확인해주세요.');
-          return;
-        }
-      
-        navigate(`/cancel-payment/detail/${paymentNo}`);
-      };
+  
       
 
     const handleGoToStore = () => navigate("/");
@@ -163,9 +161,7 @@ const PaymentSuccessPage = () => {
                     <button onClick={handleGoToLibrary} className="btn btn-secondary">
                         {t('paymentSuccess.goToLibrary')}
                     </button>
-                    <button onClick={handleGoToCancelPage} className="btn btn-info">
-                    {t('paymentSuccess.PaymentHistory')}
-      </button>
+      
                 </div>
             </div>
         );

@@ -66,7 +66,7 @@
     "totalAmount": "총액",
     "goToMainPage": "메인페이지로 이동하기",
     "goToLibrary": "라이브러리로 이동하기",
-    "failureMessage": "결제 승인 실패...",
+    "failureMessage": "이미 구매된 상품입니다",
      "PaymentHistory": "결제 내역"
   },
   "languageButton": "언어",
@@ -212,7 +212,7 @@
           "paymentEndDate": "결제완료일시",
           "canceledAt": "결제취소일시",
           "enterCancelReason": "취소 사유를 입력해주세요",
-          "cancelAll": "전체취소",
+          "cancelAll": "결제 취소하기",
           "canceledProduct": "취소된 상품입니다.",
           "cancelSuccess": "결제 취소 성공!",
           "cancelSuccessMessage": "결제가 성공적으로 취소되었습니다.",
@@ -420,4 +420,3 @@
                     "errorNoToken": "인증 토큰이 없습니다."
                   }
                 }
-                

@@ -265,7 +265,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
             console.error("리뷰 제출 실패:", error);
             alert(error.response?.data || "리뷰 처리 중 오류가 발생했습니다.");
         }
-    };
+    }; 
     /**
      * 리뷰 수정 시작 핸들러
      */

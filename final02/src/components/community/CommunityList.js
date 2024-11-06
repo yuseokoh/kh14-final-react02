@@ -8,6 +8,10 @@ import { useRecoilValue } from "recoil";
 import throttle from "lodash/throttle";
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
+import { toast, ToastContainer } from 'react-toastify'; // Toast 컴포넌트 import
+import 'react-toastify/dist/ReactToastify.css'; 
+import './CommunityList.css';
+
 
 moment.locale("ko"); // 한국어 로케일 설정
 
@@ -61,15 +65,19 @@ const CommunityList = () => {
         }
         else if (page >= 2) {
             loadMoreCommunityList();
+            
         }
+        
     }, [input.beginRow, input.endRow]);
 
     useEffect(() => {
+        
         if (page === null) return;
         if (result.last === true) return;
 
         const resizeHandler = throttle(() => {
             const percent = getScrollPercent();
+            console.log("percent : "+percent);
             if (percent >= 70 && loading.current === false) {
                 setPage(page + 1);
             }
@@ -156,9 +164,11 @@ const CommunityList = () => {
     }, [page]);
 
     const getScrollPercent = useCallback(() => {
+        
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const documentHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrollPercent = (scrollTop / documentHeight) * 100;
+        console.log(scrollPercent);
         return scrollPercent;
     }, []);
 
@@ -168,6 +178,28 @@ const CommunityList = () => {
             [e.target.name]: e.target.value
         });
     }, [input]);
+
+    // 게시글 등록 버튼 클릭 핸들러--------(추가한 코드)
+    const handleRegisterClick = () => {
+        if (!login) {
+            // 알림 표시
+            toast.error("로그인 후 사용하세요.", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                className: "toast-steam" // 커스텀 스타일 적용
+            });
+            // 로그인 페이지로 이동
+            setTimeout(() => {
+                navigate("/member/MemberLogin");
+            }, 2000); // 알림 표시 후 3초 뒤에 이동
+        } else {
+            navigate("/community/add");
+        }
+    };
 
     return (
         <>
@@ -185,8 +217,11 @@ const CommunityList = () => {
                 </div>
             </div>
             {/* 게시글 등록 버튼 */}
-            <div className="col text-end mt-2">
+            {/* <div className="col text-end mt-2">
                 <button className="btn btn-primary" onClick={() => navigate("/community/add")}>게시글 등록 <FaPlus /></button>
+            </div> */}
+            <div className="col text-end mt-2">
+                <button className="btn btn-primary" onClick={handleRegisterClick}>게시글 등록 <FaPlus /></button>
             </div>
 
             {/* 목록 */}
@@ -233,6 +268,7 @@ const CommunityList = () => {
                     </div>
                 ))}
             </div>
+            
         </>
     );
 };

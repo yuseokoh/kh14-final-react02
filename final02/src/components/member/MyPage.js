@@ -146,6 +146,11 @@ const MyPage = () => {
     const levelInfo = getLevelInfo(member?.memberPoint);
     const progressPercentage = ((member?.memberPoint || 0) / levelInfo.nextLevelPoints) * 100;
 
+    const handleGoToCancelPage = () => navigate("/paymentList");
+        
+      
+     
+
     return (
         <div className={styles.container}>
             <div className={styles.profileHeader}>
@@ -201,6 +206,10 @@ const MyPage = () => {
                 >
                     회원탈퇴
                 </button>
+
+                <button onClick={handleGoToCancelPage} className={styles.payButton}>
+                    {t('paymentSuccess.PaymentHistory')}
+      </button>
 
             </div>
         </div>
