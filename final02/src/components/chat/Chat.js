@@ -49,6 +49,7 @@ const Chat = () => {
     if(firstMessageNo !== null) return;
     setMore();
   }, [firstMessageNo]);
+  
 
   useEffect(() => {
     if (messageListRef.current && !scrollLock) {
