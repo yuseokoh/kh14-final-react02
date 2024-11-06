@@ -5,7 +5,7 @@
     font-family: Arial, sans-serif;
 }
 .paymentListPage h1 {
-    color: #ffffff; /* 흰색 /
+    color: #ffffff; 
     font-size: 2em;
     text-align: center;
     margin-bottom: 20px;
@@ -13,13 +13,13 @@
 
 .paymentGrid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); / 한 줄에 4개씩 배치 /
+    grid-template-columns: repeat(4, 1fr); 
     gap: 20px;
     justify-content: center;
 }
 
 .paymentCard {
-    max-width: 330px; / 카드의 최대 너비를 제한 /
+    max-width: 330px; 
     background-color: #2a475e;
     padding: 15px;
     border-radius: 8px;
@@ -30,7 +30,7 @@
     transition: transform 0.2s ease;
 }
 .paymentCardHeader h4 {
-    color: #ffffff; / 흰색 */
+    color: #ffffff; 
 }
 
 
