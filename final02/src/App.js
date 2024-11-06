@@ -33,20 +33,26 @@ const App = ()=>{
     const localToken = window.localStorage.getItem("refreshToken");
     //[3] 둘다 없으면 차단
     if(sessionToken === null && localToken === null) {
+      console.log("refreshToken 없음");
       setMemberLoading(true);
       return;
     }
     //[4] 둘 중 하나라도 있다면 로그인 갱신을 진행
     const refreshToken = sessionToken || localToken;
+    console.log("refreshToken", refreshToken);
 
     //[5] 헤더에 Authorization 설정
     axios.defaults.headers.common["Authorization"] = "Bearer " + refreshToken;
 
     //[6] 백엔드에 갱신 요청을 전송
     const resp = await axios.post("http://localhost:8080/member/refresh");
+    console.log("==========================================");
+    console.log(resp.data);
+    console.log("==========================================");
     
     //[7] 갱신 성공 시 응답(resp)에 담긴 데이터들을 적절하게 분배하여 저장(로그인과 동일)
-    setMemberId(resp.data.memberId);
+    console.log(resp.data.memberId || resp.data.kakaoId);
+    setMemberId(resp.data.memberId || resp.data.kakaoId);
     setMemberLevel(resp.data.memberLevel);
     axios.defaults.headers.common["Authorization"] = "Bearer " + resp.data.accessToken;
     if(window.localStorage.getItem("refreshToken") !== null) {
@@ -59,8 +65,7 @@ const App = ()=>{
     setMemberLoading(true);
   }, []); 
 
-  
-  UseLoginState();
+
 
   return (
     <>
