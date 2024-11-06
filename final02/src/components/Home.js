@@ -1,7 +1,7 @@
 // 필요한 React 훅과 외부 라이브러리를 임포트합니다.
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { ChevronLeft, ChevronRight, ChevronDown, Tag, Users, Gamepad } from 'lucide-react'; 
+import { ChevronLeft, ChevronRight, ChevronDown, Tag, Users, Gamepad } from 'lucide-react';
 import styles from './Home.module.css';
 import bannerImage from '../components/game/gameimg/webm_page_bg_koreana (1).gif';
 import { useNavigate } from 'react-router';
@@ -15,12 +15,21 @@ import { useTranslation } from 'react-i18next';
  * @param {string} bannerAlt - 배너 이미지의 대체 텍스트
 */
 const FeaturedBanner = ({ bannerAlt }) => {
-  return(
+  return (
     <div className={styles.FeaturedBanner}>
-      <img src={bannerImage} alt={bannerAlt} className={styles.bannerImage}/>
+      <img src={bannerImage} alt={bannerAlt} className={styles.bannerImage} />
     </div>
   );
 };
+
+export const FILTER_OPTIONS = [
+  { id: 'all', name: '특집' },
+  { id: 'action', name: '액션' },
+  { id: 'rpg', name: 'RPG' },
+  { id: 'strategy', name: '전략' },
+  { id: 'simulation', name: '시뮬레이션' },
+  { id: 'adventure', name: '어드벤처' }
+];
 
 /**
  * FeaturedGame 컴포넌트
@@ -48,14 +57,14 @@ const FeaturedGame = ({ game }) => {
   }, [game.gameNo]);
 
   return (
-    <div 
+    <div
       className={styles.featuredGame}
       onClick={() => navigate(`/game/detail/${game.gameNo}`, { replace: true })}
       style={{ cursor: 'pointer' }}
     >
-      <img 
-        src={imageUrl} 
-        alt={game.gameTitle} 
+      <img
+        src={imageUrl}
+        alt={game.gameTitle}
         className={styles.featuredGameImage}
       />
       <div className={styles.featuredGameInfo}>
@@ -111,19 +120,19 @@ const GameCard = ({ game }) => {
   }, [game.gameNo]);
 
   return (
-    <div 
+    <div
       className={styles.gameCard}
       onClick={() => navigate(`/game/detail/${game.gameNo}`)}
       style={{ cursor: 'pointer' }}
     >
       <div className={styles.gameImage}>
-        <img 
-          src={imageUrl} 
-          alt={game.gameTitle} 
+        <img
+          src={imageUrl}
+          alt={game.gameTitle}
           className={styles.gameImage}
         />
       </div>
-      
+
       <div className={styles.gameInfo}>
         <h3 className={styles.gameTitle}>{game.gameTitle}</h3>
         {/* 게임 카테고리 태그 표시 */}
@@ -192,15 +201,15 @@ const VerticalGameCard = ({ game }) => {
   }, [game.gameNo]);
 
   return (
-    <div 
+    <div
       className={styles.verticalCard}
       onClick={() => navigate(`/game/detail/${game.gameNo}`)}
       style={{ cursor: 'pointer' }}
     >
       <div className={styles.verticalCardImage}>
-        <img 
-          src={imageUrl} 
-          alt={game.gameTitle} 
+        <img
+          src={imageUrl}
+          alt={game.gameTitle}
           className={styles.verticalCardImage}
         />
       </div>
@@ -247,8 +256,8 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
     setCurrentIndex((prevIndex) => {
       const nextIndex = prevIndex + itemsPerPage;
       return nextIndex >= games.length ? 0 : nextIndex;
-     });
-     setTimeout(() => setIsAnimating(false), 300);
+    });
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   // 이전 슬라이드로 이동
@@ -258,23 +267,23 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
     setCurrentIndex((prevIndex) => {
       const nextIndex = prevIndex - itemsPerPage;
       return nextIndex < 0 ? Math.max(games.length - itemsPerPage, 0) : nextIndex;
-     });
-     setTimeout(() => setIsAnimating(false), 300);
+    });
+    setTimeout(() => setIsAnimating(false), 300);
   };
 
   return (
     <div>
       <div className={styles.horizontalSlider}>
         {/* 슬라이더 컨테이너 */}
-        <div 
-          className={styles.horizontalSliderContainer} 
-          style={{ 
+        <div
+          className={styles.horizontalSliderContainer}
+          style={{
             transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
             transition: 'transform 0.3s ease-in-out'
           }}
         >
           {games.map((game, index) => (
-            <div 
+            <div
               key={game.gameNo}
               className={styles.sliderItem}
               style={{ flex: `0 0 ${100 / itemsPerPage}%` }}
@@ -285,16 +294,16 @@ const HorizontalSlider = ({ games, itemsPerPage = 4 }) => {
         </div>
 
         {/* 슬라이더 네비게이션 버튼 */}
-        <button 
-          onClick={prevSlide} 
+        <button
+          onClick={prevSlide}
           className={`${styles.sliderButton} ${styles.sliderButtonLeft}`}
           disabled={currentIndex === 0}
         >
           <ChevronLeft color="white" size={24} />
         </button>
 
-        <button 
-          onClick={nextSlide} 
+        <button
+          onClick={nextSlide}
           className={`${styles.sliderButton} ${styles.sliderButtonRight}`}
           disabled={currentIndex + itemsPerPage >= games.length}
         >
@@ -334,7 +343,7 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
   };
 
   const prevSlide = () => {
-    if(isAnimating) return;
+    if (isAnimating) return;
     setIsAnimating(true);
     setCurrentIndex((prevIndex) => {
       const nextIndex = prevIndex - itemsPerPage;
@@ -342,10 +351,10 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
     });
     setTimeout(() => setIsAnimating(false), 300);
   };
- 
+
   return (
     <div className={styles.verticalCardSlider}>
-      <div 
+      <div
         className={styles.verticalCardSliderContainer}
         style={{
           transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)`,
@@ -354,27 +363,27 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
           flexDirection: 'row'
         }}
       >
-        {games.map((game,index) => (
+        {games.map((game, index) => (
           <div
             key={game.gameNo}
             className={styles.vertgicalCardSliderItem}
-            style={{ flex : `0 0 ${100 / itemsPerPage}%` }}
+            style={{ flex: `0 0 ${100 / itemsPerPage}%` }}
           >
-            <VerticalGameCard game={game}/>
+            <VerticalGameCard game={game} />
           </div>
-        ))} 
+        ))}
       </div>
 
       {/* 슬라이더 네비게이션 버튼 */}
       <button
-        onClick={prevSlide} 
+        onClick={prevSlide}
         className={`${styles.sliderButton} ${styles.sliderButtonLeft}`}
         disabled={currentIndex === 0}
       >
         <ChevronLeft color="white" size={24} />
       </button>
-      <button 
-        onClick={nextSlide} 
+      <button
+        onClick={nextSlide}
         className={`${styles.sliderButton} ${styles.sliderButtonRight}`}
         disabled={currentIndex + itemsPerPage >= games.length}
       >
@@ -392,20 +401,20 @@ const VerticalCardSlider = ({ games, itemsPerPage = 4 }) => {
 const Sidebar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
+
   const device = [
     { name: t('device.pc'), path: '/device/pc' },
     { name: t('device.mobile'), path: '/device/mobile' },
     { name: t('device.console'), path: '/device/console' }
-];
+  ];
 
-const recommendations = [
+  const recommendations = [
     { name: t('recommendations.friends'), path: '/recommendations/friends' },
     { name: t('recommendations.curators'), path: '/recommendations/curators' },
     { name: t('recommendations.tags'), path: '/recommendations/tags' }
-];
+  ];
 
-const categories = [
+  const categories = [
     { name: t('categories.action'), path: '/game/category/action' },
     { name: t('categories.adventure'), path: '/game/category/adventure' },
     { name: t('categories.indie'), path: '/game/category/indie' },
@@ -414,55 +423,33 @@ const categories = [
     { name: t('categories.strategy'), path: '/game/category/strategy' },
     { name: t('categories.openWorld'), path: '/game/category/openworld' },
     { name: t('categories.multiplayer'), path: '/game/category/multiplayer' },
-    { name: t('categories.baseBuilding'), path: '/game/category/basebuilding' },
     { name: t('categories.fantasy'), path: '/game/category/fantasy' },
     { name: t('categories.pixelGraphics'), path: '/game/category/pixelgraphics' },
     { name: t('categories.roguelike'), path: '/game/category/roguelike' },
     { name: t('categories.sandbox'), path: '/game/category/sandbox' },
     { name: t('categories.survival'), path: '/game/category/survival' }
-];
+  ];
 
-const others = [
+  const others = [
     { name: t('others.freeToPlay'), path: '/other/freetoplay' },
     { name: t('others.earlyAccess'), path: '/other/earlyaccess' },
     { name: t('others.coop'), path: '/other/coop' },
     { name: t('others.vr'), path: '/other/vr' },
     { name: t('others.controllerSupport'), path: '/other/contoller' }
-];
+  ];
 
-const ageRatings = [
+  const ageRatings = [
     { name: t('ageRatings.all'), path: '/rating/all' },
     { name: t('ageRatings.12'), path: '/rating/12' },
     { name: t('ageRatings.15'), path: '/rating/15' },
     { name: t('ageRatings.19'), path: '/rating/19' }
-];
+  ];
 
   return (
     <div className={styles.sidebar}>
-    {/* 최근 본 게임 섹션 */}
-    <div className={styles.sidebarSection}>
-      <h3 className={styles.sidebarSectionTitle}>{t("recentlyViewed")}</h3>
-      <p className={styles.sidebarSectionContent}>{t("cyberpunk")}</p>
-    </div>
-      
-    {/* 추천 섹션 */}
-    <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>{t("recommendations")}</h3>
-        <ul className={styles.sidebarSectionList}>
-          {recommendations.map((rec, index) => (
-            <li
-              key={index}
-              className={styles.categoryLink}
-              onClick={() => navigate(rec.path)}
-            >
-              {rec.name}
-            </li>
-          ))}
-        </ul>
-      </div>
-      
-       {/* 카테고리 섹션 */}
-       <div className={styles.sidebarSection}>
+
+      {/* 카테고리 섹션 */}
+      <div className={styles.sidebarSection}>
         <h3 className={styles.sidebarSectionTitle}>{t("categories")}</h3>
         <ul className={styles.sidebarSectionList}>
           {categories.map((category, index) => (
@@ -476,25 +463,9 @@ const ageRatings = [
           ))}
         </ul>
       </div>
-      
-      {/* 기타 섹션 */}
-      <div className={styles.sidebarSection}>
-        <h3 className={styles.sidebarSectionTitle}>{t("others")}</h3>
-        <ul className={styles.sidebarSectionList}>
-          {others.map((other, index) => (
-            <li
-              key={index}
-              className={styles.categoryLink}
-              onClick={() => navigate(other.path)}
-            >
-              {other.name}
-            </li>
-          ))}
-        </ul>
-      </div>
 
-       {/* 연령 등급 섹션 */}
-       <div className={styles.sidebarSection}>
+      {/* 연령 등급 섹션 */}
+      <div className={styles.sidebarSection}>
         <h3 className={styles.sidebarSectionTitle}>{t("ageRatings")}</h3>
         <ul className={styles.sidebarSectionList}>
           {ageRatings.map((rating, index) => (
@@ -536,15 +507,15 @@ const GameListItem = ({ game }) => {
   }, [game.gameNo]);
 
   return (
-    <div 
+    <div
       className={styles.gameListItem}
       onClick={() => navigate(`/game/detail/${game.gameNo}`)}
       style={{ cursor: 'pointer' }}
     >
       <div className={styles.gameListImage}>
-        <img 
-          src={imageUrl} 
-          alt={game.gameTitle} 
+        <img
+          src={imageUrl}
+          alt={game.gameTitle}
           className={styles.gameListImage}
         />
       </div>
@@ -598,7 +569,9 @@ const Home = () => {
   const [error, setError] = useState(null); // 에러 상태
   const [visiblegames, setVisibleGames] = useState(10); // 표시할 게임 수
   const [activeFilter, setActiveFilter] = useState(''); // 활성화된 필터
+  const [searchTerm, setSearchTerm] = useState('');
   const { t } = useTranslation();
+
 
   const memberLevel = useRecoilValue(memberLevelState);
   const isLoggedIn = useRecoilValue(loginState);
@@ -637,11 +610,13 @@ const Home = () => {
 
   // 선택된 필터에 따라 게임 목록 필터링
   const filteredGames = useMemo(() => {
-    if (activeFilter === 'all') return games;
-    return games.filter(game => 
-      game.gameCategory.toLowerCase().includes(activeFilter.toLowerCase())
-    );
-  }, [games, activeFilter]);
+  return games.filter(game => {
+    const matchesSearch = game.gameTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = activeFilter === 'all' || 
+      game.gameCategory.toLowerCase().includes(activeFilter.toLowerCase());
+    return matchesSearch && matchesFilter;
+  });
+}, [games, activeFilter, searchTerm]);
 
   // 게임 데이터 로딩
   useEffect(() => {
@@ -675,8 +650,9 @@ const Home = () => {
   if (error) return <div>{error}</div>;
   if (games.length === 0) return <div>{t('noGames')}</div>;
 
+  
 
-   return (
+  return (
     <div className={styles.homeContainer}>
       <FeaturedBanner bannerAlt="Steam Next Fest Banner" />
       <div className={styles.contentWrapper}>
@@ -719,22 +695,46 @@ const Home = () => {
 
             <section className={styles.section}>
               <div className={styles.sectionHeader}>
-                <h2 className={styles.sectionTitle}>{t('allGamesList')}</h2>
-                {memberLevel === '개발자' && (
-                  <button
-                    className={styles.addGameButton}
-                    onClick={() => navigate('/game/add')}
-                  >
-                    {t('addGame')}
-                  </button>
-                )}
+                <div className={styles.headerLeft}>
+                  <h2 className={styles.sectionTitle}>{t('allGamesList')}</h2>
+                  {memberLevel === '개발자' && (
+                    <button
+                      className={styles.addGameButton}
+                      onClick={() => navigate('/game/add')}
+                    >
+                      {t('addGame')}
+                    </button>
+                  )}
+                </div>
+
+                <div className={styles.filterSection}>
+                  {FILTER_OPTIONS.map(filter => (
+                    <button
+                      key={filter.id}
+                      className={`${styles.filterButton} ${activeFilter === filter.id ? styles.active : ''}`}
+                      onClick={() => setActiveFilter(filter.id)}
+                    >
+                      {filter.name}
+                    </button>
+                  ))}
+                </div>
+
+                <div className={styles.searchSection}>
+                  <input
+                    type="text"
+                    placeholder={t('searchGames')}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                </div>
               </div>
 
               <div className={styles.gameList}>
-                {games.slice(0, visiblegames).map(game => (
+                {filteredGames.slice(0, visiblegames).map(game => (
                   <GameListItem key={game.gameNo} game={game} />
                 ))}
-                {visiblegames < games.length && (
+                {visiblegames < filteredGames.length && (
                   <div className={styles.showMoreContainer}>
                     <button onClick={handleShowMore} className={styles.showMoreTrigger}>
                       <div className={styles.showMoreContent}>

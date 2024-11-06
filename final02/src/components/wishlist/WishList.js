@@ -209,11 +209,11 @@ const WishList = () => {
                 <div className={styles.wishlist_action_container}>
                   <div className={styles.game_price}>${game.gamePrice}</div>
                   {libraryGames.includes(game.gameNo) ? (
-                    <button onClick={() => navigate(`/play/${game.gameNo}`)}>{t("wishlist.play")}</button>
+                    <button className={styles.removeButton} onClick={() => navigate(`/play/${game.gameNo}`)} >{t("wishlist.play")}</button>
                   ) : (
-                    <button onClick={() => addCart(game)}>{t("wishlist.addToCart")}</button>
+                    <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>{t("wishlist.addToCart")}</button>
                   )}
-                  <button onClick={() => delWishList(game.wishListId)}>{t("wishlist.remove")}</button>
+                  <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>{t("wishlist.remove")}</button>
                 </div>
               </div>
             </CSSTransition>
