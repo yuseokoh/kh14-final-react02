@@ -254,18 +254,9 @@ const Menu = () => {
                                     <NavLink className="dropdown-item" to="/community/list">{t('menu.community')}</NavLink>
                                 </div>
                             </li>
-                            <li className="nav-item dropdown">
-                                <a className="nav-link"
-                                    data-bs-toggle="dropdown" to="/" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.info')}</a>
-                            </li>
-                            <li className="nav-item dropdown">
-                                <a className="nav-link"
-                                    data-bs-toggle="dropdown" to="/" role="button"
-                                    aria-haspopup="true" aria-expanded="false">{t('menu.support')}</a>
-                            </li>
+                           
                             <li className="nav-item">
-                                <NavLink className="nav-link" to="/member/KakaoLoginPage">카카오로그인 테스트</NavLink>
+                                <NavLink className="nav-link" to="/member/KakaoLoginPage">{t('menu.kakao_login_test')}</NavLink>
                             </li>
 
                             {login ? (<>
@@ -292,7 +283,7 @@ const Menu = () => {
                                   
                             <li className="nav-item">
                             <NavLink className="nav-link" to="/admin/payment">
-                              매출 전표
+                              {t('menu.sales_receipt')}
                             </NavLink>
                         </li>
                             )}
@@ -330,11 +321,11 @@ const Menu = () => {
             <li className="nav-item">
             {!isModalOpen?(
                                 <button className="btn btn-link nav-link" onClick={openModal}>
-                                        친구
+                                         {t('menu.friend')}
                                     </button>
                                     ):(
                                         <button className="btn btn-link nav-link" onClick={closeModal}>
-                                        친구
+                                        {t('menu.friend')}
                                     </button>
                                     )}
                                 </li>
@@ -362,7 +353,7 @@ const Menu = () => {
                                     }}
                                 >
                                     <FriendList />
-                                    <button onClick={closeModal}>닫기</button>
+                                    <button onClick={closeModal}>{t('close_button_label')}</button>
                                 </Modal>
                                 <li>
                                     <LanguageSelector />

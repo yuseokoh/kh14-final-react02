@@ -10,7 +10,13 @@
     "logout": "Logout",
     "library" :"Library",
     "wishlist": "Wishlist",
-    "cart": "Cart"
+    "cart": "Cart",
+    "friend":"friend"
+    ,
+      "close_button_label": "닫기",
+       "kakao_login_test": "Kakao Login Test",
+       "sales_receipt": "Sales Receipt"
+    
   },
   "loginPage": {
     "title": "Login",
