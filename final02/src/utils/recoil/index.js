@@ -41,9 +41,9 @@ const loginState = selector({
     key: "loginState",
     get: ({ get }) => {
         // memberId, memberLevel, kakaoId 값을 가져옴
-        const memberId = get(memberIdState);
-        const memberLevel = get(memberLevelState);
-        const kakaoId = get(kakaoIdState);
+        const memberId = get(memberIdState) || "";
+        const memberLevel = get(memberLevelState) || "";
+        const kakaoId = get(kakaoIdState) || "";
 
         // 조건: memberId, memberLevel, kakaoId 중 하나라도 값이 있으면 로그인 상태
         return (memberId.length > 0 && memberLevel.length > 0) || kakaoId.length > 0;
