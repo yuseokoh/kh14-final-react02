@@ -16,13 +16,27 @@ const WishList = () => {
   const [wishlist, setWishlist] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredWishlist, setFilteredWishlist] = useState([]);
-  const [imageUrls, setImageUrls] = useState({});
   const [cartGames, setCartGames] = useState([]);
   const [libraryGames, setLibraryGames] = useState([]);
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
   const [gameList, setGameList] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 공통 이미지 로딩 함수
+  const loadGameImage = async (gameNo) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+      if (response.data && response.data.length > 0) {
+        return `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+      }
+    } catch (error) {
+      console.error(`Error loading image for game ${gameNo}:`, error);
+    }
+    return 'https://via.placeholder.com/150';
+  };
+
+  // 구매한 게임 목록 로드
   const loadLibraryGames = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
@@ -32,6 +46,7 @@ const WishList = () => {
     }
   }, []);
 
+  // 카트에 추가된 게임 목록 로드
   const loadCartGames = useCallback(async () => {
     try {
       const resp = await axios.get("/cart/");
@@ -41,33 +56,21 @@ const WishList = () => {
     }
   }, []);
 
+  // 위시리스트 로드
   const loadWishlist = useCallback(async () => {
     try {
       const resp = await axios.get("http://localhost:8080/wishlist/");
-      setWishlist(resp.data);
-      setFilteredWishlist(resp.data);
-      loadImages(resp.data);
+      const wishlistWithImages = await Promise.all(
+        resp.data.map(async (game) => {
+          const imageUrl = await loadGameImage(game.gameNo);
+          return { ...game, imageUrl };
+        })
+      );
+      setWishlist(wishlistWithImages);
+      setFilteredWishlist(wishlistWithImages);
     } catch (error) {
       console.error("Error loading wishlist", error);
     }
-  }, []);
-
-  const loadImages = useCallback(async (wishlist) => {
-    const imageMap = {};
-    for (const game of wishlist) {
-      try {
-        const imageResp = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        if (imageResp.data && imageResp.data.length > 0) {
-          imageMap[game.wishListId] = `http://localhost:8080/game/download/${imageResp.data[0].attachmentNo}`;
-        } else {
-          imageMap[game.wishListId] = 'placeholder_image_url';
-        }
-      } catch (err) {
-        console.error("Error loading game image", err);
-        imageMap[game.wishListId] = 'placeholder_image_url';
-      }
-    }
-    setImageUrls(imageMap);
   }, []);
 
   const addCart = useCallback(async (game) => {
@@ -126,41 +129,19 @@ const WishList = () => {
     }
   }, [login, memberId, loadWishlist, loadCartGames, loadLibraryGames]);
 
-  const dragStart = (e, position) => {
-    dragItem.current = position;
-    e.target.style.opacity = 0.5;
-  };
-
-  const dragEnter = (e, position) => {
-    dragOverItem.current = position;
-    e.preventDefault();
-  };
-
-  const drop = (e) => {
-    e.preventDefault();
-    const newWishList = [...filteredWishlist];
-    const dragItemValue = newWishList[dragItem.current];
-    newWishList.splice(dragItem.current, 1);
-    newWishList.splice(dragOverItem.current, 0, dragItemValue);
-    dragItem.current = null;
-    dragOverItem.current = null;
-    setFilteredWishlist(newWishList);
-    setWishlist(newWishList);
-    e.target.style.opacity = 1;
-  };
-
   const loadGameList = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
-      console.log("게임 목록 데이터:", response.data);
+      const shuffledGames = response.data.sort(() => Math.random() - 0.5).slice(0, 6);
+      
+      const gameListWithImages = await Promise.all(
+        shuffledGames.map(async (game) => {
+          const imageUrl = await loadGameImage(game.gameNo);
+          return { ...game, imageUrl };
+        })
+      );
 
-      // 배열을 섞는 함수
-      const shuffleArray = (array) => {
-        return array.sort(() => Math.random() - 0.5);
-      };
-  
-      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
-      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
+      setGameList(gameListWithImages);
     } catch (error) {
       console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
@@ -177,10 +158,11 @@ const WishList = () => {
       setCurrentIndex(currentIndex - 3);
     }
   };
+
   return (
     <div className={styles.wishlist_container} style={{ minHeight: '100vh' }}>
       <h1 className={styles.wishlist_title}>
-         {memberId ? t("wishlist.titleWithMember", { memberId }) : t("wishlist.title")}
+        {memberId ? t("wishlist.titleWithMember", { memberId }) : t("wishlist.title")}
       </h1>
       <div className={styles.wishlist_search_container}>
         <input
@@ -207,53 +189,42 @@ const WishList = () => {
                 exitActive: styles.itemExitActive,
               }}
             >
-              <div
-                className={styles.wishlist_game_item}
-                draggable
-                onDragStart={(e) => dragStart(e, index)}
-                onDragEnter={(e) => dragEnter(e, index)}
-                onDragEnd={drop}
-                onDragOver={(e) => e.preventDefault()}
-              >
+              <div className={styles.wishlist_game_item}>
                 <img
-                  src={imageUrls[game.wishListId] || 'placeholder_image_url'}
+                  src={game.imageUrl || 'https://via.placeholder.com/150'}
                   alt={game.gameTitle}
                   className={styles.gameThumbnail}
                 />
-                <div className={styles.wishlist_game_details} style={{ maxWidth: '75%' }}>
-                <h2 
-                  className={styles.wishlist_game_title}
-                  onClick={() => navigate(`/game/detail/${game.gameNo}`)}
-                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                >{game.gameTitle}</h2>
+                <div className={styles.wishlist_game_details}>
+                  <h2 
+                    className={styles.wishlist_game_title}
+                    onClick={() => navigate(`/game/detail/${game.gameNo}`)}
+                    style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                  >{game.gameTitle}</h2>
                   <div className={styles.game_meta_info}>
-                    <span className={styles.game_review}>{t("wishlist.reviewSummary")}: {game.reviewSummary || t("wishlist.noInfo")}</span>
-                    <span className={styles.game_release}>{t("wishlist.releaseDate")}: {game.releaseDate}</span>
-                  </div>
-                  <div className={styles.tag_container}>
-                    <span className={styles.tag}>{t("wishlist.singlePlayer")}</span>
-                    <span className={styles.tag}>{t("wishlist.multiplayer")}</span>
+                    <span>{t("wishlist.reviewSummary")}: {game.reviewSummary || t("wishlist.noInfo")}</span>
+                    <span>{t("wishlist.releaseDate")}: {game.releaseDate}</span>
                   </div>
                 </div>
                 <div className={styles.wishlist_action_container}>
                   <div className={styles.game_price}>${game.gamePrice}</div>
                   {libraryGames.includes(game.gameNo) ? (
-                    <button className={styles.wishlist_cart_button} onClick={() => navigate(`/play/${game.gameNo}`)}>{t("wishlist.play")}</button>
+                    <button onClick={() => navigate(`/play/${game.gameNo}`)}>{t("wishlist.play")}</button>
                   ) : (
-                    <button className={styles.wishlist_cart_button} onClick={() => addCart(game)}>{t("wishlist.addToCart")}</button>
+                    <button onClick={() => addCart(game)}>{t("wishlist.addToCart")}</button>
                   )}
-                  <button className={styles.removeButton} onClick={() => delWishList(game.wishListId)}>{t("wishlist.remove")}</button>
+                  <button onClick={() => delWishList(game.wishListId)}>{t("wishlist.remove")}</button>
                 </div>
               </div>
             </CSSTransition>
           ))}
         </TransitionGroup>
       )}
-        {/* 추천 게임 목록 슬라이더 */}
+      {/* 추천 게임 목록 슬라이더 */}
       <section className={styles.recommendedSection}>
         <h2 className={styles.recommendedTitle}>{t("wishlist.recommendedGames")}</h2>
         <div className={styles.sliderContainer}>
-          <button onClick={prevSlide} className={styles.sliderButton}>&lt;</button>
+          <button onClick={prevSlide}>&lt;</button>
           <div className={styles.topRatedGamesWrapper}>
             <div
               className={styles.topRatedGamesContainer}
@@ -274,13 +245,13 @@ const WishList = () => {
                     >
                       {game.gameTitle}
                     </h4>
-                    <p className={styles.topRatedGamePrice}>{(game.gamePrice || 0).toLocaleString()}₩</p>
+                    <p>{(game.gamePrice || 0).toLocaleString()}₩</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <button onClick={nextSlide} className={styles.sliderButton}>&gt;</button>
+          <button onClick={nextSlide}>&gt;</button>
         </div>
       </section>
     </div>

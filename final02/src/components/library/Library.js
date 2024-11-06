@@ -12,7 +12,22 @@ const Library = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const login = useRecoilValue(loginState);
   const memberId = useRecoilValue(memberIdState);
-  const [gameList, setGameList] = useState([]); // 게임 목록을 저장하는 상태 추가
+  const [gameList, setGameList] = useState([]);
+
+  // 공통 이미지 로딩 함수
+  const loadGameImage = async (gameNo) => {
+    try {
+      const response = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+      if (response.data && response.data.length > 0) {
+        return `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+      }
+    } catch (error) {
+      console.error(`Error loading image for game ${gameNo}:`, error);
+    }
+    return 'https://via.placeholder.com/150';
+  };
+
+  // 라이브러리 리스트 로드
   const loadLib = useCallback(async () => {
     try {
       const resp = await axios.get("/library/");
@@ -24,49 +39,36 @@ const Library = () => {
         return acc;
       }, []);
       
-      setLibList(uniqueLibList);
-      loadImages(uniqueLibList);
+      const libListWithImages = await Promise.all(
+        uniqueLibList.map(async (game) => {
+          const imageUrl = await loadGameImage(game.gameNo);
+          return { ...game, imageUrl };
+        })
+      );
+
+      setLibList(libListWithImages);
     } catch (error) {
       console.error("Error loading library:", error);
     }
   }, []);
 
-  //게임 리스트 로드
+  // 추천 게임 리스트 로드
   const loadGameList = useCallback(async () => {
     try {
       const response = await axios.get("http://localhost:8080/game/");
-      console.log("게임 목록 데이터:", response.data);
-  
-      // 배열을 섞는 함수
-      const shuffleArray = (array) => {
-        return array.sort(() => Math.random() - 0.5);
-      };
-  
-      const shuffledGames = shuffleArray(response.data); // 데이터를 섞음
-      setGameList(shuffledGames.slice(0, 6)); // 무작위로 섞인 목록 중 6개의 게임만 선택
+      const shuffledGames = response.data.sort(() => Math.random() - 0.5).slice(0, 6);
+
+      const gameListWithImages = await Promise.all(
+        shuffledGames.map(async (game) => {
+          const imageUrl = await loadGameImage(game.gameNo);
+          return { ...game, imageUrl };
+        })
+      );
+
+      setGameList(gameListWithImages);
     } catch (error) {
       console.error("게임 목록을 불러오는 데 실패했습니다:", error);
     }
-  }, []);
-
-  const loadImages = useCallback(async (library) => {
-    const imageMap = {};
-
-    for (const game of library) {
-      try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
-        if (response.data && response.data.length > 0) {
-          const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
-          imageMap[game.libraryId] = imageUrl;
-        } else {
-          imageMap[game.libraryId] = '/default-profile.png';
-        }
-      } catch (error) {
-        console.error("Error loading game image:", error);
-        imageMap[game.libraryId] = '/default-profile.png';
-      }
-    }
-    setImageUrls(imageMap);
   }, []);
 
   useEffect(() => {
@@ -74,7 +76,7 @@ const Library = () => {
       loadLib();
       loadGameList();
     }
-  }, [login, memberId, loadLib]);
+  }, [login, memberId, loadLib, loadGameList]);
 
   const nextSlide = () => {
     if (currentIndex < gameList.length - 3) {
@@ -105,7 +107,7 @@ const Library = () => {
               onClick={() => navigate('/testgame2')}
             >
               <img
-                src={imageUrls[game.libraryId] || '/default-profile.png'}
+                src={game.imageUrl || '/default-profile.png'}
                 alt={game.gameTitle}
                 className={styles.gameThumbnail}
               />
@@ -116,7 +118,8 @@ const Library = () => {
           ))
         )}
       </div>
-      {/* 일반 게임 목록 슬라이드 섹션 */}
+      
+      {/* 추천 게임 목록 슬라이드 섹션 */}
       <section className={styles.sliderSection}>
         <h2 className={styles.sectionTitle}>추천 게임 목록</h2>
         <div className={styles.sliderContainer}>
@@ -128,7 +131,7 @@ const Library = () => {
             >
               {gameList.map((game) => (
                 <div key={game.gameNo} className={styles.library_game_item}>
-                  <img src={game.imageUrl || 'https://via.placeholder.com/200'} alt={game.gameTitle} className={styles.gameThumbnail} />
+                  <img src={game.imageUrl || 'https://via.placeholder.com/150'} alt={game.gameTitle} className={styles.gameThumbnail} />
                   <div className={styles.library_game_details}>
                     <h3 className={styles.library_game_title}>{game.gameTitle}</h3>
                   </div>

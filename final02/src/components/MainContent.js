@@ -138,6 +138,7 @@ const MainContent = () => {
                         <Route path="/terms-of-use" element={<TermsOfUse />} />
                         <Route path="/steam-agreement" element={<SteamAgreement />} />
                         <Route path="/refund-policy" element={<RefundPolicy />} />
+                        {/* <Route path="/community/search/title/:keyword" element={<CommunitySearch />} /> */}
 
                      
 

@@ -816,3 +816,17 @@
         gap: 10px;
     }
 }
+
+.removeButton {
+    padding: 6px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .alreadyPurchasedMessage {
+    color: white;
+    font-weight: bold;
+  }
