@@ -46,7 +46,8 @@ const Chat = () => {
   }, [messageList]);
 
   useEffect(() => {
-    setMore(firstMessageNo !== null);
+    if(firstMessageNo !== null) return;
+    setMore();
   }, [firstMessageNo]);
 
   useEffect(() => {
@@ -288,9 +289,7 @@ const Chat = () => {
                           {login && memberId !== message.senderMemberId && (
                             <h6 className="mb-1 text-primary">
                               {message.senderMemberId}{" "}
-                              <small className="text-muted">
-                                ({message.senderMemberLevel})
-                              </small>
+                              
                             </h6>
                           )}
                           {/* 사용자가 보낸 본문 */}
