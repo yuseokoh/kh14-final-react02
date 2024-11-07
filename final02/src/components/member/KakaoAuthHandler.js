@@ -13,7 +13,7 @@ const KakaoAuthHandler = () => {
             console.log("인가 코드: ", code);
             console.log("백엔드로 로그인 요청 시도");
             // 인가 코드를 백엔드로 전달
-            axios.post("http://localhost:8080/member/kakaoLogin", { code })
+            axios.post("/member/kakaoLogin", { code })
                 .then((response) => {
                     console.log("로그인 성공: ", response.data);
                     // JWT 토큰 저장 (예: localStorage)

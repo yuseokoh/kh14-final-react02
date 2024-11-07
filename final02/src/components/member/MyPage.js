@@ -40,7 +40,7 @@ const MyPage = () => {
 
     const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get("http://localhost:8080/member/myPage");
+            const resp = await axios.get("/member/myPage");
             setMember(resp.data);
             console.log("Member data received:", resp.data);
         } catch (error) {

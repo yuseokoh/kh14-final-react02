@@ -47,7 +47,7 @@ const CancelPaymentPage = () => {
             }
 
             const response = await axios.get(
-                `http://localhost:8080/kakaopay/detail/${paymentNo}`,
+                `/kakaopay/detail/${paymentNo}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -77,7 +77,7 @@ const CancelPaymentPage = () => {
 
             const token = sessionStorage.getItem('refreshToken');
             const response = await axios.delete(
-                `http://localhost:8080/kakaopay/cancelAll/${paymentNo}`,
+                `/kakaopay/cancelAll/${paymentNo}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`

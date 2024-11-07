@@ -272,7 +272,7 @@ const CommunityDetail = () => {
             {communityImageList.map((image) => (
                 <img
                     key={image.attachmentNo}
-                    src={`http://localhost:8080/community/download/${image.attachmentNo}`}
+                    src={`${process.env.REACT_APP_BASE_URL}/community/download/${image.attachmentNo}`}
                     alt={`Community Image ${image.attachmentNo}`}
                     className="kjh99community-image"
                 />

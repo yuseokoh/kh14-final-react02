@@ -1,30 +1,26 @@
 /**
- * ActionGame.js
- * 액션 게임 카테고리 페이지를 위한 메인 컴포넌트
- * Steam 스타일의 게임 목록 및 필터링 기능을 제공
+ * FifteenAges.js
+ * 15세 이용가 게임 카테고리 페이지를 위한 메인 컴포넌트
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import styles from './Category.module.css';
+import styles from './GameGrade.module.css';
 
 /**
  * 카테고리별 설정을 관리하는 객체
- * - 각 카테고리 페이지의 고유한 설정을 정의
- * - 다른 카테고리 페이지에서 이 부분만 수정하여 재사용 가능
  */
 const CATEGORY_CONFIG = {
-  name: 'Action',
-  description: '역동적인 전투와 빠른 템포의 액션 게임을 만나보세요',
-  tags: ['격투', '슈팅', '핵앤슬래시', '전투', 'TPS', 'FPS'],
-  filterKey: 'action' // API 필터링에 사용될 키워드
+  name: '15세 이용가',
+  description: '15세 이상이 이용할 수 있는 게임을 만나보세요',
+  tags: ['액션', 'RPG', '전략', '어드벤처', '시뮬레이션', 'FPS'],
+  filterKey: '15' 
 };
 
 /**
  * 필터 옵션 설정
- * 카테고리 필터링을 위한 옵션 목록
  */
 const FILTER_OPTIONS = [
   { id: 'all', name: '특집' },
@@ -32,27 +28,19 @@ const FILTER_OPTIONS = [
   { id: 'rpg', name: 'RPG' },
   { id: 'strategy', name: '전략' },
   { id: 'simulation', name: '시뮬레이션' },
-  { id: 'adventure', name: '어드벤처' }
+  { id: 'fps', name: 'FPS' }
 ];
 
 /**
  * 피처드 게임 섹션을 표시하는 컴포넌트
- * - 카테고리 페이지 상단의 하이라이트된 게임을 표시
- * - 이미지 슬라이더와 게임 정보를 포함
- * - Steam 스타일의 레이아웃 적용
- * 
- * @param {Object[]} games - 표시할 게임 목록
  */
 const FeaturedSection = ({ games }) => {
-    // 상태 관리
     const [currentIndex, setCurrentIndex] = useState(0);
     const [imageUrl, setImageUrl] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
   
-    // 이미지 로딩 효과
     useEffect(() => {
-      // 새 게임으로 전환 시 상태 초기화
       setImageUrl(null);
       setIsLoading(true);
       
@@ -60,9 +48,9 @@ const FeaturedSection = ({ games }) => {
         if (!games[currentIndex]) return;
         
         try {
-          const response = await axios.get(`http://localhost:8080/game/image/${games[currentIndex].gameNo}`);
+          const response = await axios.get(`/game/image/${games[currentIndex].gameNo}`);
           if (response.data && response.data.length > 0) {
-            const url = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+            const url = `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
             setImageUrl(url);
           }
         } catch (error) {
@@ -75,7 +63,6 @@ const FeaturedSection = ({ games }) => {
       loadGameImage();
     }, [currentIndex, games]);
   
-    // 네비게이션 핸들러
     const handlePrevious = () => {
       setCurrentIndex(prev => (prev === 0 ? games.length - 1 : prev - 1));
     };
@@ -90,7 +77,6 @@ const FeaturedSection = ({ games }) => {
   
     return (
       <div className={styles.featuredBanner}>
-        {/* 배경 이미지 및 블러 효과 */}
         <div className={styles.featuredBackground}>
           {imageUrl && (
             <img
@@ -100,11 +86,9 @@ const FeaturedSection = ({ games }) => {
             />
           )}
         </div>
-        {/* 배경 오버레이 (그라데이션) */}
         <div className={styles.featuredOverlay} />
         
         <div className={styles.featuredContent}>
-          {/* 이미지 섹션 (왼쪽) */}
           <div className={styles.featuredImageContainer}>
             {isLoading ? (
               <div className={styles.imagePlaceholder}>로딩 중...</div>
@@ -119,7 +103,6 @@ const FeaturedSection = ({ games }) => {
             )}
           </div>
   
-          {/* 게임 정보 섹션 (오른쪽) */}
           <div className={styles.featuredInfo}>
             <h2 className={styles.featuredGameTitle}>
               {currentGame.gameTitle}
@@ -129,14 +112,12 @@ const FeaturedSection = ({ games }) => {
               <span>평점: {currentGame.gameUserScore}/10</span>
             </div>
             
-            {/* 게임 설명 */}
             {currentGame.gameShortDescription && (
               <div className={styles.featuredShortDescription}>
                 {currentGame.gameShortDescription}
               </div>
             )}
   
-            {/* 태그 목록 */}
             <div className={styles.featuredTags}>
               {currentGame.gameCategory.split(',').map((tag, index) => (
                 <span key={index} className={styles.featuredTag}>
@@ -145,14 +126,12 @@ const FeaturedSection = ({ games }) => {
               ))}
             </div>
   
-            {/* 상세 설명 */}
             {currentGame.gameDescription && (
               <div className={styles.featuredDescription}>
                 {currentGame.gameDescription}
               </div>
             )}
   
-            {/* 가격 정보 */}
             <div className={styles.featuredPricing}>
               {currentGame.gameDiscount > 0 ? (
                 <>
@@ -176,7 +155,6 @@ const FeaturedSection = ({ games }) => {
             </div>
           </div>
   
-          {/* 슬라이더 네비게이션 버튼 */}
           <button
             onClick={handlePrevious}
             className={`${styles.featuredNavButton} ${styles.featuredNavButtonLeft}`}
@@ -193,7 +171,6 @@ const FeaturedSection = ({ games }) => {
           </button>
         </div>
   
-        {/* 하단 인디케이터 */}
         <div className={styles.featuredControls}>
           {Array.from({ length: games.length }, (_, i) => (
             <div
@@ -205,25 +182,21 @@ const FeaturedSection = ({ games }) => {
         </div>
       </div>
     );
-  };
+};
 
-  /**
+/**
  * 개별 게임 카드 컴포넌트
- * 리스트에서 각 게임을 표시하는 카드 형태의 컴포넌트
- * 
- * @param {Object} game - 표시할 게임 정보 객체
  */
 const GameCard = ({ game }) => {
     const [imageUrl, setImageUrl] = useState(null);
     const navigate = useNavigate();
   
-    // 게임 이미지 로딩
     useEffect(() => {
       const loadGameImage = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+          const response = await axios.get(`/game/image/${game.gameNo}`);
           if (response.data && response.data.length > 0) {
-            const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+            const imageUrl = `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
             setImageUrl(imageUrl);
           }
         } catch (error) {
@@ -278,21 +251,19 @@ const GameCard = ({ game }) => {
         </div>
       </div>
     );
-  };
-  
-  /**
-   * ActionGame 메인 컴포넌트
-   * 액션 게임 카테고리 페이지의 전체 구조를 정의
-   */
-  const ActionGame = () => {
-    // 상태 관리
-    const [games, setGames] = useState([]); // 전체 게임 목록
-    const [loading, setLoading] = useState(true); // 로딩 상태
-    const [error, setError] = useState(null); // 에러 상태
-    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
-    const [sorting, setSorting] = useState('recent'); // 정렬 방식
-    const [activeFilter, setActiveFilter] = useState('all'); // 현재 활성화된 필터
-    const gamesPerPage = 12; // 페이지당 게임 수
+};
+
+/**
+ * FifteenAges 메인 컴포넌트
+ */
+const FifteenAges = () => {
+    const [games, setGames] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sorting, setSorting] = useState('recent');
+    const [activeFilter, setActiveFilter] = useState('all');
+    const gamesPerPage = 12;
   
     const navigate = useNavigate();
 
@@ -300,19 +271,18 @@ const GameCard = ({ game }) => {
         window.scrollTo(0, 0);
     }, []);
   
-    // 게임 데이터 로딩
     useEffect(() => {
       const fetchGames = async () => {
         try {
           setLoading(true);
-          const response = await axios.get('http://localhost:8080/game/');
-          // 액션 게임 필터링
-          const actionGames = response.data.filter(game =>
-            game.gameCategory.toLowerCase().includes(CATEGORY_CONFIG.filterKey)
+          const response = await axios.get('/game/');
+          // 15세 이용가 게임만 필터링
+          const fifteenAgesGames = response.data.filter(game =>
+            game.gameGrade === "15세이용가"
           );
   
           // 정렬 적용
-          const sortedGames = [...actionGames].sort((a, b) => {
+          const sortedGames = [...fifteenAgesGames].sort((a, b) => {
             switch(sorting) {
               case 'popular':
                 return b.gameUserScore - a.gameUserScore;
@@ -336,7 +306,6 @@ const GameCard = ({ game }) => {
       fetchGames();
     }, [sorting]);
   
-    // 필터링된 게임 목록
     const filteredGames = useMemo(() => {
       if (activeFilter === 'all') return games;
       return games.filter(game => 
@@ -344,13 +313,11 @@ const GameCard = ({ game }) => {
       );
     }, [games, activeFilter]);
   
-    // 페이지네이션 처리
     const indexOfLastGame = currentPage * gamesPerPage;
     const indexOfFirstGame = indexOfLastGame - gamesPerPage;
     const currentGames = filteredGames.slice(indexOfFirstGame, indexOfLastGame);
     const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
   
-    // 정렬 변경 핸들러
     const handleSortChange = (event) => {
       setSorting(event.target.value);
       setCurrentPage(1);
@@ -363,16 +330,13 @@ const GameCard = ({ game }) => {
     return (
       <div className={styles.categoryContainer}>
         <div className={styles.contentWrapper}>
-          {/* 카테고리 헤더 */}
           <div className={styles.categoryHeader}>
             <h1 className={styles.categoryTitle}>{CATEGORY_CONFIG.name} 게임</h1>
             <p className={styles.categoryDescription}>{CATEGORY_CONFIG.description}</p>
           </div>
   
-          {/* 피처드 게임 섹션 */}
           <FeaturedSection games={games.slice(0, 5)} />
   
-          {/* 카테고리 필터 버튼 */}
           <div className={styles.categoryFilters}>
             {FILTER_OPTIONS.map(filter => (
               <button
@@ -387,7 +351,6 @@ const GameCard = ({ game }) => {
             ))}
           </div>
   
-          {/* 필터 결과 및 정렬 옵션 */}
           <div className={styles.controls}>
             <div className={styles.resultCount}>
               {filteredGames.length}개의 게임
@@ -403,14 +366,12 @@ const GameCard = ({ game }) => {
             </select>
           </div>
   
-          {/* 게임 리스트 */}
           <div className={styles.gameList}>
             {currentGames.map(game => (
               <GameCard key={game.gameNo} game={game} />
             ))}
           </div>
   
-          {/* 페이지네이션 */}
           {totalPages > 1 && (
             <div className={styles.pagination}>
               <button
@@ -433,6 +394,6 @@ const GameCard = ({ game }) => {
         </div>
       </div>
     );
-  };
-  
-  export default ActionGame;
+};
+
+export default FifteenAges;

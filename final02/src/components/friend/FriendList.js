@@ -65,7 +65,7 @@ const FriendList = () => {
   );
 
   const loadFriendList = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/friend/" + memberId);
+    const resp = await axios.get("/friend/" + memberId);
     setFriendList(resp.data);
   }, [memberId]);
 
@@ -88,10 +88,10 @@ const FriendList = () => {
   const deleteFriend = useCallback(async (target) => {
     if (!memberId || memberLoading === false) return;
     const resp = await axios.delete(
-      "http://localhost:8080/friend/" + target.friendFk
+      "/friend/" + target.friendFk
     );
     loadFriendList();
-    const resp2 = await axios.delete("http://localhost:8080/room/"+target.friendFk);
+    const resp2 = await axios.delete("/room/"+target.friendFk);
   }, []);
 
   const loadRoomList = useCallback(async () => {

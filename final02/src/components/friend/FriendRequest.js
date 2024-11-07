@@ -42,23 +42,23 @@ const FriendRequest = () => {
 
   //callback
   const loadMemberList = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/friend/member");
+    const resp = await axios.get("/friend/member");
     setMemberList(resp.data);
   }, []);
 
   const loadRequestToOther = useCallback(async ()=> {
     if(!memberId || memberLoading === false) return;
-    const resp = await axios.get("http://localhost:8080/friend/request/"+memberId);
+    const resp = await axios.get("/friend/request/"+memberId);
     setRequestToList(resp.data);
   }, [memberId]);
   const loadRequestFromOther = useCallback(async ()=>{
     if(!memberId || memberLoading === false) return;
-    const resp = await axios.get("http://localhost:8080/friend/getRequest/"+memberId);
+    const resp = await axios.get("/friend/getRequest/"+memberId);
     setRequestFromList(resp.data);
   }, [memberId]);
   const loadFriendList = useCallback(async ()=>{
     if(!memberId || memberLoading === false) return;
-    const resp = await axios.get("http://localhost:8080/friend/"+memberId);
+    const resp = await axios.get("/friend/"+memberId);
     setFriendList(resp.data);
   }, [memberId]);
 
@@ -88,19 +88,19 @@ const FriendRequest = () => {
   
   //친구 요청
   const sendRequest = useCallback(async (target)=>{
-    const resp = await axios.post("http://localhost:8080/friend/", { friendFrom: memberId, friendTo: target.memberId })
+    const resp = await axios.post("/friend/", { friendFrom: memberId, friendTo: target.memberId })
     setKeyword("");
     loadRequestToOther();
   }, [memberId]);
   //친구 수락
   const getRequest = useCallback(async (target)=>{
-    const resp = await axios.put("http://localhost:8080/friend/"+target.friendFk);
+    const resp = await axios.put("/friend/"+target.friendFk);
     loadRequestToOther();
     loadRequestFromOther();
   }, []);
   //거절, 취소
   const deleteRequest = useCallback(async (target)=>{
-    const resp = await axios.delete("http://localhost:8080/friend/"+target.friendFk);
+    const resp = await axios.delete("/friend/"+target.friendFk);
     loadRequestToOther();
     loadRequestFromOther();
   }, []);

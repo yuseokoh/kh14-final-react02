@@ -22,7 +22,7 @@ const MemberEdit = () => {
     // 회원 정보 가져오기
     const fetchMemberInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/member/${memberId}`);
+        const response = await axios.get(`/api/member/${memberId}`);
         setMemberInfo(response.data);
       } catch (error) {
         setError('회원 정보를 가져오는데 실패했습니다.');
@@ -35,9 +35,9 @@ const MemberEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:8080/api/member/${memberId}`, memberInfo);
+      await axios.put(`/api/member/${memberId}`, memberInfo);
       // 개발자 권한 요청 처리 완료 시 요청 삭제
-      await axios.delete(`http://localhost:8080/api/developer-requests/${memberId}`);
+      await axios.delete(`/api/developer-requests/${memberId}`);
       navigate('/admin/members');
     } catch (error) {
       setError('회원 정보 수정에 실패했습니다.');

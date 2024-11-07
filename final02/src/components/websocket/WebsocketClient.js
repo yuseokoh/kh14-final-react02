@@ -58,7 +58,7 @@ const WebsocketClient = ()=>{
 
     //callback for websocket
     const connectToServer = useCallback(()=>{
-        const socket = new SockJS("http://localhost:8080/ws");
+        const socket = new SockJS(`${process.env.REACT_APP_BASE_URL}/ws`);
         
         const client = new Client({
             webSocketFactory: ()=> socket,

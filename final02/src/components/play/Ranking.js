@@ -26,18 +26,18 @@ const Ranking = () => {
 
   //callback
   const loadScoreRanking = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/play/score");
+    const resp = await axios.get("/play/score");
     setScoreRanking(resp.data);
   }, [scoreRanking]);
 
   const loadLevelRanking = useCallback(async () => {
-    const resp = await axios.get("http://localhost:8080/play/level");
+    const resp = await axios.get("/play/level");
     setLevelRanking(resp.data);
   }, [levelRanking]);
 
   const searchById = useCallback(async ()=> {
     if(keyword.length === 0) return;
-    const resp = await axios.get("http://localhost:8080/play/"+keyword);
+    const resp = await axios.get("/play/"+keyword);
     setSearchList(resp.data);
     setKeyword("");
   }, [keyword, searchList]);

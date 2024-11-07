@@ -28,7 +28,7 @@ const AdminMemberEdit = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:8080/member/${memberId}`,
+          `/member/${memberId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -60,7 +60,7 @@ const AdminMemberEdit = () => {
 
       // 회원 정보 수정 요청
       await axios.put(
-        `http://localhost:8080/member/admin/edit/${memberId}`,
+        `/member/admin/edit/${memberId}`,
         memberInfo,
         {
           headers: {

@@ -12,9 +12,9 @@ const GameCard = ({ game }) => {
   useEffect(() => {
     const loadGameImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        const response = await axios.get(`/game/image/${game.gameNo}`);
         if (response.data && response.data.length > 0) {
-          setImageUrl(`http://localhost:8080/game/download/${response.data[0].attachmentNo}`);
+          setImageUrl(`${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`);
         }
       } catch (error) {
         console.error("이미지 로딩 에러:", error);

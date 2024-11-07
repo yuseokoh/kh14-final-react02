@@ -45,9 +45,9 @@ const FeaturedGame = ({ game }) => {
   useEffect(() => {
     const loadGameImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        const response = await axios.get(`/game/image/${game.gameNo}`);
         if (response.data && response.data.length > 0) {
-          setImageUrl(`http://localhost:8080/game/download/${response.data[0].attachmentNo}`);
+          setImageUrl(`${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`);
         }
       } catch (error) {
         console.error("이미지 로딩 에러:", error);
@@ -108,9 +108,9 @@ const GameCard = ({ game }) => {
   useEffect(() => {
     const loadGameImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        const response = await axios.get(`/game/image/${game.gameNo}`);
         if (response.data && response.data.length > 0) {
-          setImageUrl(`http://localhost:8080/game/download/${response.data[0].attachmentNo}`);
+          setImageUrl(`${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`);
         }
       } catch (error) {
         console.error("이미지 로딩 에러:", error);
@@ -189,9 +189,9 @@ const VerticalGameCard = ({ game }) => {
   useEffect(() => {
     const loadGameImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        const response = await axios.get(`/game/image/${game.gameNo}`);
         if (response.data && response.data.length > 0) {
-          setImageUrl(`http://localhost:8080/game/download/${response.data[0].attachmentNo}`);
+          setImageUrl(`${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`);
         }
       } catch (error) {
         console.error("이미지 로딩 에러:", error);
@@ -402,27 +402,12 @@ const Sidebar = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const device = [
-    { name: t('device.pc'), path: '/device/pc' },
-    { name: t('device.mobile'), path: '/device/mobile' },
-    { name: t('device.console'), path: '/device/console' }
-  ];
-
-  const recommendations = [
-    { name: t('recommendations.friends'), path: '/recommendations/friends' },
-    { name: t('recommendations.curators'), path: '/recommendations/curators' },
-    { name: t('recommendations.tags'), path: '/recommendations/tags' }
-  ];
-
   const categories = [
     { name: t('categories.action'), path: '/game/category/action' },
     { name: t('categories.adventure'), path: '/game/category/adventure' },
-    { name: t('categories.indie'), path: '/game/category/indie' },
     { name: t('categories.rpg'), path: '/game/category/rpg' },
     { name: t('categories.simulation'), path: '/game/category/simulation' },
     { name: t('categories.strategy'), path: '/game/category/strategy' },
-    { name: t('categories.openWorld'), path: '/game/category/openworld' },
-    { name: t('categories.multiplayer'), path: '/game/category/multiplayer' },
     { name: t('categories.fantasy'), path: '/game/category/fantasy' },
     { name: t('categories.pixelGraphics'), path: '/game/category/pixelgraphics' },
     { name: t('categories.roguelike'), path: '/game/category/roguelike' },
@@ -430,20 +415,12 @@ const Sidebar = () => {
     { name: t('categories.survival'), path: '/game/category/survival' }
   ];
 
-  const others = [
-    { name: t('others.freeToPlay'), path: '/other/freetoplay' },
-    { name: t('others.earlyAccess'), path: '/other/earlyaccess' },
-    { name: t('others.coop'), path: '/other/coop' },
-    { name: t('others.vr'), path: '/other/vr' },
-    { name: t('others.controllerSupport'), path: '/other/contoller' }
-  ];
-
   const ageRatings = [
-    { name: t('ageRatings.all'), path: '/rating/all' },
-    { name: t('ageRatings.12'), path: '/rating/12' },
-    { name: t('ageRatings.15'), path: '/rating/15' },
-    { name: t('ageRatings.19'), path: '/rating/19' }
-  ];
+    { name: t('ageRatings.all'), path: '/game/grade/allusers' },
+    { name: t('ageRatings.12'), path: '/game/grade/twelveages' },
+    { name: t('ageRatings.15'), path: '/game/grade/fifteenages' },
+    { name: t('ageRatings.19'), path: '/game/grade/nineteenages' }
+];
 
   return (
     <div className={styles.sidebar}>
@@ -495,9 +472,9 @@ const GameListItem = ({ game }) => {
   useEffect(() => {
     const loadGameImage = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+        const response = await axios.get(`/game/image/${game.gameNo}`);
         if (response.data && response.data.length > 0) {
-          setImageUrl(`http://localhost:8080/game/download/${response.data[0].attachmentNo}`);
+          setImageUrl(`${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`);
         }
       } catch (error) {
         console.error("이미지 로딩 에러:", error);
@@ -565,6 +542,7 @@ const Home = () => {
   // 상태 관리
   const [games, setGames] = useState([]); // 전체 게임 목록
   const [featuredIndex, setFeaturedIndex] = useState(0); // 추천 게임 인덱스
+  
   const [loading, setLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState(null); // 에러 상태
   const [visiblegames, setVisibleGames] = useState(10); // 표시할 게임 수
@@ -591,7 +569,7 @@ const Home = () => {
 
   // 할인 게임 필터링 (20% 이상)
   const discountedGames = useMemo(() => {
-    return games.filter(game => game.gameDiscount >= 20);
+    return games.filter(game => game.gameDiscount >= 40);
   }, [games]);
 
   // 신작 게임 필터링 (2021년 이후)
@@ -619,21 +597,24 @@ const Home = () => {
 }, [games, activeFilter, searchTerm]);
 
   // 게임 데이터 로딩
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get('http://localhost:8080/game/');
-        setGames(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('게임 데이터를 불러오는 데 실패했습니다.');
-        setLoading(false);
-      }
-    };
+  // Home 컴포넌트 내부의 useEffect만 수정
+useEffect(() => {
+  const fetchGames = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('/game/');
+      // 게임 배열을 랜덤하게 섞기
+      const randomizedGames = [...response.data].sort(() => Math.random() - 0.5);
+      setGames(randomizedGames);
+      setLoading(false);
+    } catch (err) {
+      setError('게임 데이터를 불러오는 데 실패했습니다.');
+      setLoading(false);
+    }
+  };
 
-    fetchGames();
-  }, []);
+  fetchGames();
+}, []);
 
   // 필터 변경 시 visible games 리셋
   useEffect(() => {

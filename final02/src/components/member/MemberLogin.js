@@ -39,7 +39,7 @@ const MemberLogin = () => {
   const sendLoginRequest = useCallback(async () => {
     try {
         // 로그인 요청 URL 수정
-        const resp = await axios.post("http://localhost:8080/member/login", input);
+        const resp = await axios.post("/member/login", input);
         console.log("로그인 응답:", resp.data); // 디버깅용 로그
 
         // 성공적으로 로그인했을 경우

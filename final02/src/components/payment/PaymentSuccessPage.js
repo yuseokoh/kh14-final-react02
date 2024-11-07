@@ -51,7 +51,7 @@ const PaymentSuccessPage = () => {
         }));
 
     
-            const resp = await axios.post("http://localhost:8080/game/approve", {
+            const resp = await axios.post("/game/approve", {
                 partnerOrderId: partnerOrderId,
                 pgToken: new URLSearchParams(window.location.search).get("pg_token"),
                 tid: tid,

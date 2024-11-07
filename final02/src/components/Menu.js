@@ -43,7 +43,7 @@ const NotificationMenu = ({ memberId }) => {
                 }
 
                 const response = await axios.get(
-                    "http://localhost:8080/member/notifications",  // URL 수정
+                    "/member/notifications",  // URL 수정
                     {
                         headers: {
                             'Authorization': `Bearer ${token}`

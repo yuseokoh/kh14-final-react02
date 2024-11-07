@@ -39,7 +39,7 @@ function KakaoEmail() {
       } else {
         // 서버에 요청하여 임시 이메일 여부 확인
         axios
-          .get(`http://localhost:8080/kakao/find/${storedKakaoId}`)
+          .get(`/kakao/find/${storedKakaoId}`)
           .then((response) => {
             if (
               response.data &&
@@ -72,7 +72,7 @@ function KakaoEmail() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/kakao/saveEmail', {
+      const response = await axios.post('/kakao/saveEmail', {
         kakaoId,
         memberEmail: email,
       });

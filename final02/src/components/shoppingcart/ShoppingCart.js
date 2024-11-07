@@ -23,9 +23,9 @@ const ShoppingCart = () => {
   // 공통 이미지 로딩 함수
   const loadGameImage = async (gameNo) => {
     try {
-      const response = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+      const response = await axios.get(`/game/image/${gameNo}`);
       if (response.data && response.data.length > 0) {
-        return `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+        return `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
       }
     } catch (error) {
       console.error(`Error loading image for game ${gameNo}:`, error);
@@ -64,7 +64,7 @@ const ShoppingCart = () => {
   // 추천 게임 목록 로드
   const loadGameList = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8080/game/");
+      const response = await axios.get("/game/");
       const shuffledGames = response.data.sort(() => Math.random() - 0.5).slice(0, 6);
 
       const gameListWithImages = await Promise.all(
@@ -123,7 +123,7 @@ const ShoppingCart = () => {
       const selectedGames = cartList.filter(cart => selectedItems.includes(cart.cartId));
 
       const response = await axios.post(
-        "http://localhost:8080/game/purchase",
+        "/game/purchase",
         {
           gameList: selectedGames.map(game => ({
             gameNo: game.gameNo,

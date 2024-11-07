@@ -34,7 +34,7 @@ const SignupPage = () => {
     try {
       // Sending signup invitation email request
       const response = await axios.post(
-        "http://localhost:8080/rest/cert/send",
+        "/rest/cert/send",
         null,
         {
           params: {

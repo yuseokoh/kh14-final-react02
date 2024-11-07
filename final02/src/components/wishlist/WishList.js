@@ -26,9 +26,9 @@ const WishList = () => {
   // 공통 이미지 로딩 함수
   const loadGameImage = async (gameNo) => {
     try {
-      const response = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+      const response = await axios.get(`/game/image/${gameNo}`);
       if (response.data && response.data.length > 0) {
-        return `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+        return `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
       }
     } catch (error) {
       console.error(`Error loading image for game ${gameNo}:`, error);
@@ -59,7 +59,7 @@ const WishList = () => {
   // 위시리스트 로드
   const loadWishlist = useCallback(async () => {
     try {
-      const resp = await axios.get("http://localhost:8080/wishlist/");
+      const resp = await axios.get("/wishlist/");
       const wishlistWithImages = await Promise.all(
         resp.data.map(async (game) => {
           const imageUrl = await loadGameImage(game.gameNo);
@@ -95,7 +95,7 @@ const WishList = () => {
 
   const delWishList = useCallback(async (wishListId) => {
     try {
-      await axios.delete(`http://localhost:8080/wishlist/${wishListId}`);
+      await axios.delete(`/wishlist/${wishListId}`);
       setWishlist((prevWishlist) => prevWishlist.filter((item) => item.wishListId !== wishListId));
       setFilteredWishlist((prevFilteredWishlist) => prevFilteredWishlist.filter((item) => item.wishListId !== wishListId));
     } catch (error) {
@@ -131,7 +131,7 @@ const WishList = () => {
 
   const loadGameList = useCallback(async () => {
     try {
-      const response = await axios.get("http://localhost:8080/game/");
+      const response = await axios.get("/game/");
       const shuffledGames = response.data.sort(() => Math.random() - 0.5).slice(0, 6);
       
       const gameListWithImages = await Promise.all(

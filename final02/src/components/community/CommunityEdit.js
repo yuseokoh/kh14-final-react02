@@ -167,7 +167,7 @@ const CommunityEdit = () => {
                         <div className="kjhexisting-images">
                             {existingImages.map(image => (
                                  <div key={image.attachmentNo} className="kjhimage-container">
-                                 <img src={`http://localhost:8080/community/download/${image.attachmentNo}`} alt={`Attachment ${image.attachmentNo}`} className="kjhimage-preview" />
+                                 <img src={`${process.env.REACT_APP_BASE_URL}/community/download/${image.attachmentNo}`} alt={`Attachment ${image.attachmentNo}`} className="kjhimage-preview" />
                                  <button type="button" className="kjhbtn kjhbtn-danger" onClick={() => handleExistingImageDelete(image.attachmentNo)}>
                                         삭제
                                     </button>

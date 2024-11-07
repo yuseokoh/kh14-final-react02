@@ -20,7 +20,7 @@ const AdminPaymentPage = () => {
         throw new Error(t('adminPayment.noAuthToken'));
       }
 
-      const response = await axios.get('http://localhost:8080/admin/total-sales', {
+      const response = await axios.get('/admin/total-sales', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,7 +40,7 @@ const AdminPaymentPage = () => {
         throw new Error(t('adminPayment.noAuthToken'));
       }
 
-      const response = await axios.get('http://localhost:8080/admin/payments', {
+      const response = await axios.get('/admin/payments', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

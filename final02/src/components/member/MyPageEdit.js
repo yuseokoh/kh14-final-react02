@@ -21,7 +21,7 @@ const MemberEdit = () => {
 
   const loadMember = useCallback(async () => {
     try {
-      const resp = await axios.get("http://localhost:8080/member/");
+      const resp = await axios.get("/member/");
       setMember(resp.data);
     } catch (e) {
       setMember(null);
@@ -47,7 +47,7 @@ const MemberEdit = () => {
         formData.append("files", file);
       });
 
-      await axios.put("http://localhost:8080/member/edit", formData, {
+      await axios.put("/member/edit", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -59,7 +59,7 @@ const MemberEdit = () => {
   }, [member, files, memberId]);
 
   const imageUrl = member?.attachment
-    ? `http://localhost:8080/member/download/${member.attachment}`
+    ? `${process.env.REACT_APP_BASE_URL}/member/download/${member.attachment}`
     : "/default-profile.png";
 
   const levels = [
