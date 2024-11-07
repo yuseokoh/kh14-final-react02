@@ -30,7 +30,7 @@ const ShoppingCart = () => {
     return window.location.origin
             + pathname
             + (window.location.hash || '');
-}, []);
+}, []); 
 
   // 공통 이미지 로딩 함수
   const loadGameImage = async (gameNo) => {
