@@ -42,7 +42,7 @@ const Profile = () => {
 
     const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get(`http://localhost:8080/member/${targetId}`);
+            const resp = await axios.get(`/member/${targetId}`);
             setMember(resp.data);
         } catch (error) {
             console.error("Error loading member data:", error);

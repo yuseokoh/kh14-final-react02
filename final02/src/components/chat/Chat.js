@@ -84,7 +84,7 @@ const Chat = () => {
   //callback
   const connectToServer = useCallback(() => {
     //소켓 연결 생성
-    const socket = new SockJS("http://localhost:8080/ws");
+    const socket = new SockJS("${process.env.REACT_APP_BASE_URL}/ws");
     //STOMP로 업그레이드(비회원이 없고 모두 회원)
     const client = new Client({
       webSocketFactory: () => socket, //연결에 사용할 소켓 설정

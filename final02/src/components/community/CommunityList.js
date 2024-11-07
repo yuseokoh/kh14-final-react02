@@ -101,7 +101,7 @@ const CommunityList = () => {
                  // 이미지 URL 가져오기
                  const imageResponse = await axios.get(`/community/image/${community.communityNo}`);
                  const imageUrl = imageResponse.data[0]
-                 ? `http://localhost:8080/community/download/${imageResponse.data[0].attachmentNo}`
+                 ? `${process.env.REACT_APP_BASE_URL}/community/download/${imageResponse.data[0].attachmentNo}`
                  : null;
  
                 return {
@@ -135,7 +135,7 @@ const CommunityList = () => {
                 // 이미지 URL 가져오기
                 const imageResponse = await axios.get(`/community/image/${community.communityNo}`);
                 const imageUrl = imageResponse.data[0]
-                ? `http://localhost:8080/community/download/${imageResponse.data[0].attachmentNo}`
+                ? `${process.env.REACT_APP_BASE_URL}/community/download/${imageResponse.data[0].attachmentNo}`
                 : null;
 
                 return {

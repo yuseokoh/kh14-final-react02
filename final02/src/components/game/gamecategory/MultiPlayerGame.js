@@ -62,9 +62,9 @@ const FILTER_OPTIONS = [
         if (!games[currentIndex]) return;
         
         try {
-          const response = await axios.get(`http://localhost:8080/game/image/${games[currentIndex].gameNo}`);
+          const response = await axios.get(`/game/image/${games[currentIndex].gameNo}`);
           if (response.data && response.data.length > 0) {
-            const url = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+            const url = `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
             setImageUrl(url);
           }
         } catch (error) {
@@ -223,9 +223,9 @@ const GameCard = ({ game }) => {
     useEffect(() => {
       const loadGameImage = async () => {
         try {
-          const response = await axios.get(`http://localhost:8080/game/image/${game.gameNo}`);
+          const response = await axios.get(`/game/image/${game.gameNo}`);
           if (response.data && response.data.length > 0) {
-            const imageUrl = `http://localhost:8080/game/download/${response.data[0].attachmentNo}`;
+            const imageUrl = `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
             setImageUrl(imageUrl);
           }
         } catch (error) {
@@ -307,7 +307,7 @@ const GameCard = ({ game }) => {
       const fetchGames = async () => {
         try {
           setLoading(true);
-          const response = await axios.get('http://localhost:8080/game/');
+          const response = await axios.get('/game/');
           // 멀티플레이 게임 필터링
           const multiplayerGames = response.data.filter(game =>
             game.gameCategory.toLowerCase().includes(CATEGORY_CONFIG.filterKey.toLowerCase())

@@ -27,7 +27,7 @@ function KakaoLoginPage() {
     const code = new URL(window.location.href).searchParams.get("code");
     if (code) {
       // 카카오 로그인 API 호출
-      axios.post("http://localhost:8080/kakao/login", { code }, {
+      axios.post("/kakao/login", { code }, {
         headers: {
           'Content-Type': 'application/json'
         }

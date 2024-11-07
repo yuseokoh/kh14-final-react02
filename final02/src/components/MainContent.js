@@ -47,11 +47,10 @@ import Roguelike from "./game/gamecategory/Roguelike";
 import Survival from "./game/gamecategory/Survival";
 import SandBox from "./game/gamecategory/Sandbox";
 
-// import AllUsers from "./game/gamegrade/AllUsers";
-// import TwelveAges from "./game/gamegrade/TwelveAges";
-// import FifteenAges from "./game/gamegrade/FifteenAges";
-// import SevenAges from "./game/gamegrade/SevenAges";
-// import NineteenAges from "./game/gamegrade/NineteenAges";
+import AllUsers from "./game/gamegrade/AllUsers";
+import TwelveAges from "./game/gamegrade/TwelveAges";
+import FifteenAges from "./game/gamegrade/FifteenAges";
+import NineteenAges from "./game/gamegrade/NineteenAges";
 
 
 import Library from "../components/library/Library";
@@ -126,6 +125,10 @@ const MainContent = () => {
                         <Route path="/game/category/sandbox" element={<SandBox />} />
                         <Route path="/game/category/survival" element={<Survival />} />
                         <Route path="/game/category/strategy" element={<StrategyGame />} />
+                        <Route path="/game/grade/allusers" element={<AllUsers />} />
+                        <Route path="/game/grade/twelveages" element={<TwelveAges />} />
+                        <Route path="/game/grade/fifteenages" element={<FifteenAges />} />
+                        <Route path="/game/grade/nineteenages" element={<NineteenAges />} />
 
 
                         <Route path="/member/MemberLogin" element={<MemberLogin />} />

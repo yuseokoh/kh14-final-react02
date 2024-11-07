@@ -49,15 +49,15 @@ const GameEdit = () => {
         const loadData = async () => {
             try {
                 // 게임 정보 로드
-                const gameResp = await axios.get(`http://localhost:8080/game/${gameNo}`);
+                const gameResp = await axios.get(`/game/${gameNo}`);
                 setGame(gameResp.data);
 
                 // 기존 이미지 로드
-                const imageResp = await axios.get(`http://localhost:8080/game/image/${gameNo}`);
+                const imageResp = await axios.get(`/game/image/${gameNo}`);
                 setExistingImages(imageResp.data || []);
 
                 // 시스템 요구사항 로드
-                const reqResponse = await axios.get(`http://localhost:8080/game/requirements/${gameNo}`);
+                const reqResponse = await axios.get(`/game/requirements/${gameNo}`);
                 const reqData = reqResponse.data.reduce((acc, req) => {
                     acc[req.requirementType] = {
                         ...req,
@@ -96,7 +96,7 @@ const GameEdit = () => {
                 const token = sessionStorage.getItem("accessToken");
                 if (!token) return;
 
-                const response = await axios.get("http://localhost:8080/member/", {
+                const response = await axios.get("/member/", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setCurrentUser(response.data);
@@ -132,22 +132,38 @@ const GameEdit = () => {
     //첨부된 이미지를 삭제처리하는 코드
     const handleExistingImageDelete = async (attachmentNo) => {
         try {
-            // 서버로 삭제 요청 보내기
-            await axios.delete(`http://localhost:8080/game/image/${attachmentNo}`, {
-                params: { gameNo },
-            });
-
-            // 삭제에 성공하면 화면에서 제거
+            const token = sessionStorage.getItem("accessToken");
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                return;
+            }
+    
+            // POST 요청으로 이미지 삭제
+            await axios.post(
+                `/game/image/${attachmentNo}?gameNo=${gameNo}`,
+                null,
+                {
+                    headers: { 
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+    
+            // 성공적으로 삭제되면 UI 업데이트
             setExistingImages(prev =>
                 prev.filter(img => img.attachmentNo !== attachmentNo)
             );
             setDeletedImageNos(prev => [...prev, attachmentNo]);
+            
         } catch (error) {
             console.error("이미지 삭제 실패:", error);
-            alert("이미지 삭제에 실패했습니다");
+            if (error.response?.status === 404) {
+                alert("이미지를 찾을 수 없습니다");
+            } else {
+                alert("이미지 삭제에 실패했습니다");
+            }
         }
     };
-
     const changeGame = useCallback(e => {
         setGame({
             ...game,
@@ -174,7 +190,7 @@ const GameEdit = () => {
 
             // 게임 정보 업데이트
             await axios.put(
-                `http://localhost:8080/game/${gameNo}`,
+                `/game/${gameNo}`,
                 formData,
                 {
                     headers: {
@@ -186,7 +202,7 @@ const GameEdit = () => {
 
             // 시스템 요구사항 업데이트
             await axios.put(
-                `http://localhost:8080/game/requirements/${gameNo}`,
+                `/game/requirements/${gameNo}`,
                 [
                     {
                         ...requirements.minimum,
@@ -234,7 +250,7 @@ const GameEdit = () => {
                 return;
             }
 
-            await axios.delete(`http://localhost:8080/game/${gameNo}`, {
+            await axios.delete(`/game/${gameNo}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -259,7 +275,7 @@ const GameEdit = () => {
                     {existingImages.map((img) => (
                         <div key={img.attachmentNo} className={styles.previewContainer}>
                             <img
-                                src={`http://localhost:8080/game/download/${img.attachmentNo}`}
+                                src={`${process.env.REACT_APP_BASE_URL}/game/download/${img.attachmentNo}`}
                                 alt="기존 게임 이미지"
                                 className={styles.previewImage}
                             />
@@ -599,7 +615,7 @@ const GameEdit = () => {
                                     if (!window.confirm("정말 이 게임을 삭제하시겠습니까?")) return;
 
                                     const token = sessionStorage.getItem("accessToken");
-                                    await axios.delete(`http://localhost:8080/game/${gameNo}`, {
+                                    await axios.delete(`/game/${gameNo}`, {
                                         headers: { Authorization: `Bearer ${token}` }
                                     });
 

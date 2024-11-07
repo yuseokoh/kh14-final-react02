@@ -104,7 +104,7 @@ const GameAdd = () => {
             });
 
             //서버에 데이터 전송
-            await axios.post("http://localhost:8080/game/", formData, {
+            await axios.post("/game/", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

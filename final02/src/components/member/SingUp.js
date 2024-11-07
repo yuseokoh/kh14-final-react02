@@ -29,7 +29,7 @@ const SignUp = () => {
     if (!emailValid) return;
 
     try {
-        const response = await fetch('http://localhost:8080/member/email', {  // 전체 URL 사용
+        const response = await fetch('/member/email', {  // 전체 URL 사용
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(email),  // body에 이메일 문자열을 바로 전달

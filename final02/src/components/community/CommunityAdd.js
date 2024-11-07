@@ -61,7 +61,7 @@ const CommunityAdd = () => {
             files.forEach(file => formData.append("files", file)); // 여러 파일 첨부
 
             // 게시글 저장 요청
-            const resp = await axios.post("http://localhost:8080/community/", formData, {
+            const resp = await axios.post("/community/", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }

@@ -56,7 +56,7 @@ const handleSubmit = async (e) => {
     e.preventDefault();
     if (isAllValid) {
         try {
-            const response = await axios.post('http://localhost:8080/member/join', {
+            const response = await axios.post('/member/join', {
                 memberId,
                 memberPw,
                 memberEmail: certEmail,

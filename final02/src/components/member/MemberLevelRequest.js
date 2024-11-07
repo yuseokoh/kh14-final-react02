@@ -42,7 +42,7 @@ const MemberLevelRequest = () => {
         try {
             const token = sessionStorage.getItem('refreshToken');
             await axios.post(
-                `http://localhost:8080/member/developer-request`, 
+                `/member/developer-request`, 
                 {
                     memberId: memberId
                 },

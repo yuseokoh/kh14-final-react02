@@ -45,7 +45,7 @@ const App = ()=>{
     axios.defaults.headers.common["Authorization"] = "Bearer " + refreshToken;
 
     //[6] 백엔드에 갱신 요청을 전송
-    const resp = await axios.post("http://localhost:8080/member/refresh");
+    const resp = await axios.post("/member/refresh");
     console.log("==========================================");
     console.log(resp.data);
     console.log("==========================================");

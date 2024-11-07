@@ -160,7 +160,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
         try {
             const size = 10; // 페이지당 항목 수
             const response = await axios.get(
-                `http://localhost:8080/game/${gameNo}/reviews`,
+                `/game/${gameNo}/reviews`,
                 {
                     params: {
                         page: page,
@@ -190,7 +190,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
             try {
                 const token = sessionStorage.getItem('refreshToken');
                 const response = await axios.get(
-                    `http://localhost:8080/game/${gameNo}/review/check`,
+                    `/game/${gameNo}/review/check`,
                     {
                         headers: { Authorization: `Bearer ${token}` }
                     }
@@ -232,13 +232,13 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
             // 리뷰 작성 또는 수정
             if (reviewForm.mode === 'create') {
                 await axios.post(
-                    `http://localhost:8080/game/${gameNo}/review`,
+                    `/game/${gameNo}/review`,
                     reviewForm.data,
                     config
                 );
             } else {
                 await axios.put(
-                    `http://localhost:8080/game/${gameNo}/review/${reviewForm.editingReviewNo}`,
+                    `/game/${gameNo}/review/${reviewForm.editingReviewNo}`,
                     reviewForm.data,
                     config
                 );
@@ -294,7 +294,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
             try {
                 const token = sessionStorage.getItem('refreshToken');
                 await axios.delete(
-                    `http://localhost:8080/game/${gameNo}/review/${reviewNo}`,
+                    `/game/${gameNo}/review/${reviewNo}`,
                     {
                         headers: { Authorization: `Bearer ${token}` }
                     }
@@ -326,7 +326,7 @@ const ReviewSystem = ({ gameNo, login, memberId, memberLevel, game, onReviewUpda
         try {
             const token = sessionStorage.getItem('refreshToken');
             await axios.post(
-                `http://localhost:8080/game/${gameNo}/review/${reviewNo}/like`,
+                `/game/${gameNo}/review/${reviewNo}/like`,
                 null,
                 {
                     headers: { Authorization: `Bearer ${token}` }
@@ -573,9 +573,9 @@ const GameDetail = () => {
         try {
             // 게임 정보, 이미지, 시스템 요구사항을 병렬로 로드
             const [gameResponse, imageResponse, requirementsResponse] = await Promise.all([
-                axios.get(`http://localhost:8080/game/${gameNo}`),
-                axios.get(`http://localhost:8080/game/image/${gameNo}`),
-                axios.get(`http://localhost:8080/game/requirements/${gameNo}`)
+                axios.get(`/game/${gameNo}`),
+                axios.get(`/game/image/${gameNo}`),
+                axios.get(`/game/requirements/${gameNo}`)
             ]);
 
             setGame(gameResponse.data);
@@ -584,7 +584,7 @@ const GameDetail = () => {
             if (imageResponse.data && imageResponse.data.length > 0) {
                 const imageUrls = imageResponse.data
                     .filter(img => img.attachmentNo)
-                    .map(img => `http://localhost:8080/game/download/${img.attachmentNo}`);
+                    .map(img => `${process.env.REACT_APP_BASE_URL}/game/download/${img.attachmentNo}`);
 
                 if (imageUrls.length > 0) {
                     setImages(imageUrls);

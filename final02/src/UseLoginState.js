@@ -17,7 +17,7 @@ const UseLoginState = () => {
 
       const refreshToken = sessionToken || localToken;
       try {
-        const response = await axios.post("http://localhost:8080/member/refresh", {}, {
+        const response = await axios.post("/member/refresh", {}, {
           headers: { Authorization: `Bearer ${refreshToken}` }
         });
 

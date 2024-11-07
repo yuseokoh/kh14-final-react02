@@ -41,7 +41,7 @@ export default class GameoverScene extends Phaser.Scene {
 
 
         // 백엔드로 데이터 전송
-        axios.post('http://localhost:8080/play/', { 
+        axios.post('/play/', { 
             playScore: this.m_enemyKilled, 
             playLevel: this.m_level, 
             memberId: this.m_memberId })
