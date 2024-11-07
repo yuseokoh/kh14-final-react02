@@ -50,7 +50,7 @@ const FeaturedSection = ({ games }) => {
         try {
           const response = await axios.get(`/game/image/${games[currentIndex].gameNo}`);
           if (response.data && response.data.length > 0) {
-            const url = `/game/download/${response.data[0].attachmentNo}`;
+            const url = `${process.env.REACT_APP_BASE_URL}/game/download/${response.data[0].attachmentNo}`;
             setImageUrl(url);
           }
         } catch (error) {
