@@ -20,6 +20,18 @@ const ShoppingCart = () => {
   const memberId = useRecoilValue(memberIdState);
   const navigate = useNavigate();
 
+  const getCurrentUrl = useCallback(() => {
+    // window.location.pathname이 이미 앞에 '/'를 포함하고 있기 때문에
+    // 마지막 슬래시를 체크하고 제거하는 로직 추가
+    const pathname = window.location.pathname.endsWith('/') 
+        ? window.location.pathname.slice(0, -1) 
+        : window.location.pathname;
+        
+    return window.location.origin
+            + pathname
+            + (window.location.hash || '');
+}, []);
+
   // 공통 이미지 로딩 함수
   const loadGameImage = async (gameNo) => {
     try {
@@ -129,9 +141,9 @@ const ShoppingCart = () => {
             gameNo: game.gameNo,
             qty: 1,
           })),
-          approvalUrl: `${window.location.origin}/success`,
-          cancelUrl: `${window.location.origin}/cancel`,
-          failUrl: `${window.location.origin}/fail`,
+          approvalUrl : getCurrentUrl() + "/success",
+          cancelUrl: getCurrentUrl() + "/cancel",
+          failUrl : getCurrentUrl() + "/fail"
         }
       );
 
