@@ -17,7 +17,7 @@ const ProgressBar = styled.div`
 `;
 
 const Progress = styled.div`
-    width: ${(props) => props.width}% ;
+    width: ${(props) => props.width}%;
     height: 100%;
     text-align: right;
     background-color: skyblue;
@@ -29,6 +29,7 @@ const Progress = styled.div`
     font-size: 0.8rem;
 `;
 
+
 const MyPage = () => {
     const { t } = useTranslation();
     const [member, setMember] = useState({});
@@ -38,11 +39,12 @@ const MyPage = () => {
     const [memberLevel, setMemberLevel] = useRecoilState(memberLevelState);
     const login = useRecoilValue(loginState);
 
+
     const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get("/myPage");
+            const resp = await axios.get("http://localhost:8080/member/");
+            console.log("Member data received:", resp.data); // 데이터 출력
             setMember(resp.data);
-            console.log("Member data received:", resp.data);
         } catch (error) {
             console.error("Error loading member data:", error);
         }
@@ -50,44 +52,54 @@ const MyPage = () => {
 
     const loadImage = useCallback(async (memberId) => {
         try {
-            const resp = await axios.get(`/image/${memberId}`);
+            const resp = await axios.get(`/member/image/${memberId}`);
             const { attachment } = resp.data;
 
-            setImage(attachment ? `/download/${attachment}` : '/default-profile.png');
+            if (attachment) {
+                const imageUrl = `/member/download/${attachment}`;
+                setImage(imageUrl);
+            } else {
+                setImage('/default-profile.png');
+            }
         } catch (error) {
             console.error("Error loading image:", error);
             setImage('/default-profile.png');
         }
     }, []);
 
-    const logout = useCallback(() => {
-        // Recoil 상태와 스토리지의 리프레시 토큰 제거
+    const logout = useCallback((e) => {
+        // recoil에 저장된 memberId와 memberLevel을 제거
         setMemberId("");
         setMemberLevel("");
+
+        // axios에 설정된 Authorization 헤더도 제거
+        delete axios.defaults.headers.common["Authorization"];
+
+        // localStorage, sessionStorage의 refreshToken 및 jwtToken 제거
         window.localStorage.removeItem("refreshToken");
         window.sessionStorage.removeItem("refreshToken");
-        
-        // Authorization 헤더 제거
-        delete axios.defaults.headers.common["Authorization"];
+
+        // 페이지 이동
         navigate("/");
-    }, [setMemberId, setMemberLevel, navigate]);
+    }, [setMemberId, setMemberLevel, , , , navigate]);
 
     const delmember = useCallback(async () => {
         try {
             await axios.delete(`/member/delete/${member.memberId}`);
-            navigate("/");
-            logout();
+            navigate("/"); // 삭제 후 메인 페이지로 이동
+            logout("/");
+
         } catch (error) {
             console.error("Error deleting member:", error);
         }
-    }, [member.memberId, navigate, logout]);
+    }, [member.memberId, navigate]);
 
     useEffect(() => {
         if (login && memberId) {
-            loadMember();
+            loadMember(memberId);
             loadImage(memberId);
         }
-    }, [login, memberId, loadMember, loadImage]);
+    }, [login, memberId]);
 
     const imageUrl = image || '/default-profile.png';
 
@@ -103,14 +115,30 @@ const MyPage = () => {
     ];
 
     const getLevelInfo = (points) => {
-        return levels.find(level => points >= level.points) || levels[levels.length - 1];
+        for (let i = 0; i < levels.length; i++) {
+            if (points >= levels[i].points) {
+                const currentLevel = levels[i];
+                const nextLevelPoints = i > 0 ? levels[i - 1].points : currentLevel.points;
+                return {
+                    ...currentLevel,
+                    nextLevelPoints
+                };
+            }
+        }
+        return levels[levels.length - 1];
     };
 
     const renderProfileImage = () => {
         const levelInfo = getLevelInfo(member?.memberPoint);
+
+
         return (
             <div className={styles.profileImageContainer}>
-                <img src={levelInfo.frame} alt={t(`levels.${levelInfo.level}`)} className={styles.levelFrame} />
+                <img
+                    src={levelInfo.frame}
+                    alt={t(`levels.${levelInfo.level}`)}
+                    className={styles.levelFrame}
+                />
             </div>
         );
     };
@@ -119,6 +147,9 @@ const MyPage = () => {
     const progressPercentage = ((member?.memberPoint || 0) / levelInfo.nextLevelPoints) * 100;
 
     const handleGoToCancelPage = () => navigate("/paymentList");
+        
+      
+     
 
     return (
         <div className={styles.container}>
@@ -130,9 +161,12 @@ const MyPage = () => {
                         {t(`levels.${levelInfo.level}`).toUpperCase()}
                     </div>
                     <div>
+
+                        {/* Progress bar */}
                         <ProgressBar>
                             <Progress width={progressPercentage}>
                                 {progressPercentage.toFixed(2)}%
+                                {/* <h3>{member.memberPoint} / {levelInfo.nextLevelPoints}</h3> */}
                             </Progress>
                         </ProgressBar>
                     </div>
@@ -159,15 +193,24 @@ const MyPage = () => {
             </div>
 
             <div style={{ textAlign: 'right', marginTop: '2rem' }}>
-                <button className={styles.editButton} onClick={() => navigate(`/member/mypageedit`)}>
+                <button
+                    className={styles.editButton}
+                    onClick={() => navigate(`/member/mypageedit`)}  // memberId 없이 수정 페이지로 이동
+                >
                     {t("edit")}
                 </button>
-                <button className={styles.delButton} onClick={delmember}>
-                    {t("exit")}
+                <button
+                    className={styles.delButton}
+                    // onClick={() => navigate(`/member/delete/${memberId}`)}
+                    onClick={delmember}
+                >
+                     {t("exit")}
                 </button>
+
                 <button onClick={handleGoToCancelPage} className={styles.payButton}>
                     {t('paymentSuccess.PaymentHistory')}
-                </button>
+      </button>
+
             </div>
         </div>
     );
