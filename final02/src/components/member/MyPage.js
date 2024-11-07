@@ -40,7 +40,7 @@ const MyPage = () => {
 
     const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get("/member/myPage");
+            const resp = await axios.get("/myPage");
             setMember(resp.data);
             console.log("Member data received:", resp.data);
         } catch (error) {
@@ -50,10 +50,10 @@ const MyPage = () => {
 
     const loadImage = useCallback(async (memberId) => {
         try {
-            const resp = await axios.get(`/member/image/${memberId}`);
+            const resp = await axios.get(`/image/${memberId}`);
             const { attachment } = resp.data;
 
-            setImage(attachment ? `/member/download/${attachment}` : '/default-profile.png');
+            setImage(attachment ? `/download/${attachment}` : '/default-profile.png');
         } catch (error) {
             console.error("Error loading image:", error);
             setImage('/default-profile.png');
