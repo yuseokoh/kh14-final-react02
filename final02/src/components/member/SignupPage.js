@@ -105,7 +105,8 @@ const SignupPage = () => {
               <div className={styles.formGroup}>
                 <ReCAPTCHA
                   // sitekey="6LespWUqAAAAAKOEWHAw9ZmAi7n11rBumfAkPqE8" //개발환경
-                  sitekey="6LdFmHcqAAAAAMb0HlybZCN13vlMXaFULqhcqCIF" // 배포환경
+                  sitekey="6LfJln0qAAAAAIIH_Cpmg-mxF3_B-naL1C6xI9LO" // 배포환경 & 개발환경
+                  //6LfJln0qAAAAAB7PuhoIxOLt-9H8ePLvtEdaUhvN 시크릿키
                   onChange={handleHumanVerification}
                 />
               </div>

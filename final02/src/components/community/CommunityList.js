@@ -77,7 +77,7 @@ const CommunityList = () => {
 
         const resizeHandler = throttle(() => {
             const percent = getScrollPercent();
-            console.log("percent : "+percent);
+           //("percent : "+percent);
             if (percent >= 70 && loading.current === false) {
                 setPage(page + 1);
             }
@@ -168,7 +168,7 @@ const CommunityList = () => {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
         const documentHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         const scrollPercent = (scrollTop / documentHeight) * 100;
-        console.log(scrollPercent);
+       //(scrollPercent);
         return scrollPercent;
     }, []);
 

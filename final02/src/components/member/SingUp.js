@@ -35,8 +35,8 @@ const SignUp = () => {
             body: JSON.stringify(email),  // body에 이메일 문자열을 바로 전달
         });
 
-        console.log('Response status:', response.status);  // 응답 상태 확인
-        console.log('Response body:', await response.text());  // 응답 본문 확인
+       //('Response status:', response.status);  // 응답 상태 확인
+       //('Response body:', await response.text());  // 응답 본문 확인
 
         if (response.ok) {
             alert('인증 이메일을 전송했습니다. 확인 후 계속 진행해주세요.');

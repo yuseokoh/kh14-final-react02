@@ -13,8 +13,11 @@ i18n
   .init({
     fallbackLng: 'ko', // 기본 언어를 설정
     supportedLngs: ['en', 'ko'],
+    // backend: {
+    //   loadPath: '/locales/{{lng}}/translation.json',
+    // },
     backend: {
-      loadPath: '/locales/{{lng}}/translation.json',
+      loadPath: `${process.env.PUBLIC_URL}/locales/{{lng}}/translation.json`,
     },
     detection: {
       order: ['localStorage', 'navigator'],

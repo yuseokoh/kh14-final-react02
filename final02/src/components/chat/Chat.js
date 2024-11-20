@@ -114,7 +114,7 @@ const Chat = () => {
         setConnect(false); //연결상태 갱신
       },
       debug: (str) => {
-        console.log(str);
+       //(str);
       },
     });
 
@@ -172,7 +172,7 @@ const Chat = () => {
       setMessageList((prev) => [...resp.data.messageList, ...prev]);
       setMore(resp.data.last);
     } catch (error) {
-      console.log("더보기 요청 중 오류 발생 : ", error);
+     //("더보기 요청 중 오류 발생 : ", error);
     } finally {
       setLoading(false);
   

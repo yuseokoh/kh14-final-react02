@@ -80,14 +80,14 @@ export default class PlayingScene extends Phaser.Scene {
 
     //일시정지
     this.input.keyboard.on('keydown-ESC', () => {
-        console.log("esc keydown");
+       //("esc keydown");
         global_pause("playGame");
     }, this);
 
 
     // 방향키
     this.m_cursorKeys = this.input.keyboard.createCursorKeys();
-    console.log(this.m_cursorKeys);
+   //(this.m_cursorKeys);
 
   }
 

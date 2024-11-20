@@ -72,7 +72,7 @@ const PaymentSuccessPage = () => {
                         memberId: memberId
                     };
     
-                    console.log("Sending libraryDto:", libraryDto);
+                   //("Sending libraryDto:", libraryDto);
     
                     // 라이브러리에 추가
                     await axios.post("/library/add", libraryDto, {
@@ -84,7 +84,7 @@ const PaymentSuccessPage = () => {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                 }
-                console.log("Games added to library and removed from cart successfully.");
+               //("Games added to library and removed from cart successfully.");
             }
         } catch (e) {
             console.error(e);
@@ -97,20 +97,15 @@ const PaymentSuccessPage = () => {
     }, [partnerOrderId, t, memberId]);
     
 
-    console.log(gameList);
+   //(gameList);
 
-    const totalAmount = useMemo(() => {
-        return gameList.reduce((total, game) => {
-            console.log("gamePrice:", game.
-                paymentDetailPrice
-                , "qty:", game.paymentDetailQty);
-           
-            const price = parseFloat(game.paymentDetailPrice) || 0;
-      
-            return total + ( price );
-        }, 0);
-    }, [gameList]);
-    
+const totalAmount = useMemo(() => {
+    return gameList.reduce((total, game) => {
+        const price = parseFloat(game.paymentDetailPrice) || 0;
+        const quantity = game.paymentDetailQty || 1;
+        return total + (price * quantity);
+    }, 0);
+}, [gameList]);
    
       
   

@@ -46,7 +46,7 @@ export default class GameoverScene extends Phaser.Scene {
             playLevel: this.m_level, 
             memberId: this.m_memberId })
             .then(response => {
-                console.log('데이터 전송 성공:', response.data);
+               //('데이터 전송 성공:', response.data);
             })
             .catch(error => {
                 console.error('데이터 전송 실패:', error);

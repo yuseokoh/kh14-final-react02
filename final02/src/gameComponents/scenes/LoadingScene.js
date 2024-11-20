@@ -87,7 +87,7 @@ export default class LoadingScene extends Phaser.Scene {
         this.createAnimations();
 
         // 로딩 완료 후 다음 씬으로 전환
-        console.log("Loading complete, starting main scene");
+       //("Loading complete, starting main scene");
         this.scene.start("mainScene");
     }
 
