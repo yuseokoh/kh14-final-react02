@@ -21,7 +21,7 @@ const CancelPaymentPage = () => {
     // 쿼리 파라미터에서 paymentNo 가져오기
     const { paymentNo } = useParams();
 
-    console.log(paymentNo);
+   //(paymentNo);
 
     useEffect(() => {
         const timer = setTimeout(() => {

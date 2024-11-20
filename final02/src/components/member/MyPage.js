@@ -42,8 +42,8 @@ const MyPage = () => {
 
     const loadMember = useCallback(async () => {
         try {
-            const resp = await axios.get("http://localhost:8080/member/");
-            console.log("Member data received:", resp.data); // 데이터 출력
+            const resp = await axios.get("/member/");
+           //("Member data received:", resp.data); // 데이터 출력
             setMember(resp.data);
         } catch (error) {
             console.error("Error loading member data:", error);

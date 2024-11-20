@@ -51,7 +51,7 @@ const NotificationMenu = ({ memberId }) => {
                     }
                 );
 
-                console.log("알림 응답:", response.data);
+                ////("알림 응답:", response.data);
                 setNotifications(response.data);
                 setHasNewNotifications(response.data.length > 0);
 
@@ -156,7 +156,7 @@ const Menu = () => {
 //             }
 //         })
 //         .then(response => {
-//             console.log("카카오 로그아웃 성공", response);
+//            //("카카오 로그아웃 성공", response);
 //         })
 //         .catch(error => {
 //             console.error("카카오 로그아웃 실패", error);
@@ -198,7 +198,7 @@ const Menu = () => {
                 }
             })
                 .then(response => {
-                    console.log("카카오 로그아웃 성공", response);
+                   //("카카오 로그아웃 성공", response);
                     window.localStorage.removeItem("kakaoAccessToken");
                     window.localStorage.removeItem("kakaoId");
                 })
@@ -311,9 +311,9 @@ const Menu = () => {
                                 </NavLink>
                             </li>
                         </>) : (<>
-                            <li className="nav-item">
+                            {/* <li className="nav-item">
                                 <NavLink className="nav-link" to="/member/KakaoLoginPage">{t('menu.kakao_login_test')}</NavLink>
-                            </li>
+                            </li> */}
                                 <li className="nav-item">
                                     <NavLink className="nav-link" to="/member/MemberLogin">
                                         <i className="fa-solid fa-right-to-bracket"></i>

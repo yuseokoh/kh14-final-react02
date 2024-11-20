@@ -40,7 +40,7 @@ const MemberLogin = () => {
     try {
         // 로그인 요청 URL 수정
         const resp = await axios.post("/member/login", input);
-        console.log("로그인 응답:", resp.data); // 디버깅용 로그
+       //("로그인 응답:", resp.data); // 디버깅용 로그
 
         // 성공적으로 로그인했을 경우
         setMemberId(resp.data.memberId);
@@ -48,7 +48,7 @@ const MemberLogin = () => {
 
         // JWT 토큰 localStorage에 저장
         window.localStorage.setItem("jwtToken", resp.data.accessToken);
-        console.log("JWT 토큰 저장됨:", resp.data.accessToken); // 디버깅용
+       //("JWT 토큰 저장됨:", resp.data.accessToken); // 디버깅용
         
         // Authorization 헤더에 토큰 설정
         axios.defaults.headers.common["Authorization"] = `Bearer ${resp.data.accessToken}`;
@@ -57,11 +57,11 @@ const MemberLogin = () => {
       if (stay) {
         window.localStorage.setItem("accessToken", resp.data.accessToken);
         window.localStorage.setItem("refreshToken", resp.data.refreshToken);
-        console.log("로컬 스토리지에 저장된 Access Token:", window.localStorage.getItem("accessToken"));
+       //("로컬 스토리지에 저장된 Access Token:", window.localStorage.getItem("accessToken"));
       } else {
         window.sessionStorage.setItem("accessToken", resp.data.accessToken);
         window.sessionStorage.setItem("refreshToken", resp.data.refreshToken);
-        console.log("세션 스토리지에 저장된 Access Token:", window.sessionStorage.getItem("accessToken"));
+       //("세션 스토리지에 저장된 Access Token:", window.sessionStorage.getItem("accessToken"));
       } 
         // 홈 화면으로 이동
         navigate("/");
@@ -87,9 +87,9 @@ const MemberLogin = () => {
           <div className={styles.jumbotronTitle}>로그인</div>
 
           <div className={styles.container}>
-            <span>아이디: testuser123</span>
+            {/* <span>아이디: testuser123</span> */}
             <br />
-            <span>비밀번호: Testuser123!!</span>
+            {/* <span>비밀번호: Testuser123!!</span> */}
 
             <div className="row mt-4">
               <div className="col-9">

@@ -7,6 +7,11 @@ import { kakaoIdState, kakaoAccessTokenState, memberLevelState, memberIdState } 
 function KakaoLoginPage() {
   const REST_API_KEY = "e027bcf677db65dbc9a5954313eb0a3f";
   const REDIRECT_URI = "http://localhost:3000/member/KakaoLoginPage";
+  // const REDIRECT_URI = "https://www.sysout.co.kr/member/KakaoLoginPage";
+  // const isLocal = window.location.hostname === "localhost";
+  // const REDIRECT_URI = isLocal 
+  //   ? "http://localhost:3000/member/KakaoLoginPage"
+  //   : "https://www.sysout.co.kr/member/KakaoLoginPage";
   const navigate = useNavigate();
   
   // 로그인 유지 상태
@@ -27,33 +32,43 @@ function KakaoLoginPage() {
     const code = new URL(window.location.href).searchParams.get("code");
     if (code) {
       // 카카오 로그인 API 호출
-      axios.post("/kakao/login", { code }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      // axios.post("/kakao/login", { code }, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
+      // axios.post(`${isLocal ? "http://localhost:8081" : "https://api.sysout.co.kr"}/kakao/login`, { code }, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
+        axios.post("http://localhost:8081/kakao/login", { code }, { // 절대 경로 사용
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
       .then(response => {
-        console.log("응답 데이터: ", response.data); 
+       //("응답 데이터: ", response.data); 
       
       // 응답에서 필요한 데이터 추출
       const { accessToken, jwtToken, refreshToken, emailRequired, kakaoId, nickname, memberLevel } = response.data;
 
-        console.log("Access Token:", accessToken);
-        console.log("JWT Token:", jwtToken);
-        console.log("Refresh Token:", refreshToken);
-        console.log("Email Required:", emailRequired);
-        console.log("Kakao ID:", kakaoId);
-        console.log("Nickname:", nickname);
+       //("Access Token:", accessToken);
+       //("JWT Token:", jwtToken);
+       //("Refresh Token:", refreshToken);
+       //("Email Required:", emailRequired);
+       //("Kakao ID:", kakaoId);
+       //("Nickname:", nickname);
       
         // 이메일 입력이 필요한 경우 이메일 입력 페이지로 이동
         if (emailRequired) {
-          console.log("카카오 ID 저장: ", kakaoId);
+         //("카카오 ID 저장: ", kakaoId);
           localStorage.setItem('kakaoId', kakaoId);
           navigate('/member/KakaoEmail');
         } else if (jwtToken && accessToken) {
           // JWT 토큰이 있을 경우 저장하고 메인 페이지로 이동
-          console.log('JWT Token:', jwtToken);
-          console.log('Access Token:', accessToken);
+         //('JWT Token:', jwtToken);
+         //('Access Token:', accessToken);
           // 1. 세션 또는 로컬 스토리지에 저장 (stay 상태에 따라)
           if (stay) {
             window.localStorage.setItem('refreshToken', refreshToken);
@@ -69,8 +84,8 @@ function KakaoLoginPage() {
           // 2. Recoil 상태에도 저장
           setMemberId(kakaoId);
           setMemberLevel(memberLevel);
-          console.log('Recoil에 저장된 Kakao ID:', kakaoId);
-          console.log('Recoil에 저장된 Access Token:', accessToken);
+         //('Recoil에 저장된 Kakao ID:', kakaoId);
+         //('Recoil에 저장된 Access Token:', accessToken);
       
           // 3. 메인 페이지로 이동
           navigate('/');

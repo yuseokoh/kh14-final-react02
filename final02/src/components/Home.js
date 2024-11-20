@@ -602,7 +602,9 @@ useEffect(() => {
   const fetchGames = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/game/');
+      // const response = await axios.get('/game/');
+      const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/game/`);
+
       // 게임 배열을 랜덤하게 섞기
       const randomizedGames = [...response.data].sort(() => Math.random() - 0.5);
       setGames(randomizedGames);

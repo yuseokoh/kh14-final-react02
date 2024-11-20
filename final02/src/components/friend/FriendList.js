@@ -54,7 +54,7 @@ const FriendList = () => {
   const chatClick = useCallback(
     (friend) => {
       if (memberId === null) return;
-      console.log("friend : ", friend);
+     //("friend : ", friend);
       const targetId =
         memberId === friend.friendTo ? friend.friendFrom : friend.friendTo;
       setReceiverId(targetId);
@@ -113,7 +113,7 @@ const FriendList = () => {
       if (!memberId || memberLoading === false) return;
        try{
       const roomName = friend.friendFrom + ", " + friend.friendTo;
-      console.log("friendFK" + friend.friendFk);
+     //("friendFK" + friend.friendFk);
       const resp = await axios.post("/room/", {
         roomNo: friend.friendFk,
         roomName: roomName,
@@ -121,7 +121,7 @@ const FriendList = () => {
       loadRoomList();
       await axios.post("/room/enter", { roomNo: friend.friendFk });
       checkMemberJoin();
-      console.log("try : ");
+     //("try : ");
       navigate(`/room-chat/${friend.friendFk}`);
     }
       catch {
@@ -134,7 +134,7 @@ const FriendList = () => {
             checkMemberJoin();
         } catch {
             loadRoomList();
-            console.log("catch : ");
+           //("catch : ");
             navigate(`/room-chat/${friend.friendFk}`);
         }
         checkMemberJoin();
@@ -143,7 +143,7 @@ const FriendList = () => {
         loadRoomList();
         
         checkMemberJoin();
-        console.log("finally : ");
+       //("finally : ");
         navigate(`/room-chat/${friend.friendFk}`);
        }
     },
@@ -153,7 +153,7 @@ const FriendList = () => {
   const checkMemberJoin = useCallback(async () => {
     const resp = await axios.get("/room/member");
     setMemberJoin(prev => ({ ...prev, ...resp.data }));
-    console.log("join :", resp.data);
+   //("join :", resp.data);
 }, []);
 
   const enterRoom = useCallback(async (friend) => {
